@@ -1,0 +1,198 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Users {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String   @unique
+  phone     String   @unique
+  avatar    String?  @default("") // TODO Create default pfp TODO find way to store iamge
+  password  String
+
+  // Relations
+  templates Templates[]
+  Blogs Blogs[]
+  Comments Comments[]
+  BlogReports BlogReports[]
+  CommentReports CommentReports[]
+}
+
+model Languages {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+
+  // Relations
+  TemplateCodes TemplateCodes[]
+}
+
+model TemplateCodes {
+  id         Int      @id @default(autoincrement())
+  languageId Int
+  code       String
+
+  // Relations
+  language Languages @relation(fields: [languageId], references: [id])
+  Templates Templates[]
+}
+
+model Templates {
+  id             Int      @id @default(autoincrement())
+  title          String
+  explanation    String
+  templateCodeId Int
+  authorId       Int
+
+  // Relations
+  author      Users    @relation(fields: [authorId], references: [id])
+  templateCodes TemplateCodes @relation(fields: [templateCodeId], references: [id])
+  tags        Tags[]  @relation("Tags")
+  Links Links[]
+}
+
+model Tags {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  color String
+
+  // Relations
+  templates Templates[] @relation("Tags")
+  Blogs Blogs[] @relation("Tags")
+}
+
+model Blogs {
+  id         Int      @id @default(autoincrement())
+  title      String
+  authorId   Int
+  content    String
+
+  // Relations
+  links      Links[] @relation("Links")
+  author     Users   @relation(fields: [authorId], references: [id])
+  tags       Tags[]  @relation("Tags")
+  Links Links[]
+  Comments Comments[]
+  BlogRating BlogRating[]
+  BlogReports BlogReports[]
+  FlaggedBlogs FlaggedBlogs[]
+}
+
+model Links {
+  id         Int     @id @default(autoincrement())
+  blogId     Int
+  templateId Int
+  link       String
+
+  // Relations
+  blog    Blogs   @relation(fields: [blogId], references: [id])
+  template Templates @relation(fields: [templateId], references: [id])
+  Blogs Blogs[] @relation("Links")
+}
+
+model Comments {
+  id      Int     @id @default(autoincrement())
+  blogId  Int
+  userId  Int
+  content String
+
+  // Relations
+  blog    Blogs   @relation(fields: [blogId], references: [id])
+  user    Users   @relation(fields: [userId], references: [id])
+  parentComment Comments? @relation("parentCommentId", fields: [parentCommentid], references: [id])
+  parentCommentid Int?
+  Comments Comments[] @relation("parentCommentId")
+  CommentRating CommentRating[]
+  CommentReports CommentReports[]
+  FlaggedComments FlaggedComments[]
+}
+
+model BlogRating {
+  id           Int    @id @default(autoincrement())
+  blogId       Int
+  numUpvotes   Int
+  numDownvotes Int
+
+  // Relations
+  blog Blogs @relation(fields: [blogId], references: [id])
+}
+
+model CommentRating {
+  id           Int    @id @default(autoincrement())
+  commentId    Int
+  numUpvotes   Int
+  numDownvotes Int
+
+  // Relations
+  comment Comments @relation(fields: [commentId], references: [id])
+}
+
+model Reports {
+  id      Int     @id @default(autoincrement())
+  message String
+
+  // Relations
+  BlogReports BlogReports[]
+
+  CommentReports CommentReports[]
+
+  FlaggedBlogs FlaggedBlogs[]
+
+  FlaggedComments FlaggedComments[]
+}
+
+model BlogReports {
+  id      Int     @id @default(autoincrement())
+  blogId  Int
+  userId  Int
+  reportId Int
+
+  // Relations
+  blog Blogs @relation(fields: [blogId], references: [id])
+  user Users @relation(fields: [userId], references: [id])
+  report Reports @relation(fields: [reportId], references: [id])
+}
+
+model CommentReports {
+  id      Int     @id @default(autoincrement())
+  commentId  Int
+  userId  Int
+  reportId Int
+
+  // Relations
+  comment Comments @relation(fields: [commentId], references: [id])
+  user Users @relation(fields: [userId], references: [id])
+  report Reports @relation(fields: [reportId], references: [id])
+}
+
+model FlaggedBlogs {
+  id      Int     @id @default(autoincrement())
+  blogId  Int
+  reportId Int
+
+  // Relations
+  blog Blogs @relation(fields: [blogId], references: [id])
+  report Reports @relation(fields: [reportId], references: [id])
+}
+
+model FlaggedComments {
+  id      Int     @id @default(autoincrement())
+  commentId  Int
+  reportId Int
+
+  // Relations
+  comment Comments @relation(fields: [commentId], references: [id])
+  report Reports @relation(fields: [reportId], references: [id])
+}
