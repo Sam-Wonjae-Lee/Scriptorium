@@ -20,8 +20,9 @@ model Users {
   lastName  String
   email     String   @unique
   phone     String   @unique
-  avatar    String?  @default("") // TODO Create default pfp TODO find way to store iamge
+  avatar    Bytes?
   password  String
+  permission String
 
   // Relations
   templates Templates[]
