@@ -4,21 +4,49 @@ export default async function handler(req, res) {
     const { id } = req.query;
 
     /**
+     * As a visitor, I want to follow links from a blog post directly 
+     * to the relevant code template so that I can view, run, or fork the code discussed.
+     */
+
+    // Fetch a single blog post by ID
+    if (req.method === "GET") {
+        try {
+            const blogPost = await prisma.blogs.findUnique({
+                where: { id: parseInt(id) },
+                include: {
+                    tags: true,
+                    links: true,
+                    templates: true,
+                },
+            });
+
+            if (!blogPost) {
+                return res.status(404).json({ error: "Blog post not found" });
+            }
+
+            res.status(200).json(blogPost);
+        } catch (error) {
+            return res.status(500).json({ error: "Failed to fetch blog post" });
+        }
+    }
+
+    /**
      * As a user, I want to create/edit/delete blog posts. 
      * A blog post has a title, description, and tag. It might also include 
      * links to code templates (either mine or someone else’s).
      */
 
+
     // Create blog posts
-    if (req.method === "POST") {
-        const { title, authorId, content, tags, links } = req.body;
+    else if (req.method === "POST") {
+        const { title, authorId, content, tags, links, templates } = req.body;
 
         if (!title || !authorId || !content) {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
         try {
-            const BlogPost = await prisma.blogs.create({
+            const blogPost = await prisma.blogs.create({
                 data: {
                     title,
                     authorId,
@@ -32,9 +60,12 @@ export default async function handler(req, res) {
                             description: link.description,
                         })),
                     },
+                    templates: {
+                        connect: templates.map(templateId => ({ id: templateId })),
+                    },
                 },
             });
-            res.status(201).json(BlogPost);
+            res.status(201).json(blogPost);
 
         } catch (error) {
             return res.status(500).json({ error: "Failed to create blog post" });
@@ -43,14 +74,14 @@ export default async function handler(req, res) {
 
     // Edit blog posts
     else if (req.method === "PUT") {
-        const { title, authorId, content, tags, links } = req.body;
+        const { title, authorId, content, tags, links, templates } = req.body;
 
         if (!id || !title || !authorId || !content) {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
         try {
-            const BlogPost = await prisma.blogs.update({
+            const blogPost = await prisma.blogs.update({
                 where: { id: parseInt(id) },
                 data: {
                     title,
@@ -65,9 +96,12 @@ export default async function handler(req, res) {
                             description: link.description,
                         })),
                     },
+                    templates: {
+                        set: templates.map(templateId => ({ id: templateId })),
+                    },
                 },
             });
-            res.status(200).json(BlogPost);
+            res.status(200).json(blogPost);
 
         } catch (error) {
             return res.status(500).json({ error: "Failed to edit blog post" });
@@ -81,10 +115,10 @@ export default async function handler(req, res) {
         }
 
         try {
-            const BlogPost = await prisma.blogs.delete({
+            const blogPost = await prisma.blogs.delete({
                 where: { id: parseInt(id) },
             });
-            res.status(200).json(BlogPost);
+            res.status(200).json(blogPost);
 
         } catch (error) {
             return res.status(500).json({ error: "Failed to delete blog post" });
