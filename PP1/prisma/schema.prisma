@@ -36,16 +36,6 @@ model Languages {
   name  String  @unique
 
   // Relations
-  TemplateCodes TemplateCodes[]
-}
-
-model TemplateCodes {
-  id         Int      @id @default(autoincrement())
-  languageId Int
-  code       String
-
-  // Relations
-  language Languages @relation(fields: [languageId], references: [id])
   Templates Templates[]
 }
 
@@ -53,14 +43,15 @@ model Templates {
   id             Int      @id @default(autoincrement())
   title          String
   explanation    String
-  templateCodeId Int
   authorId       Int
+  languageId     Int
+  code           String
+  tags           Tags[]
+  isPublic       Boolean
 
   // Relations
+  language     Languages @relation(fields: [languageId], references: [id])
   author      Users    @relation(fields: [authorId], references: [id])
-  templateCodes TemplateCodes @relation(fields: [templateCodeId], references: [id])
-  tags        Tags[]  @relation("Tags")
-  Links Links[]
 }
 
 model Tags {
@@ -69,8 +60,8 @@ model Tags {
   color String
 
   // Relations
-  templates Templates[] @relation("Tags")
   Blogs Blogs[] @relation("Tags")
+  Templates Templates[]
 }
 
 model Blogs {
@@ -80,26 +71,12 @@ model Blogs {
   content    String
 
   // Relations
-  links      Links[] @relation("Links")
   author     Users   @relation(fields: [authorId], references: [id])
   tags       Tags[]  @relation("Tags")
-  Links Links[]
   Comments Comments[]
   BlogRating BlogRating[]
   BlogReports BlogReports[]
   FlaggedBlogs FlaggedBlogs[]
-}
-
-model Links {
-  id         Int     @id @default(autoincrement())
-  blogId     Int
-  templateId Int
-  link       String
-
-  // Relations
-  blog    Blogs   @relation(fields: [blogId], references: [id])
-  template Templates @relation(fields: [templateId], references: [id])
-  Blogs Blogs[] @relation("Links")
 }
 
 model Comments {

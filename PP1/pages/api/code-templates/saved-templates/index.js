@@ -1,0 +1,98 @@
+import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
+
+export default async function handler(req, res) {
+  if (req.method === "GET") {
+    const {
+      authorId,
+      title,
+      explanation,
+      code,
+      languageId,
+      tags,
+      page = 1,
+    } = req.query;
+
+    const languageIdInt = parseInt(languageId);
+    const tagsArray = tags ? tags.split(",") : [];
+    const tagsArrayInt = tagsArray.map((tag) => parseInt(tag));
+    const authorIdInt = parseInt(authorId);
+
+    // Check authorId is provided
+    if (!authorIdInt) {
+      res.status(400).json({ message: "AuthorId is required" });
+      return;
+    }
+    // Check authorId exists
+    const author = await prisma.users.findUnique({
+      where: { id: authorIdInt },
+    });
+    if (!author) {
+      res.status(400).json({ message: "Author not found" });
+      return;
+    }
+
+    // Check languageId exists if provided
+    if (languageIdInt) {
+      const language = await prisma.languages.findUnique({
+        where: { id: languageIdInt },
+      });
+      if (!language) {
+        res.status(400).json({ message: "Language not found" });
+        return;
+      }
+    }
+
+    // Check tags exist if provided
+    if (tagsArrayInt.length > 0) {
+      const tags = await prisma.tags.findMany({
+        where: {
+          id: {
+            in: tagsArrayInt,
+          },
+        },
+      });
+      if (tags.length !== tagsArrayInt.length) {
+        res.status(400).json({ message: "Tag not found" });
+        return;
+      }
+    }
+
+    // Create filters
+    const filters = {};
+    if (tagsArrayInt && tagsArrayInt.length > 0) {
+      filters.tags = {
+        some: {
+          id: { in: tagsArrayInt },
+        },
+      };
+    }
+    filters.authorId = authorIdInt;
+    if (title) filters.title = { contains: title };
+    if (explanation) filters.explanation = { contains: explanation };
+    if (code) filters.code = { contains: code };
+    if (languageId) filters.languageId = languageIdInt;
+
+    // Paginate
+    const skip = get_skip(page);
+
+    const templates = await prisma.templates.findMany({
+      where: filters,
+      skip: skip,
+      take: PAGINATION_LIMIT,
+    });
+
+    const totalTemplates = await prisma.templates.count({ where: filters });
+    const totalPages = Math.ceil(totalTemplates / PAGINATION_LIMIT);
+
+    return res.status(200).json({
+      templates,
+      pagination: {
+        totalTemplates,
+        totalPages,
+        currentPage: page,
+      },
+    });
+  } else {
+    res.status(405).json({ message: "Method not allowed" });
+  }
+}
