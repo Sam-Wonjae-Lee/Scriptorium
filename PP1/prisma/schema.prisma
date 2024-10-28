@@ -18,6 +18,7 @@ model Users {
   id        Int      @id @default(autoincrement())
   firstName String
   lastName  String
+  role      String
   email     String   @unique
   phone     String   @unique
   avatar    Bytes?
