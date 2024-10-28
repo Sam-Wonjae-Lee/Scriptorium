@@ -1,34 +1,27 @@
-// As a user, I want to create/edit/delete blog posts. A blog post has title, description, and tag. 
-// It might also include links to code templates (either mine or someone else’s).
-
 import prisma from "@/utils/db";
 
 export default async function handler(req, res) {
+    const { id } = req.query;
+
     // Create blog posts
     if (req.method === "POST") {
-        // TODO: May need to include tags or linkId
-        const { id, title, authorId, content, tags, links, userId } = req.body;
+        const { title, authorId, content, tags, links, userId } = req.body;
 
-        // Check if any required fields are missing
-        if (!id || !title || !authorId || !content || !userId) {
+        if (!title || !authorId || !content || !userId) {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
-        // Fetch the user from the database
         const user = await prisma.users.findUnique({
             where: { id: userId },
         });
 
-        // Check if the user has the 'USER' permission
         if (user.permission !== 'USER') {
             return res.status(403).json({ error: "Forbidden: Insufficient permissions" });
         }
 
         try {
-            // Create the blog post with tags and links
             const BlogPost = await prisma.blogs.create({
                 data: {
-                    id,
                     title,
                     authorId,
                     content,
@@ -52,16 +45,15 @@ export default async function handler(req, res) {
 
     // Edit blog posts
     else if (req.method === "PUT") {
-        const { id, title, authorId, content } = req.body;
+        const { title, authorId, content, tags, links } = req.body;
 
-        // Check if any required fields are missing
         if (!id || !title || !authorId || !content) {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
         try {
-            const BlogPost = await prisma.blogPost.update({
-                where: { id },
+            const BlogPost = await prisma.blogs.update({
+                where: { id: parseInt(id) },
                 data: {
                     title,
                     content,
@@ -86,16 +78,13 @@ export default async function handler(req, res) {
 
     // Delete blog posts
     else if (req.method === "DELETE") {
-        const { id } = req.body;
-
-        // Check if any required fields are missing
         if (!id) {
             return res.status(400).json({ error: "Missing blog post id" });
         }
 
         try {
-            const BlogPost = await prisma.blogPost.delete({
-                where: { id },
+            const BlogPost = await prisma.blogs.delete({
+                where: { id: parseInt(id) },
             });
             res.status(200).json(BlogPost);
 
