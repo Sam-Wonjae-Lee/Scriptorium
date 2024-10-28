@@ -3,20 +3,18 @@ import prisma from "@/utils/db";
 export default async function handler(req, res) {
     const { id } = req.query;
 
+    /**
+     * As a user, I want to create/edit/delete blog posts. 
+     * A blog post has a title, description, and tag. It might also include 
+     * links to code templates (either mine or someone else’s).
+     */
+
     // Create blog posts
     if (req.method === "POST") {
-        const { title, authorId, content, tags, links, userId } = req.body;
+        const { title, authorId, content, tags, links } = req.body;
 
-        if (!title || !authorId || !content || !userId) {
+        if (!title || !authorId || !content) {
             return res.status(400).json({ error: "Missing required fields" });
-        }
-
-        const user = await prisma.users.findUnique({
-            where: { id: userId },
-        });
-
-        if (user.permission !== 'USER') {
-            return res.status(403).json({ error: "Forbidden: Insufficient permissions" });
         }
 
         try {
