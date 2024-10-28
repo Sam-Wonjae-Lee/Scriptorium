@@ -62,7 +62,7 @@ model Templates {
   author      Users    @relation(fields: [authorId], references: [id])
   templateCodes TemplateCodes @relation(fields: [templateCodeId], references: [id])
   tags        Tags[]  @relation("Tags")
-  Links Links[]
+  Blogs Blogs[]
 }
 
 model Tags {
@@ -82,26 +82,13 @@ model Blogs {
   content    String
 
   // Relations
-  links      Links[] @relation("Links")
   author     Users   @relation(fields: [authorId], references: [id])
   tags       Tags[]  @relation("Tags")
-  Links Links[]
+  Templates Templates[]
   Comments Comments[]
   BlogRating BlogRating[]
   BlogReports BlogReports[]
   FlaggedBlogs FlaggedBlogs[]
-}
-
-model Links {
-  id         Int     @id @default(autoincrement())
-  blogId     Int
-  templateId Int
-  link       String
-
-  // Relations
-  blog    Blogs   @relation(fields: [blogId], references: [id])
-  template Templates @relation(fields: [templateId], references: [id])
-  Blogs Blogs[] @relation("Links")
 }
 
 model Comments {
