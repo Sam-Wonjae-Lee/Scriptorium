@@ -36,42 +36,6 @@ export default async function handler(req, res) {
      * links to code templates (either mine or someone else’s).
      */
 
-
-    // Create blog posts
-    else if (req.method === "POST") {
-        const { title, authorId, content, tags, links, templates } = req.body;
-
-        if (!title || !authorId || !content) {
-            return res.status(400).json({ error: "Missing required fields" });
-        }
-
-        try {
-            const blogPost = await prisma.blogs.create({
-                data: {
-                    title,
-                    authorId,
-                    content,
-                    tags: {
-                        connect: tags.map(tagId => ({ id: tagId })),
-                    },
-                    links: {
-                        create: links.map(link => ({
-                            url: link.url,
-                            description: link.description,
-                        })),
-                    },
-                    templates: {
-                        connect: templates.map(templateId => ({ id: templateId })),
-                    },
-                },
-            });
-            res.status(201).json(blogPost);
-
-        } catch (error) {
-            return res.status(500).json({ error: "Failed to create blog post" });
-        }
-    }
-
     // Edit blog posts
     else if (req.method === "PUT") {
         const { title, authorId, content, tags, links, templates } = req.body;
