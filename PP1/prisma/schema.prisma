@@ -80,6 +80,7 @@ model Blogs {
   title      String
   authorId   Int
   content    String
+  numReports Int     @default(0)
 
   // Relations
   author     Users   @relation(fields: [authorId], references: [id])
@@ -96,6 +97,7 @@ model Comments {
   blogId  Int
   userId  Int
   content String
+  numReports Int     @default(0)
 
   // Relations
   blog    Blogs   @relation(fields: [blogId], references: [id])
