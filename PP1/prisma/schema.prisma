@@ -47,6 +47,7 @@ model Templates {
   languageId     Int
   code           String
   tags           Tags[]
+  forkedId      Int?
   isPublic       Boolean
 
   // Relations
