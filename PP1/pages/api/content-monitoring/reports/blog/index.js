@@ -1,4 +1,4 @@
-import prisma from "@/utils/db";
+import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
@@ -43,10 +43,22 @@ export default async function handler(req, res) {
       return;
     }
 
+    // Check if user has already reported blog
+    const blogReportExists = await prisma.blogReports.findFirst({
+      where: {
+        blogId: Number(blogId),
+        userId: Number(userId),
+      },
+    });
+    if (blogReportExists) {
+      res.status(409).json({ message: "Blog already reported by user" });
+      return;
+    }
+
     // Increment blog report count
     await prisma.blogs.update({
       where: { id: Number(blogId) },
-      data: { reports: { increment: 1 } },
+      data: { numReports: { increment: 1 } },
     });
 
     // Create blog report
@@ -59,9 +71,6 @@ export default async function handler(req, res) {
     });
 
     res.status(201).json(blogReport);
-  } else if (req.method === "GET") {
-    const blogReports = await prisma.blogReports.findMany();
-    res.status(200).json(blogReports);
   } else {
     res.status(405).json({ message: "Method not allowed" });
   }

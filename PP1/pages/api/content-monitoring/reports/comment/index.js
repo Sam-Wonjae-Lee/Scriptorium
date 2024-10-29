@@ -46,7 +46,7 @@ export default async function handler(req, res) {
     // Increment comment report count
     await prisma.comments.update({
       where: { id: Number(commentId) },
-      data: { reports: { increment: 1 } },
+      data: { numReports: { increment: 1 } },
     });
 
     // Create blog report
