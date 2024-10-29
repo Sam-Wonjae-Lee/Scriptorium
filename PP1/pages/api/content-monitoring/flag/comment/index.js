@@ -7,6 +7,8 @@ export default async function handler(req, res) {
     // Search for comments with the given parameters
     const filters = {};
 
+    filters.isFlagged = true;
+
     if (content) {
       filters.content = {
         contains: content,

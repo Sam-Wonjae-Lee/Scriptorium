@@ -13,6 +13,8 @@ export default async function handler(req, res) {
     // Search for blogs with the given parameters
     const filters = {};
 
+    filters.isFlagged = true;
+
     if (title) {
       filters.title = {
         contains: title,
