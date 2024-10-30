@@ -18,14 +18,12 @@ export default async function handler(req, res) {
     if (title) {
       filters.title = {
         contains: title,
-        mode: "insensitive",
       };
     }
 
     if (content) {
       filters.content = {
         contains: content,
-        mode: "insensitive",
       };
     }
 
@@ -37,7 +35,6 @@ export default async function handler(req, res) {
         filters.author.AND.push({
           firstName: {
             contains: authorFirstName,
-            mode: "insensitive",
           },
         });
       }
@@ -45,7 +42,6 @@ export default async function handler(req, res) {
         filters.author.AND.push({
           lastName: {
             contains: authorLastName,
-            mode: "insensitive",
           },
         });
       }

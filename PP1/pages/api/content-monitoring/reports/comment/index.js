@@ -1,4 +1,4 @@
-import prisma from "@/utils/db";
+import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       where: { id: Number(commentId) },
     });
     if (!comment) {
-      res.status(404).json({ message: "Blog not found" });
+      res.status(404).json({ message: "Comment not found" });
       return;
     }
 
@@ -43,13 +43,25 @@ export default async function handler(req, res) {
       return;
     }
 
+    // Check if user has already reported comment
+    const commentReportExists = await prisma.commentReports.findFirst({
+      where: {
+        commentId: Number(commentId),
+        userId: Number(userId),
+      },
+    });
+    if (commentReportExists) {
+      res.status(409).json({ message: "Comment already reported by user" });
+      return;
+    }
+
     // Increment comment report count
     await prisma.comments.update({
       where: { id: Number(commentId) },
       data: { numReports: { increment: 1 } },
     });
 
-    // Create blog report
+    // Create comment report
     const commentReport = await prisma.commentReports.create({
       data: {
         commentId: Number(commentId),
@@ -59,7 +71,7 @@ export default async function handler(req, res) {
     });
 
     res.status(201).json(commentReport);
-  } else if (method.req === "GET") {
+  } else if (req.method === "GET") {
     const { content, authorFirstName, authorLastName, page = 1 } = req.query;
 
     // Search for comments with the given parameters
@@ -72,27 +84,24 @@ export default async function handler(req, res) {
     if (content) {
       filters.content = {
         contains: content,
-        mode: "insensitive",
       };
     }
 
     if (authorFirstName || authorLastName) {
-      filters.author = {
+      filters.user = {
         AND: [],
       };
       if (authorFirstName) {
-        filters.author.AND.push({
+        filters.user.AND.push({
           firstName: {
             contains: authorFirstName,
-            mode: "insensitive",
           },
         });
       }
       if (authorLastName) {
-        filters.author.AND.push({
+        filters.user.AND.push({
           lastName: {
             contains: authorLastName,
-            mode: "insensitive",
           },
         });
       }

@@ -13,6 +13,7 @@ export default async function handler(req, res) {
       return;
     }
 
+    console.log(blog);
     // Flag the blog
     const flaggedBlog = await prisma.blogs.update({
       where: { id: parseInt(id) },

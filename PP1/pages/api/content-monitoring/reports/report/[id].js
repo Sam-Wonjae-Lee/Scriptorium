@@ -67,6 +67,43 @@ export default async function handler(req, res) {
       return;
     }
 
+    // Update numReports in blog
+    // Get all blog reports related to this report
+    const blogReports = await prisma.blogReports.findMany({
+      where: { reportId: parseInt(id) },
+    });
+
+    // Decrement numReports for each blog
+    for (const blogReport of blogReports) {
+      await prisma.blogs.update({
+        where: { id: blogReport.blogId },
+        data: { numReports: { decrement: 1 } },
+      });
+    }
+
+    // Delete all blog reports related to this report
+    await prisma.blogReports.deleteMany({
+      where: { reportId: parseInt(id) },
+    });
+
+    // Get all comment reports related to this report
+    const commentReports = await prisma.commentReports.findMany({
+      where: { reportId: parseInt(id) },
+    });
+
+    // Decrement numReports for each comment
+    for (const commentReport of commentReports) {
+      await prisma.comments.update({
+        where: { id: commentReport.commentId },
+        data: { numReports: { decrement: 1 } },
+      });
+    }
+
+    // Delete all comment reports related to this report
+    await prisma.commentReports.deleteMany({
+      where: { reportId: parseInt(id) },
+    });
+
     // Delete report
     await prisma.reports.delete({
       where: { id: parseInt(id) },

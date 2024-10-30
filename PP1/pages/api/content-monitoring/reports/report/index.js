@@ -1,4 +1,4 @@
-import prisma from "@/utils/db";
+import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
@@ -16,6 +16,17 @@ export default async function handler(req, res) {
       return;
     }
 
+    // Check if report with this message exists
+    const existingReport = await prisma.reports.findFirst({
+      where: { message },
+    });
+    if (existingReport) {
+      res
+        .status(409)
+        .json({ message: "Report with this message already exists" });
+      return;
+    }
+
     // Create report
     const report = await prisma.reports.create({
       data: {
@@ -23,7 +34,7 @@ export default async function handler(req, res) {
       },
     });
 
-    res.json(report);
+    res.status(201).json(report);
   } else if (req.method === "GET") {
     const { message, page = 1 } = req.query;
 

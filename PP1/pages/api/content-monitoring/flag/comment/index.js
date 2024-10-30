@@ -12,27 +12,24 @@ export default async function handler(req, res) {
     if (content) {
       filters.content = {
         contains: content,
-        mode: "insensitive",
       };
     }
 
     if (authorFirstName || authorLastName) {
-      filters.author = {
+      filters.user = {
         AND: [],
       };
       if (authorFirstName) {
-        filters.author.AND.push({
+        filters.user.AND.push({
           firstName: {
             contains: authorFirstName,
-            mode: "insensitive",
           },
         });
       }
       if (authorLastName) {
-        filters.author.AND.push({
+        filters.user.AND.push({
           lastName: {
             contains: authorLastName,
-            mode: "insensitive",
           },
         });
       }
