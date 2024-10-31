@@ -7,10 +7,11 @@
 import prisma from "@/utils/db";
 
 export default async function handler(req, res) {
-    // Create blog posts
+    // Create blog posts    
     if (req.method === "POST") {
-        const { title, authorId, content, tags, links, templates } = req.body;
+        const { title, authorId, content, tags, templates } = req.body;
 
+        // Check for missing fields
         if (!title || !authorId || !content) {
             return res.status(400).json({ error: "Missing required fields" });
         }
@@ -19,18 +20,12 @@ export default async function handler(req, res) {
             const blogPost = await prisma.blogs.create({
                 data: {
                     title,
-                    authorId,
                     content,
-                    tags: {
-                        connect: tags.map(tagId => ({ id: tagId })),
-                    },
-                    links: {
-                        create: links.map(link => ({
-                            url: link.url,
-                            description: link.description,
-                        })),
-                    },
-                    templates: {
+                    authorId: parseInt(authorId),
+                    tags: tags ? {
+                        connect: tags.map(tagId => ({ id: tagId }))
+                    } : undefined,
+                    Templates: {
                         connect: templates.map(templateId => ({ id: templateId })),
                     },
                 },
