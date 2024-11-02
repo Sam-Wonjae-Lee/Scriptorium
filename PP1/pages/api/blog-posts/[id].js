@@ -7,7 +7,6 @@ export default async function handler(req, res) {
      * As a visitor, I want to follow links from a blog post directly 
      * to the relevant code template so that I can view, run, or fork the code discussed.
      */
-
     // Fetch a single blog post by ID
     if (req.method === "GET") {
         try {
@@ -15,8 +14,10 @@ export default async function handler(req, res) {
                 where: { id: parseInt(id) },
                 include: {
                     tags: true,
-                    links: true,
-                    templates: true,
+                    Comments: true,
+                    BlogRating: true,
+                    BlogReports: true,
+                    FlaggedBlogs: true,
                 },
             });
 
@@ -26,6 +27,7 @@ export default async function handler(req, res) {
 
             res.status(200).json(blogPost);
         } catch (error) {
+            console.error("Error fetching blog post:", error);
             return res.status(500).json({ error: "Failed to fetch blog post" });
         }
     }
@@ -38,7 +40,7 @@ export default async function handler(req, res) {
 
     // Edit blog posts
     else if (req.method === "PUT") {
-        const { title, authorId, content, tags, links, templates } = req.body;
+        const { title, authorId, content, tags, templates } = req.body;
 
         if (!id || !title || !authorId || !content) {
             return res.status(400).json({ error: "Missing required fields" });
@@ -50,46 +52,37 @@ export default async function handler(req, res) {
                 data: {
                     title,
                     content,
-                    tags: {
-                        set: tags.map(tagId => ({ id: tagId })),
-                    },
-                    links: {
-                        deleteMany: {}, // Delete existing links
-                        create: links.map(link => ({
-                            url: link.url,
-                            description: link.description,
-                        })),
-                    },
-                    templates: {
-                        set: templates.map(templateId => ({ id: templateId })),
-                    },
+                    tags: tags ? { set: tags.map((tagId) => ({ id: tagId })) } : undefined,
+                    templates: templates ? { set: templates.map((templateId) => ({ id: templateId })) } : undefined,
                 },
             });
             res.status(200).json(blogPost);
-
         } catch (error) {
+            console.error("Error updating blog post:", error);
             return res.status(500).json({ error: "Failed to edit blog post" });
         }
     }
 
     // Delete blog posts
     else if (req.method === "DELETE") {
-        if (!id) {
-            return res.status(400).json({ error: "Missing blog post id" });
-        }
-
         try {
+            // Manually delete related records
+            await prisma.comments.deleteMany({ where: { blogId: parseInt(id) } });
+            await prisma.blogRating.deleteMany({ where: { blogId: parseInt(id) } });
+            await prisma.blogReports.deleteMany({ where: { blogId: parseInt(id) } });
+            await prisma.flaggedBlogs.deleteMany({ where: { blogId: parseInt(id) } });
+
+            // Delete the blog post itself
             const blogPost = await prisma.blogs.delete({
                 where: { id: parseInt(id) },
             });
-            res.status(200).json(blogPost);
 
+            res.status(200).json(blogPost);
         } catch (error) {
+            console.error("Error deleting blog post:", error);
             return res.status(500).json({ error: "Failed to delete blog post" });
         }
-    }
-
-    else {
+    } else {
         return res.status(405).json({ error: "Method not allowed" });
     }
 }

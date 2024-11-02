@@ -6,12 +6,13 @@
 import prisma from "@/utils/db";
 
 export default async function handler(req, res) {
-    // Create comments
     if (req.method === "POST") {
         const { content, userId, blogId, parentCommentid } = req.body;
+        const newUserId = parseInt(userId);
+        const newBlogId = parseInt(blogId);
 
         // Ensure required fields are provided
-        if (!content || !userId || (!blogId && !parentCommentid)) {
+        if (!content || !userId || !blogId) {
             return res.status(400).json({ error: "Missing required fields" });
         }
 
@@ -19,11 +20,12 @@ export default async function handler(req, res) {
             const comment = await prisma.comments.create({
                 data: {
                     content,
-                    userId,
-                    blogId: parentCommentid ? undefined : blogId,
-                    parentCommentid: parentCommentid || null,
-                },
+                    parentComment: parentCommentid ? { connect: { id: parentCommentid } } : undefined,
+                    blog: { connect: { id: newBlogId } }, // Always connect to the blog
+                    user: { connect: { id: newUserId } }
+                }
             });
+            
             res.status(201).json(comment);
         } catch (error) {
             console.error("Error creating comment:", error);

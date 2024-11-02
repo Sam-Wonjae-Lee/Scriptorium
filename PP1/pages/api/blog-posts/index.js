@@ -9,25 +9,27 @@ import prisma from "@/utils/db";
 export default async function handler(req, res) {
     // Create blog posts    
     if (req.method === "POST") {
-        const { title, authorId, content, tags, templates } = req.body;
+        // Check if body type is JSON
+        if (req.headers["content-type"] !== "application/json") {
+            res
+            .status(400)
+            .json({ message: "Content-Type must be application/json" });
+            return;
+        }
+
+        const { title, authorId, content } = req.body;
 
         // Check for missing fields
         if (!title || !authorId || !content) {
             return res.status(400).json({ error: "Missing required fields" });
         }
-
+        
         try {
             const blogPost = await prisma.blogs.create({
                 data: {
                     title,
                     content,
-                    authorId: parseInt(authorId),
-                    tags: tags ? {
-                        connect: tags.map(tagId => ({ id: tagId }))
-                    } : undefined,
-                    Templates: {
-                        connect: templates.map(templateId => ({ id: templateId })),
-                    },
+                    authorId: parseInt(authorId)
                 },
             });
             res.status(201).json(blogPost);

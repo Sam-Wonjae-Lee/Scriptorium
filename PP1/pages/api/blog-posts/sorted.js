@@ -12,10 +12,14 @@ export default async function handler(req, res) {
 
     try {
         let orderBy = {};
+        
+        // Adjust the sorting logic as per your schema
         if (sortBy === 'most-upvotes') {
-            orderBy = { ratings: { numUpvotes: 'desc' } };
+            orderBy = { BlogRating: { numUpvotes: 'desc' } };
         } else if (sortBy === 'most-downvotes') {
-            orderBy = { ratings: { numDownvotes: 'desc' } };
+            orderBy = { BlogRating: { numDownvotes: 'desc' } };
+        } else if (sortBy === 'most-controversial') {
+            // This requires fetching and calculating scores after retrieval
         }
 
         const blogPosts = await prisma.blogs.findMany({
@@ -23,15 +27,17 @@ export default async function handler(req, res) {
             take: parseInt(limit),
             orderBy,
             include: {
-                ratings: true,
+                BlogRating: true,  // Make sure the ratings relation is correct
+                tags: true,
+                author: true,
             },
         });
 
         if (sortBy === 'most-controversial') {
             blogPosts.forEach(post => {
-                const u = post.ratings.numUpvotes;
-                const d = post.ratings.numDownvotes;
-                post.controversialScore = (u + d) ** 2 / (Math.abs(u - d) + 1);
+                const upvotes = post.BlogRating?.numUpvotes || 0;
+                const downvotes = post.BlogRating?.numDownvotes || 0;
+                post.controversialScore = (upvotes + downvotes) ** 2 / (Math.abs(upvotes - downvotes) + 1);
             });
 
             blogPosts.sort((a, b) => b.controversialScore - a.controversialScore);
@@ -39,6 +45,7 @@ export default async function handler(req, res) {
 
         res.status(200).json(blogPosts);
     } catch (error) {
+        console.error("Error fetching blog posts:", error);
         return res.status(500).json({ error: "Failed to fetch blog posts" });
     }
 }
