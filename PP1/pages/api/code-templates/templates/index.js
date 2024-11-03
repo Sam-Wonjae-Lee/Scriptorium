@@ -66,7 +66,7 @@ export default async function handler(req, res) {
 
     res.status(201).json(template);
   } else if (req.method === "GET") {
-    const { title, explanation, code, languageId, tags, page = 1 } = req.query;
+    const { query = "", languageId, tags, page = 1 } = req.query;
 
     const languageIdInt = parseInt(languageId);
     const tagsArray = tags ? tags.split(",") : [];
@@ -107,9 +107,13 @@ export default async function handler(req, res) {
         },
       };
     }
-    if (title) filters.title = { contains: title };
-    if (explanation) filters.explanation = { contains: explanation };
-    if (code) filters.code = { contains: code };
+
+    filters.OR = [
+      { title: { contains: query, lte: "insensitive" } },
+      { explanation: { contains: query, lte: "insensitive" } },
+      { code: { contains: query, lte: "insensitive" } },
+    ];
+
     if (languageId) filters.languageId = languageIdInt;
     filters.isPublic = true;
 

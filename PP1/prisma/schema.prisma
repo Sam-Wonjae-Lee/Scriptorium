@@ -86,9 +86,12 @@ model Blogs {
   // Relations
   author     Users   @relation(fields: [authorId], references: [id])
   tags       Tags[]  @relation("Tags")
+  Templates Templates[]
   Comments Comments[]
   BlogRating BlogRating[]
   BlogReports BlogReports[]
+
+  FlaggedBlogs FlaggedBlogs[]
 }
 
 model Comments {
@@ -109,6 +112,8 @@ model Comments {
   Comments Comments[] @relation("parentCommentId")
   CommentRating CommentRating[]
   CommentReports CommentReports[]
+
+  FlaggedComments FlaggedComments[]
 }
 
 model BlogRating {
@@ -143,6 +148,10 @@ model Reports {
   BlogReports BlogReports[]
 
   CommentReports CommentReports[]
+
+  FlaggedBlogs FlaggedBlogs[]
+
+  FlaggedComments FlaggedComments[]
 }
 
 model BlogReports {
@@ -166,5 +175,25 @@ model CommentReports {
   // Relations
   comment Comments @relation(fields: [commentId], references: [id])
   user Users @relation(fields: [userId], references: [id])
+  report Reports @relation(fields: [reportId], references: [id])
+}
+
+model FlaggedBlogs {
+  id      Int     @id @default(autoincrement())
+  blogId  Int
+  reportId Int
+
+  // Relations
+  blog Blogs @relation(fields: [blogId], references: [id])
+  report Reports @relation(fields: [reportId], references: [id])
+}
+
+model FlaggedComments {
+  id      Int     @id @default(autoincrement())
+  commentId  Int
+  reportId Int
+
+  // Relations
+  comment Comments @relation(fields: [commentId], references: [id])
   report Reports @relation(fields: [reportId], references: [id])
 }
