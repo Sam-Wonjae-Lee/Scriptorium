@@ -3,7 +3,9 @@ import { hashPassword, verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
     // For creation of Admin without needing another explicit Admin user, use a secret key
-    console.log(req.body.secretKey);
+    console.log("WPDPAOKDPAKWDPOWK")
+    console.log("wd " + req.body.secretKey + " w");
+    console.log("WPDPAOKDPAKWDPOWK")
     if (!req.body.secretKey || req.body.secretKey != process.env.JWT_SECRET) {
         const result = verifyJWT(req);
         if (!result) {

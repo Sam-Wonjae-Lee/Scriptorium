@@ -4,11 +4,16 @@
  */
 
 import prisma from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
   if (req.method === "PUT") {
+    const result = verifyJWT(req);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
     const { id } = req.query;
-    const { userId, action } = req.body;
+    const { action } = req.body;
 
     if (
       !action ||
@@ -21,7 +26,7 @@ export default async function handler(req, res) {
 
     // Check if user exists
     const user = await prisma.users.findUnique({
-      where: { id: parseInt(userId) },
+      where: { id: parseInt(result.id) },
     });
     if (!user) {
       return res.status(400).json({ message: "User does not exist" });
@@ -38,7 +43,7 @@ export default async function handler(req, res) {
     // Check if user has already rated the comment
     const rating = await prisma.commentRating.findUnique({
       where: {
-        commentId_userId: { commentId: parseInt(id), userId: parseInt(userId) },
+        commentId_userId: { commentId: parseInt(id), userId: parseInt(result.id) },
       },
     });
     if (rating) {
@@ -104,7 +109,7 @@ export default async function handler(req, res) {
         where: {
           commentId_userId: {
             commentId: parseInt(id),
-            userId: parseInt(userId),
+            userId: parseInt(result.id),
           },
         },
         data: { rating: new_rating },
@@ -122,7 +127,7 @@ export default async function handler(req, res) {
     // Create rating
     await prisma.commentRating.create({
       data: {
-        userId: parseInt(userId),
+        userId: parseInt(result.id),
         commentId: parseInt(id),
         rating: action === "upvote" ? 1 : -1,
       },

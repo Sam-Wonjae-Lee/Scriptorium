@@ -1,18 +1,23 @@
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
+    const result = verifyJWT(req);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
     // Check body is json
     if (req.headers["content-type"] !== "application/json") {
       res.status(400).json({ message: "Content-Type is not application/json" });
       return;
     }
 
-    const { blogId, userId, reportId } = req.body;
+    const { blogId, reportId, explanation } = req.body;
 
     // Check fields are not empty
-    if (!blogId || !userId || !reportId) {
-      res.status(400).json({ message: "Title and content are required" });
+    if (!blogId || !reportId || !explanation) {
+      res.status(400).json({ message: "Invalid fields" });
       return;
     }
 
@@ -27,7 +32,7 @@ export default async function handler(req, res) {
 
     // Check user exists
     const user = await prisma.users.findUnique({
-      where: { id: Number(userId) },
+      where: { id: Number(result.id) },
     });
     if (!user) {
       res.status(404).json({ message: "User not found" });
@@ -47,7 +52,7 @@ export default async function handler(req, res) {
     const blogReportExists = await prisma.blogReports.findFirst({
       where: {
         blogId: Number(blogId),
-        userId: Number(userId),
+        userId: Number(result.id),
       },
     });
     if (blogReportExists) {
@@ -65,13 +70,21 @@ export default async function handler(req, res) {
     const blogReport = await prisma.blogReports.create({
       data: {
         blogId: Number(blogId),
-        userId: Number(userId),
+        userId: Number(result.id),
         reportId: Number(reportId),
+        explanation
       },
     });
 
     res.status(201).json(blogReport);
   } else if (req.method === "GET") {
+    const result = verifyJWT(req);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
+    if (result.role != "ADMIN") {
+      return res.status(403).json({"error": "Lack of permissions"});
+    }
     const {
       title,
       content,

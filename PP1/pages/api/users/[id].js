@@ -3,6 +3,7 @@ import { verifyJWT, generateRefreshToken, generateToken } from "@/utils/auth";
 
 export default async function handler(req, res) {
     const result = verifyJWT(req);
+    console.log(result)
     const { id } = req.query;
     if (!result) {
         return res.status(401).json({"error": "Unauthorized"});
@@ -47,6 +48,7 @@ export default async function handler(req, res) {
             res.status(200).json({"message": "User deleted successfully"});
         } 
         catch (error) {
+            console.log(error)
             res.status(500).json({"message": "failed to delete user"});
         }
     }

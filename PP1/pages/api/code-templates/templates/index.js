@@ -114,9 +114,9 @@ export default async function handler(req, res) {
     }
 
     filters.OR = [
-      { title: { contains: query, lte: "insensitive" } },
-      { explanation: { contains: query, lte: "insensitive" } },
-      { code: { contains: query, lte: "insensitive" } },
+      { title: { contains: query} },
+      { explanation: { contains: query} },
+      { code: { contains: query} },
     ];
 
     if (languageId) filters.languageId = languageIdInt;

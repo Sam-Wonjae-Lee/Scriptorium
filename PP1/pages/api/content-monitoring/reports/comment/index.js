@@ -1,18 +1,24 @@
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
+    const result = verifyJWT(req);
+    console.log(result);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
     // Check body is json
     if (req.headers["content-type"] !== "application/json") {
       res.status(400).json({ message: "Content-Type is not application/json" });
       return;
     }
 
-    const { commentId, userId, reportId } = req.body;
+    const { commentId, reportId, explanation } = req.body;
 
     // Check fields are not empty
-    if (!commentId || !userId || !reportId) {
-      res.status(400).json({ message: "Title and content are required" });
+    if (!commentId || !explanation || !reportId) {
+      res.status(400).json({ message: "Invalid Fields" });
       return;
     }
 
@@ -27,7 +33,7 @@ export default async function handler(req, res) {
 
     // Check user exists
     const user = await prisma.users.findUnique({
-      where: { id: Number(userId) },
+      where: { id: Number(result.id) },
     });
     if (!user) {
       res.status(404).json({ message: "User not found" });
@@ -47,7 +53,7 @@ export default async function handler(req, res) {
     const commentReportExists = await prisma.commentReports.findFirst({
       where: {
         commentId: Number(commentId),
-        userId: Number(userId),
+        userId: Number(result.id),
       },
     });
     if (commentReportExists) {
@@ -65,13 +71,21 @@ export default async function handler(req, res) {
     const commentReport = await prisma.commentReports.create({
       data: {
         commentId: Number(commentId),
-        userId: Number(userId),
+        userId: Number(result.id),
         reportId: Number(reportId),
+        explanation
       },
     });
 
     res.status(201).json(commentReport);
   } else if (req.method === "GET") {
+    const result = verifyJWT(req);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
+    if (result.role != "ADMIN") {
+      return res.status(403).json({"error": "Lack of permissions"});
+    }
     const { content, authorFirstName, authorLastName, page = 1 } = req.query;
 
     // Search for comments with the given parameters

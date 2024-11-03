@@ -1,7 +1,15 @@
 import prisma from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
   if (req.method === "PUT") {
+    const result = verifyJWT(req);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
+    if (result.role != "ADMIN") {
+        return res.status(403).json({"error": "Lack of permissions"});
+    }
     const { id } = req.query;
 
     // Check if the comment exists
@@ -21,6 +29,13 @@ export default async function handler(req, res) {
 
     res.status(200).json(flaggedComment);
   } else if (req.method === "DELETE") {
+    const result = verifyJWT(req);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
+    if (result.role != "ADMIN") {
+        return res.status(403).json({"error": "Lack of permissions"});
+    }
     const { id } = req.query;
 
     // Check if the comment exists

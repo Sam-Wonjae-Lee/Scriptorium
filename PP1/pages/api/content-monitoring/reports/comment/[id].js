@@ -1,7 +1,16 @@
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
+import { Result } from "postcss";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
+    const result = verifyJWT(req);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
+    if (result.role != "ADMIN") {
+        return res.status(403).json({"error": "Lack of permissions"});
+    }
     const { id, page = 1 } = req.query;
 
     // Check comment exists

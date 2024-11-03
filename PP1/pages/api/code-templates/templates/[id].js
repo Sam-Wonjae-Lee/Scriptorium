@@ -60,6 +60,16 @@ export default async function handler(req, res) {
       res.status(404).json({ message: "Author not found" });
       return;
     }
+
+    // Check if user exists
+    const user = await prisma.users.findUnique({
+      where: { id: parseInt(result.id) },
+    });
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+
+    // check if correct author
     if (result.id != template.authorId) {
       return res.status(403).json({"error": "Forbidden from modifying"});
     }
@@ -98,6 +108,16 @@ export default async function handler(req, res) {
       res.status(404).json({ message: "Template not found" });
       return;
     }
+
+    // Check if user exists
+    const user = await prisma.users.findUnique({
+      where: { id: parseInt(result.id) },
+    });
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
+    }
+
+    // check if correct author
     if (result.id != template.authorId) {
       return res.status(403).json({"error": "Forbidden from modifying"});
     }

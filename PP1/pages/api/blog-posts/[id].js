@@ -1,4 +1,5 @@
 import prisma from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
   const { id } = req.query;
@@ -41,6 +42,10 @@ export default async function handler(req, res) {
 
   // Edit blog posts
   else if (req.method === "PUT") {
+    const result = verifyJWT(req);
+    if (!result) {
+      return res.status(401).json({"error": "Unauthorized"});
+    }
     const { title, authorId, content, tagIds, templateIds } = req.body;
 
     // Check if blog exists
@@ -59,16 +64,16 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: "Blog post not found" });
     }
 
-    // Check if author exists
-    const author = await prisma.users.findUnique({
-      where: { id: parseInt(authorId) },
+    // Check if user exists
+    const user = await prisma.users.findUnique({
+      where: { id: parseInt(result.id) },
     });
-    if (!author) {
-      return res.status(400).json({ error: "Author does not exist" });
+    if (!user) {
+      return res.status(400).json({ message: "User does not exist" });
     }
 
     // Check if author is same as original author
-    if (blogPost.authorId !== parseInt(authorId)) {
+    if (result.id != blogPost.authorId) {
       return res
         .status(400)
         .json({ error: "You are not the author of this blog post" });
@@ -122,7 +127,42 @@ export default async function handler(req, res) {
 
   // Delete blog posts
   else if (req.method === "DELETE") {
+    const result = verifyJWT(req);
+    if (!result) {
+      return res.status(401).json({"error": "Unauthorized"});
+    }
     try {
+      // Check if blog exists
+      const blogPost = await prisma.blogs.findUnique({
+        where: { id: parseInt(id) },
+        select: {
+          title: true,
+          authorId: true,
+          content: true,
+          tags: { select: { id: true } },
+          Templates: { select: { id: true } },
+        },
+      });
+
+      if (!blogPost) {
+        return res.status(404).json({ error: "Blog post not found" });
+      }
+
+      // Check if user exists
+      const user = await prisma.users.findUnique({
+        where: { id: parseInt(result.id) },
+      });
+      if (!user) {
+        return res.status(400).json({ message: "User does not exist" });
+      }
+
+      // Check if author is same as original author
+      if (result.id != blogPost.authorId) {
+        return res
+          .status(400)
+          .json({ error: "You are not the author of this blog post" });
+      }
+
       // Manually delete related records
       await prisma.comments.deleteMany({ where: { blogId: parseInt(id) } });
       await prisma.blogRating.deleteMany({ where: { blogId: parseInt(id) } });
@@ -130,11 +170,11 @@ export default async function handler(req, res) {
       await prisma.flaggedBlogs.deleteMany({ where: { blogId: parseInt(id) } });
 
       // Delete the blog post itself
-      const blogPost = await prisma.blogs.delete({
+      const deleted = await prisma.blogs.delete({
         where: { id: parseInt(id) },
       });
 
-      res.status(200).json(blogPost);
+      res.status(200).json(deleted);
     } catch (error) {
       console.error("Error deleting blog post:", error);
       return res.status(500).json({ error: "Failed to delete blog post" });

@@ -5,11 +5,20 @@
  */
 
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
   // Create blog posts
   if (req.method === "POST") {
+    const result = verifyJWT(req);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
     // Check if body type is JSON
+    console.log(req.headers);
+    console.log(req.headers["content-type"]);
+
+    // WHY THE FUCK IS CONTENT TYPE UNDEFINED
     if (req.headers["content-type"] !== "application/json") {
       res
         .status(400)
@@ -17,16 +26,16 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { title, authorId, content, tagIds, templateIds } = req.body;
+    const { title, content, tagIds, templateIds } = req.body;
 
     // Check for missing fields
-    if (!title || !authorId || !content) {
+    if (!title || !content) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
     // Check if author exists
     const author = await prisma.users.findUnique({
-      where: { id: parseInt(authorId) },
+      where: { id: parseInt(result.id) },
     });
     if (!author) {
       return res.status(400).json({ message: "Author does not exist" });
@@ -61,7 +70,7 @@ export default async function handler(req, res) {
       data: {
         title,
         content,
-        authorId: parseInt(authorId),
+        authorId: parseInt(result.id),
         tags: {
           connect: tagIds.map((id) => ({ id: parseInt(id) })),
         },
@@ -133,11 +142,16 @@ export default async function handler(req, res) {
       };
     }
 
-    filters.OR = [
-      { title: { contains: query, lte: "insensitive" } },
-      { content: { contains: query, lte: "insensitive" } },
-    ];
+    // filters.OR = [
+    //   { title: { contains: query, lte: "insensitive" } },
+    //   { content: { contains: query, lte: "insensitive" } },
+    // ];
 
+    filters.OR = [
+      { title: { contains: query } },
+      { content: { contains: query } },
+    ];
+  
     if (languageId) {
       filters.Templates = {
         some: {

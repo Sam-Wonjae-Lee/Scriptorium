@@ -158,6 +158,7 @@ model BlogReports {
   blogId  Int
   userId  Int
   reportId Int
+  explanation String
 
   // Relations
   blog Blogs @relation(fields: [blogId], references: [id])
@@ -170,6 +171,7 @@ model CommentReports {
   commentId  Int
   userId  Int
   reportId Int
+  explanation String
 
   // Relations
   comment Comments @relation(fields: [commentId], references: [id])

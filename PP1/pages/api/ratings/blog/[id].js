@@ -4,11 +4,16 @@
  */
 
 import prisma from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
   if (req.method === "PUT") {
+    const result = verifyJWT(req);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
     const { id } = req.query;
-    const { userId, action } = req.body;
+    const { action } = req.body;
 
     if (
       !action ||
@@ -21,7 +26,7 @@ export default async function handler(req, res) {
 
     // Check if user exists
     const user = await prisma.users.findUnique({
-      where: { id: parseInt(userId) },
+      where: { id: parseInt(result.id) },
     });
     if (!user) {
       return res.status(400).json({ message: "User does not exist" });
@@ -37,11 +42,11 @@ export default async function handler(req, res) {
 
     // Check if user has already rated the blog
     // const rating = await prisma.blogRating.findUnique({
-    //   where: { blogId: parseInt(id), userId: parseInt(userId) },
+    //   where: { blogId: parseInt(id), userId: parseInt(result.id) },
     // });
     const rating = await prisma.blogRating.findUnique({
       where: {
-        blogId_userId: { blogId: parseInt(id), userId: parseInt(userId) },
+        blogId_userId: { blogId: parseInt(id), userId: parseInt(result.id) },
       },
     });
     if (rating) {
@@ -105,7 +110,7 @@ export default async function handler(req, res) {
       // Update rating
       await prisma.blogRating.update({
         where: {
-          blogId_userId: { blogId: parseInt(id), userId: parseInt(userId) },
+          blogId_userId: { blogId: parseInt(id), userId: parseInt(result.id) },
         },
         data: { rating: new_rating },
       });
@@ -122,7 +127,7 @@ export default async function handler(req, res) {
     // Create rating
     await prisma.blogRating.create({
       data: {
-        userId: parseInt(userId),
+        userId: parseInt(result.id),
         blogId: parseInt(id),
         rating: action === "upvote" ? 1 : -1,
       },
