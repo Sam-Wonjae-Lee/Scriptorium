@@ -31,6 +31,10 @@ model Users {
   Comments Comments[]
   BlogReports BlogReports[]
   CommentReports CommentReports[]
+
+  BlogRating BlogRating[]
+
+  CommentRating CommentRating[]
 }
 
 model Languages {
@@ -40,6 +44,7 @@ model Languages {
   // Relations
   Templates Templates[]
 }
+
 
 model Templates {
   id             Int      @id @default(autoincrement())
@@ -55,6 +60,7 @@ model Templates {
   // Relations
   language     Languages @relation(fields: [languageId], references: [id])
   author      Users    @relation(fields: [authorId], references: [id])
+  Blogs Blogs[]
 }
 
 model Tags {
@@ -74,6 +80,8 @@ model Blogs {
   content    String
   numReports Int     @default(0)
   isFlagged Boolean @default(false)
+  numUpvotes Int     @default(0)
+  numDownvotes Int     @default(0)
 
   // Relations
   author     Users   @relation(fields: [authorId], references: [id])
@@ -90,12 +98,14 @@ model Comments {
   content String
   numReports Int     @default(0)
   isFlagged Boolean @default(false)
+  numUpvotes Int     @default(0)
+  numDownvotes Int     @default(0)
 
   // Relations
   blog    Blogs   @relation(fields: [blogId], references: [id])
   user    Users   @relation(fields: [userId], references: [id])
-  parentComment Comments? @relation("parentCommentId", fields: [parentCommentid], references: [id])
-  parentCommentid Int?
+  parentComment Comments? @relation("parentCommentId", fields: [parentCommentId], references: [id])
+  parentCommentId Int?
   Comments Comments[] @relation("parentCommentId")
   CommentRating CommentRating[]
   CommentReports CommentReports[]
@@ -103,22 +113,26 @@ model Comments {
 
 model BlogRating {
   id           Int    @id @default(autoincrement())
-  blogId       Int
-  numUpvotes   Int
-  numDownvotes Int
+  blogId       Int    
+  userId   Int
+  rating   Int
 
   // Relations
+  @@unique([blogId, userId])
   blog Blogs @relation(fields: [blogId], references: [id])
+  user Users @relation(fields: [userId], references: [id])
 }
 
 model CommentRating {
   id           Int    @id @default(autoincrement())
   commentId    Int
-  numUpvotes   Int
-  numDownvotes Int
+  userId   Int
+  rating Int
 
   // Relations
+  @@unique([commentId, userId])
   comment Comments @relation(fields: [commentId], references: [id])
+  user Users @relation(fields: [userId], references: [id])
 }
 
 model Reports {

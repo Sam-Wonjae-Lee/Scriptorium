@@ -11,11 +11,14 @@ export default async function handler(req, res) {
     const offset = (page - 1) * limit;
 
     try {
-        let orderBy = {};
+        let orderBy;
         if (sortBy === 'most-upvotes') {
             orderBy = { ratings: { numUpvotes: 'desc' } };
         } else if (sortBy === 'most-downvotes') {
             orderBy = { ratings: { numDownvotes: 'desc' } };
+        } else {
+            // Default order if sortBy is not provided
+            orderBy = { createdAt: 'desc' };
         }
 
         const comments = await prisma.comments.findMany({
@@ -29,8 +32,8 @@ export default async function handler(req, res) {
 
         if (sortBy === 'most-controversial') {
             comments.forEach(comment => {
-                const u = comment.ratings.numUpvotes;
-                const d = comment.ratings.numDownvotes;
+                const u = comment.ratings?.numUpvotes || 0;
+                const d = comment.ratings?.numDownvotes || 0;
                 comment.controversialScore = (u + d) ** 2 / (Math.abs(u - d) + 1);
             });
 
@@ -39,6 +42,7 @@ export default async function handler(req, res) {
 
         res.status(200).json(comments);
     } catch (error) {
-        return res.status(500).json({ error: "Failed to fetch comments" });
+        console.error("Error fetching comments:", error);
+        res.status(500).json({ error: "Failed to fetch comments" });
     }
 }
