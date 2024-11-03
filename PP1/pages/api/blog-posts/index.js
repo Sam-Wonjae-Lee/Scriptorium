@@ -77,6 +77,7 @@ export default async function handler(req, res) {
       query = "",
       languageId,
       tags,
+      templateId,
       page = 1,
       sortBy = "upvotes",
     } = req.query;
@@ -112,6 +113,16 @@ export default async function handler(req, res) {
       }
     }
 
+    // Check template exist if provided
+    if (templateId) {
+      const template = await prisma.templates.findUnique({
+        where: { id: parseInt(templateId) },
+      });
+      if (!template) {
+        return res.status(400).json({ message: "Template does not exist" });
+      }
+    }
+
     // Create filters
     const filters = {};
     if (tags) {
@@ -131,6 +142,13 @@ export default async function handler(req, res) {
       filters.Templates = {
         some: {
           languageId: parseInt(languageId),
+        },
+      };
+    }
+    if (templateId) {
+      filters.Templates = {
+        some: {
+          id: parseInt(templateId),
         },
       };
     }
