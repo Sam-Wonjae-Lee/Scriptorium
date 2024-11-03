@@ -108,8 +108,8 @@ model Comments {
   // Relations
   blog    Blogs   @relation(fields: [blogId], references: [id])
   user    Users   @relation(fields: [userId], references: [id])
-  parentComment Comments? @relation("parentCommentId", fields: [parentCommentid], references: [id])
-  parentCommentid Int?
+  parentComment Comments? @relation("parentCommentId", fields: [parentCommentId], references: [id])
+  parentCommentId Int?
   Comments Comments[] @relation("parentCommentId")
   CommentRating CommentRating[]
   CommentReports CommentReports[]

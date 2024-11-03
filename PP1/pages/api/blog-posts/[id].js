@@ -118,26 +118,6 @@ export default async function handler(req, res) {
     });
 
     res.status(200).json(updatedBlogPost);
-
-    // try {
-    //   const blogPost = await prisma.blogs.update({
-    //     where: { id: parseInt(id) },
-    //     data: {
-    //       title,
-    //       content,
-    //       tags: tags
-    //         ? { set: tags.map((tagId) => ({ id: tagId })) }
-    //         : undefined,
-    //       templates: templates
-    //         ? { set: templates.map((templateId) => ({ id: templateId })) }
-    //         : undefined,
-    //     },
-    //   });
-    //   res.status(200).json(blogPost);
-    // } catch (error) {
-    //   console.error("Error updating blog post:", error);
-    //   return res.status(500).json({ error: "Failed to edit blog post" });
-    // }
   }
 
   // Delete blog posts
