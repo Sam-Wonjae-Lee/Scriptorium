@@ -1,6 +1,8 @@
 import prisma from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
+  const result = verifyJWT(req);
   if (req.method === "GET") {
     const { id } = req.query;
 
@@ -18,9 +20,15 @@ export default async function handler(req, res) {
       res.status(400).json({ message: "Template not found" });
       return;
     }
+    if (!template.isPublic && (!result || result.id != template.authorId)) {
+      return res.status(403).json({ message: "Forbidden access" });
+    }
 
     res.status(200).json(template);
   } else if (req.method === "PUT") {
+    if (!result) {
+      return res.status(401).json({"error": "Unauthorized"});
+    }
     // Check if the request body is json
     if (req.headers["content-type"] !== "application/json") {
       res
@@ -30,7 +38,7 @@ export default async function handler(req, res) {
     }
     const { id } = req.query;
 
-    const { title, explanation, code, languageId, tagIds } = req.body;
+    const { title, explanation, code, languageId, tagIds, isPublic } = req.body;
 
     // Check if id exists in db
     const template = await prisma.templates.findUnique({
@@ -43,12 +51,17 @@ export default async function handler(req, res) {
         code: true,
         languageId: true,
         tags: true,
+        authorId: true,
+        isPublic: true
       },
     });
 
     if (!template) {
       res.status(404).json({ message: "Author not found" });
       return;
+    }
+    if (result.id != template.authorId) {
+      return res.status(403).json({"error": "Forbidden from modifying"});
     }
 
     // Update the author
@@ -64,13 +77,16 @@ export default async function handler(req, res) {
         tags: {
           set: tagIds ? tagIds.map((tagId) => ({ id: tagId })) : template.tags,
         },
+        isPublic: isPublic || template.isPublic,
       },
     });
 
     return res.status(200).json(updatedTemplate);
   } else if (req.method === "DELETE") {
     const { id } = req.query;
-
+    if (!result) {
+      return res.status(401).json({"error": "Unauthorized"});
+    }
     // Check if id exists in db
     const template = await prisma.templates.findUnique({
       where: {
@@ -81,6 +97,9 @@ export default async function handler(req, res) {
     if (!template) {
       res.status(404).json({ message: "Template not found" });
       return;
+    }
+    if (result.id != template.authorId) {
+      return res.status(403).json({"error": "Forbidden from modifying"});
     }
 
     // Delete author

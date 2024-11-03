@@ -1,9 +1,13 @@
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
   if (req.method === "GET") {
+    const result = verifyJWT(req);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
     const {
-      authorId,
       title,
       explanation,
       code,
@@ -15,7 +19,7 @@ export default async function handler(req, res) {
     const languageIdInt = parseInt(languageId);
     const tagsArray = tags ? tags.split(",") : [];
     const tagsArrayInt = tagsArray.map((tag) => parseInt(tag));
-    const authorIdInt = parseInt(authorId);
+    const authorIdInt = parseInt(result.id);
 
     // Check authorId is provided
     if (!authorIdInt) {

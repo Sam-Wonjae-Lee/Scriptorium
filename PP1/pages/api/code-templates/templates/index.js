@@ -1,7 +1,12 @@
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
+    const result = verifyJWT(req);
+    if (!result) {
+        return res.status(401).json({"error": "Unauthorized"});
+    }
     // Check if body type is JSON
     if (req.headers["content-type"] !== "application/json") {
       res
@@ -10,8 +15,8 @@ export default async function handler(req, res) {
       return;
     }
 
-    const { title, explanation, code, languageId, authorId, tagIds } = req.body;
-    if (!title || !explanation || !code || !languageId || !authorId) {
+    const { title, explanation, code, languageId, tagIds } = req.body;
+    if (!title || !explanation || !code || !languageId || !result.id) {
       res.status(400).json({ message: "Missing required fields" });
       return;
     }
@@ -27,7 +32,7 @@ export default async function handler(req, res) {
 
     // Check if author exists
     const author = await prisma.users.findUnique({
-      where: { id: authorId },
+      where: { id: result.id },
     });
     if (!author) {
       res.status(400).json({ message: "Author not found" });
@@ -56,7 +61,7 @@ export default async function handler(req, res) {
         explanation,
         code,
         languageId,
-        authorId,
+        authorId: result.id,
         tags: {
           connect: tagIds.map((tagId) => ({ id: tagId })),
         },

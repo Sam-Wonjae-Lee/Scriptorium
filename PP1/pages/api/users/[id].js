@@ -4,8 +4,11 @@ import { verifyJWT, generateRefreshToken, generateToken } from "@/utils/auth";
 export default async function handler(req, res) {
     const result = verifyJWT(req);
     const { id } = req.query;
-    if (!result || result.id != id) {
+    if (!result) {
         return res.status(401).json({"error": "Unauthorized"});
+    }
+    if (result.id != id) {
+        return res.status(403).json({"error": "Forbidden from modifying"});
     }
     if (req.method === "PUT") {
         const updateParams = ["firstName", "lastName", "avatar", "phone"];

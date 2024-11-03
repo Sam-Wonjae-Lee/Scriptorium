@@ -23,14 +23,14 @@ export default async function handler(req, res) {
         try {
             const result = verifyJWT(req);
             const identifier = result ? result.id : uuidv4();
-            const { stdout, stderr, compilerWarnings } = await executeCode(req, identifier);
-            res.status(200).json({stdout, stderr, compilerWarnings});
+            const { stdout, stderr, compilerWarnings, timeout } = await executeCode(req, identifier);
+            if (timeout) {
+                return res.status(400).json({"message": "Time limit exceeded"});
+            }
+            return res.status(200).json({stdout, stderr, compilerWarnings});
         }
         catch (error) {
             console.log(error);
-            if (error.signal == "SIGTERM") {
-                return res.status(400).json({"message": "Time limit exceeded"});
-            }
             res.status(500).json({"message": "failed to run program"});
         }
     } 
@@ -43,6 +43,7 @@ async function executeCode(req, identifier) {
     let executableArgs;
     let execProgram;
     let compilerWarnings;
+    console.log(identifier);
     await fs.mkdir(`./client_files/${identifier}`);
     const srcPath = `./client_files/${identifier}/${identifier}.${req.body.language}`;
     if (req.body.language == "py") {
@@ -82,7 +83,7 @@ async function executeCode(req, identifier) {
 
     let stdinPath;
     if (req.body.stdin) {
-        stdinPath = "./client_files/" + identifier + ".txt";
+        stdinPath = `./client_files/${identifier}/${identifier}.txt`;
         await fs.writeFile(stdinPath, req.body.stdin);
     }
 
@@ -91,12 +92,26 @@ async function executeCode(req, identifier) {
     // await execPromise(memoryCommand);
 
     const command = `${execProgram} ${executableArgs}` + (req.body.stdin ? ` < ${stdinPath}` : ``);
-    const { stdout, stderr } = await execPromise(command, {timeout: PROGRAM_TIMEOUT});
-    await fs.rm(`./client_files/${identifier}`, { recursive: true })
+    let stdout, stderr, timeout;
+    try {
+        const result = await execPromise(command, {timeout: PROGRAM_TIMEOUT});
+        stdout = result.stdout;
+        stderr = result.stderr;
+    }
+    catch (error) {
+        console.log(error);
+        if (error.signal == "SIGTERM") {
+            timeout = true;
+        }
+    }
+    finally {
+        await fs.rm(`./client_files/${identifier}`, { recursive: true })
+    }
 
     return {
         stdout,
         stderr,
-        compilerWarnings
+        compilerWarnings,
+        timeout
     }
 }
