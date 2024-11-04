@@ -1,6 +1,12 @@
 import { PrismaClient } from "@prisma/client";
+import bcrypt from 'bcrypt';
 
+const SALT_ROUNDS = 10;
 const prisma = new PrismaClient();
+
+export async function hashPassword(password) {
+    return await bcrypt.hash(password, SALT_ROUNDS);
+}
 
 async function main() {
     await prisma.languages.createMany({
@@ -22,6 +28,17 @@ async function main() {
           { message: "Too Political" },
           { message: "Not LGBTQ+2 Friendly" }
         ],
+    });
+    await prisma.users.create({
+        data: {
+            firstName: "Lala",
+            lastName: "Deviluke",
+            role: "ADMIN",
+            password: await hashPassword("pokpok"),
+            email: "lala@gmail.com",
+            phone: "604604604",
+            avatar: Buffer.from("llllllllll", "utf-8")
+        }
     });
 }
 
