@@ -1,22 +1,2602 @@
 {
 	"info": {
-		"_postman_id": "47d1c5a4-bfb0-417f-97c9-ef4ef908c7a5",
+		"_postman_id": "1bc9b118-a71f-48f7-b44f-6dc6ad6f7ca5",
 		"name": "Scriptorium",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "38804722"
+		"_exporter_id": "33032908"
 	},
 	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "RegisterAdmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"userID\", response.user.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "firstName",
+									"value": "Lala",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "Deviluke",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "pokpok",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "lala@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "604604604",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"value": "llllllllll",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "ADMIN",
+									"type": "text"
+								},
+								{
+									"key": "secretKey",
+									"value": "{{secretKey}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/admin/users/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RegisterAdmin",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "firstName",
+											"value": "Lala",
+											"type": "text"
+										},
+										{
+											"key": "lastName",
+											"value": "Deviluke",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "pokpok",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "lala@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "604604604",
+											"type": "text"
+										},
+										{
+											"key": "avatar",
+											"value": "llllllllll",
+											"type": "text"
+										},
+										{
+											"key": "role",
+											"value": "ADMIN",
+											"type": "text"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secretKey}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/admin/users/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"users",
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"kq7efqqf5q7g\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "268"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:30:48 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user\": {\n        \"id\": 1,\n        \"firstName\": \"lala\",\n        \"lastName\": \"deviluke\",\n        \"role\": \"ADMIN\",\n        \"email\": \"lala@gmail.com\",\n        \"phone\": \"604604604\",\n        \"avatar\": {\n            \"type\": \"Buffer\",\n            \"data\": [\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108\n            ]\n        },\n        \"password\": \"$2b$10$wVZd7cN6OdKgEqE075CAXuQ937b7s0LgBordS31VkHnGeR85GmCpK\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"accessToken\", response.accessToken);",
+									"pm.environment.set(\"refreshToken\", response.refreshToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "LALA@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "pokpok",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "LALA@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "pokpok",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"fwz11cpjamng\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "844"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:19:29 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3ROYW1lIjoibGFsYSIsImxhc3ROYW1lIjoiZGV2aWx1a2UiLCJyb2xlIjoiQURNSU4iLCJlbWFpbCI6ImxhbGFAZ21haWwuY29tIiwicGhvbmUiOiI2MDQ2MDQ2MDQiLCJhdmF0YXIiOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOlsxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDhdfSwiZXhwaXJlc0F0IjoxNzMwNjYyNDY5LCJpYXQiOjE3MzA2NjE1NjksImV4cCI6MTczMDY2MjQ2OX0.VjRPWQDYwzsl08kGiB1yEfw_fTC6jl7fT3KeSy0JI3c\",\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3ROYW1lIjoibGFsYSIsImxhc3ROYW1lIjoiZGV2aWx1a2UiLCJyb2xlIjoiQURNSU4iLCJlbWFpbCI6ImxhbGFAZ21haWwuY29tIiwicGhvbmUiOiI2MDQ2MDQ2MDQiLCJhdmF0YXIiOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOlsxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDhdfSwiZXhwaXJlc0F0IjoxNzMxMjY2MzY5LCJpYXQiOjE3MzA2NjE1NjksImV4cCI6MTczMTI2NjM2OX0.oROyoBOtfZ4KHKYIhLgc8KwxOypz0a4H-u0eMgxe5LQ\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Refresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"accessToken\", response.accessToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "refreshToken",
+									"value": "{{refreshToken}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/refresh",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"refresh"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Refresh",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "refreshToken",
+											"value": "{{refreshToken}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/refresh",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"refresh"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"gpnjh7d3ibbq\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "422"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:19:35 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3ROYW1lIjoibGFsYSIsImxhc3ROYW1lIjoiZGV2aWx1a2UiLCJyb2xlIjoiQURNSU4iLCJlbWFpbCI6ImxhbGFAZ21haWwuY29tIiwicGhvbmUiOiI2MDQ2MDQ2MDQiLCJhdmF0YXIiOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOlsxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDhdfSwiZXhwaXJlc0F0IjoxNzMwNjYyNDc1LCJpYXQiOjE3MzA2NjE1NzUsImV4cCI6MTczMDY2MjQ3NX0.48Y8FnqrsV5vrPcn_eXpQx20iZuV1J3hdhXxlsZdsYk\"\n}"
+						}
+					]
+				},
+				{
+					"name": "UpdateUser",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"accessToken\", response.accessToken);",
+									"pm.environment.set(\"refreshToken\", response.refreshToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "firstName",
+									"value": "momo",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "belia deviluke",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"value": "momomomomomo",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "9090090909",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/{{userID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "UpdateUser",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "firstName",
+											"value": "momo",
+											"type": "text"
+										},
+										{
+											"key": "lastName",
+											"value": "belia deviluke",
+											"type": "text"
+										},
+										{
+											"key": "avatar",
+											"value": "momomomomomo",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "9090090909",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/{{userID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"{{userID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"2osypsw87et6\""
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Content-Encoding",
+									"value": "gzip"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:31:16 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3ROYW1lIjoibW9tbyIsImxhc3ROYW1lIjoiYmVsaWEgZGV2aWx1a2UiLCJyb2xlIjoiQURNSU4iLCJlbWFpbCI6ImxhbGFAZ21haWwuY29tIiwicGhvbmUiOiI5MDkwMDkwOTA5IiwiYXZhdGFyIjp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjpbMTU0LDEzNywxNjgsMTU0LDEzNywxNjgsMTU0LDEzNywxNjhdfSwiZXhwaXJlc0F0IjoxNzMwNjczOTc2LCJpYXQiOjE3MzA2NzMwNzYsImV4cCI6MTczMDY3Mzk3Nn0.ZumnL--4-Xn_pGPs8S6j8t-OEEKx_qmHKmNNyDuhtcI\",\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3ROYW1lIjoibW9tbyIsImxhc3ROYW1lIjoiYmVsaWEgZGV2aWx1a2UiLCJyb2xlIjoiQURNSU4iLCJlbWFpbCI6ImxhbGFAZ21haWwuY29tIiwicGhvbmUiOiI5MDkwMDkwOTA5IiwiYXZhdGFyIjp7InR5cGUiOiJCdWZmZXIiLCJkYXRhIjpbMTU0LDEzNywxNjgsMTU0LDEzNywxNjgsMTU0LDEzNywxNjhdfSwiZXhwaXJlc0F0IjoxNzMxMjc3ODc2LCJpYXQiOjE3MzA2NzMwNzYsImV4cCI6MTczMTI3Nzg3Nn0.NWIRQe-q7tINUvqTPyuoBE9hgdv8hRmTkOhKDarvXD8\",\n    \"result\": {\n        \"id\": 1,\n        \"firstName\": \"momo\",\n        \"lastName\": \"belia deviluke\",\n        \"role\": \"ADMIN\",\n        \"email\": \"lala@gmail.com\",\n        \"phone\": \"9090090909\",\n        \"avatar\": {\n            \"type\": \"Buffer\",\n            \"data\": [\n                154,\n                137,\n                168,\n                154,\n                137,\n                168,\n                154,\n                137,\n                168\n            ]\n        }\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "DeleteUser",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/{{userID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "DeleteUser",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/{{userID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"{{userID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"lhcqqjexrb13\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "39"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:19:45 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User deleted successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "RegisterNormal",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"userID\", response.user.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "firstName",
+									"value": "Lala",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "Deviluke",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "pokpok",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "lala@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "604604604",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"value": "llllllllll",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RegisterNormal",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "firstName",
+											"value": "Lala",
+											"type": "text"
+										},
+										{
+											"key": "lastName",
+											"value": "Deviluke",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "pokpok",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "lala@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "604604604",
+											"type": "text"
+										},
+										{
+											"key": "avatar",
+											"value": "llllllllll",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"os9netqxc27f\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "267"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:33:42 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user\": {\n        \"id\": 2,\n        \"firstName\": \"lala\",\n        \"lastName\": \"deviluke\",\n        \"role\": \"USER\",\n        \"email\": \"lala@gmail.com\",\n        \"phone\": \"604604604\",\n        \"avatar\": {\n            \"type\": \"Buffer\",\n            \"data\": [\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108\n            ]\n        },\n        \"password\": \"$2b$10$w6MXbFcprqslb3.HAHAineCfnJ8qauhbi62vJ.RLUGjAkT5IXb8i.\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"accessToken\", response.accessToken);",
+									"pm.environment.set(\"refreshToken\", response.refreshToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "LALA@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "pokpok",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "LALA@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "pokpok",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"rzg2ev93hbng\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "844"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:31:51 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3ROYW1lIjoibGFsYSIsImxhc3ROYW1lIjoiZGV2aWx1a2UiLCJyb2xlIjoiQURNSU4iLCJlbWFpbCI6ImxhbGFAZ21haWwuY29tIiwicGhvbmUiOiI2MDQ2MDQ2MDQiLCJhdmF0YXIiOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOlsxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDhdfSwiZXhwaXJlc0F0IjoxNzMwNjc0MDExLCJpYXQiOjE3MzA2NzMxMTEsImV4cCI6MTczMDY3NDAxMX0.tOf_BSOIreZHc5qcIcgF3DdH7h4MBgkwDQxBwoK-31k\",\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3ROYW1lIjoibGFsYSIsImxhc3ROYW1lIjoiZGV2aWx1a2UiLCJyb2xlIjoiQURNSU4iLCJlbWFpbCI6ImxhbGFAZ21haWwuY29tIiwicGhvbmUiOiI2MDQ2MDQ2MDQiLCJhdmF0YXIiOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOlsxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDhdfSwiZXhwaXJlc0F0IjoxNzMxMjc3OTExLCJpYXQiOjE3MzA2NzMxMTEsImV4cCI6MTczMTI3NzkxMX0.bQPP-IoVM5ps0Q7hKmEqZ3ePorvAOH0hE8EXwCYNX2o\"\n}"
+						}
+					]
+				},
+				{
+					"name": "InvalidUpdateToAdmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "firstName",
+									"value": "momo",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "belia deviluke",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"value": "momomomomomo",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "9090090909",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "ADMIN",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/admin/users/{{userID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "InvalidUpdateToAdmin",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "firstName",
+											"value": "momo",
+											"type": "text"
+										},
+										{
+											"key": "lastName",
+											"value": "belia deviluke",
+											"type": "text"
+										},
+										{
+											"key": "avatar",
+											"value": "momomomomomo",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "9090090909",
+											"type": "text"
+										},
+										{
+											"key": "role",
+											"value": "ADMIN",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/admin/users/{{userID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"users",
+										"{{userID}}"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"ftamlbj15xv\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "31"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 21:12:56 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Lack of permissions\"\n}"
+						}
+					]
+				},
+				{
+					"name": "DeleteUser",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/{{userID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"{{userID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "DeleteUser Copy",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/{{userID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"{{userID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"lhcqqjexrb13\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "39"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 21:16:37 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User deleted successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "RegisterAdminAgain",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"userID\", response.user.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "firstName",
+									"value": "Lala",
+									"type": "text"
+								},
+								{
+									"key": "lastName",
+									"value": "Deviluke",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "pokpok",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "lala@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "phone",
+									"value": "604604604",
+									"type": "text"
+								},
+								{
+									"key": "avatar",
+									"value": "llllllllll",
+									"type": "text"
+								},
+								{
+									"key": "role",
+									"value": "ADMIN",
+									"type": "text"
+								},
+								{
+									"key": "secretKey",
+									"value": "{{secretKey}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/admin/users/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RegisterAdminAgain",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "firstName",
+											"value": "Lala",
+											"type": "text"
+										},
+										{
+											"key": "lastName",
+											"value": "Deviluke",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "pokpok",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "lala@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "phone",
+											"value": "604604604",
+											"type": "text"
+										},
+										{
+											"key": "avatar",
+											"value": "llllllllll",
+											"type": "text"
+										},
+										{
+											"key": "role",
+											"value": "ADMIN",
+											"type": "text"
+										},
+										{
+											"key": "secretKey",
+											"value": "{{secretKey}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/admin/users/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"admin",
+										"users",
+										"register"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"37g6gw6q157g\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "268"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:39:36 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user\": {\n        \"id\": 3,\n        \"firstName\": \"lala\",\n        \"lastName\": \"deviluke\",\n        \"role\": \"ADMIN\",\n        \"email\": \"lala@gmail.com\",\n        \"phone\": \"604604604\",\n        \"avatar\": {\n            \"type\": \"Buffer\",\n            \"data\": [\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108,\n                108\n            ]\n        },\n        \"password\": \"$2b$10$DdqUBWsDXntxrZ5fI90ffOdyXnMZlP2LfoRD4mJBSRzGJzb2YPyWu\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"accessToken\", response.accessToken);",
+									"pm.environment.set(\"refreshToken\", response.refreshToken);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "LALA@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "pokpok",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/users/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Login",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "email",
+											"value": "LALA@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "pokpok",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/users/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"fwz11cpjamng\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "844"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:19:29 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"accessToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3ROYW1lIjoibGFsYSIsImxhc3ROYW1lIjoiZGV2aWx1a2UiLCJyb2xlIjoiQURNSU4iLCJlbWFpbCI6ImxhbGFAZ21haWwuY29tIiwicGhvbmUiOiI2MDQ2MDQ2MDQiLCJhdmF0YXIiOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOlsxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDhdfSwiZXhwaXJlc0F0IjoxNzMwNjYyNDY5LCJpYXQiOjE3MzA2NjE1NjksImV4cCI6MTczMDY2MjQ2OX0.VjRPWQDYwzsl08kGiB1yEfw_fTC6jl7fT3KeSy0JI3c\",\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3ROYW1lIjoibGFsYSIsImxhc3ROYW1lIjoiZGV2aWx1a2UiLCJyb2xlIjoiQURNSU4iLCJlbWFpbCI6ImxhbGFAZ21haWwuY29tIiwicGhvbmUiOiI2MDQ2MDQ2MDQiLCJhdmF0YXIiOnsidHlwZSI6IkJ1ZmZlciIsImRhdGEiOlsxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDgsMTA4LDEwOCwxMDhdfSwiZXhwaXJlc0F0IjoxNzMxMjY2MzY5LCJpYXQiOjE3MzA2NjE1NjksImV4cCI6MTczMTI2NjM2OX0.oROyoBOtfZ4KHKYIhLgc8KwxOypz0a4H-u0eMgxe5LQ\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Code",
+			"item": [
+				{
+					"name": "RunBasicPythonScript",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code",
+									"value": "print(9)\nx = 5\ny = 6\nfor i in range(1, 1000000):\n    y += 1\nprint(y)",
+									"type": "text"
+								},
+								{
+									"key": "language",
+									"value": "py",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code/execute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code",
+								"execute"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RunBasicPythonScript",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "code",
+											"value": "print(9)\nx = 5\ny = 6\nfor i in range(1, 1000000):\n    y += 1\nprint(y)",
+											"type": "text"
+										},
+										{
+											"key": "language",
+											"value": "py",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code/execute",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code",
+										"execute"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"yrsnmfbr1511\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "37"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:20:02 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stdout\": \"9\\n1000005\\n\",\n    \"stderr\": \"\"\n}"
+						}
+					]
+				},
+				{
+					"name": "RunBasicPythonScriptAsUser",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code",
+									"value": "print(9)\nx = 5\ny = 6\nfor i in range(1, 1000000):\n    y += 1\nprint(y)",
+									"type": "text"
+								},
+								{
+									"key": "language",
+									"value": "py",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code/execute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code",
+								"execute"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RunBasicPythonScriptAsUser",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "code",
+											"value": "print(9)\nx = 5\ny = 6\nfor i in range(1, 1000000):\n    y += 1\nprint(y)",
+											"type": "text"
+										},
+										{
+											"key": "language",
+											"value": "py",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code/execute",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code",
+										"execute"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"yrsnmfbr1511\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "37"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:20:09 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stdout\": \"9\\n1000005\\n\",\n    \"stderr\": \"\"\n}"
+						}
+					]
+				},
+				{
+					"name": "RunPythonWithInput",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code",
+									"value": "for i in range(1, 3):\n    x = input()\n    print(x)",
+									"type": "text"
+								},
+								{
+									"key": "language",
+									"value": "py",
+									"type": "text"
+								},
+								{
+									"key": "stdin",
+									"value": "I love animals\nI love food",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code/execute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code",
+								"execute"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RunPythonWithInput",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "code",
+											"value": "for i in range(1, 3):\n    x = input()\n    print(x)",
+											"type": "text"
+										},
+										{
+											"key": "language",
+											"value": "py",
+											"type": "text"
+										},
+										{
+											"key": "stdin",
+											"value": "I love animals\nI love food",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code/execute",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code",
+										"execute"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"w18x6xj3jf1i\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "54"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:20:15 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stdout\": \"I love animals\\nI love food\\n\",\n    \"stderr\": \"\"\n}"
+						}
+					]
+				},
+				{
+					"name": "RunPythonTimeout10Seconds",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code",
+									"value": "print(9)\nx = 5\ny = 6\nfor i in range(1, 1000000000):\n    y += 1\nprint(y)",
+									"type": "text"
+								},
+								{
+									"key": "language",
+									"value": "py",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code/execute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code",
+								"execute"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RunPythonTimeout10Seconds",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "code",
+											"value": "print(9)\nx = 5\ny = 6\nfor i in range(1, 1000000000):\n    y += 1\nprint(y)",
+											"type": "text"
+										},
+										{
+											"key": "language",
+											"value": "py",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code/execute",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code",
+										"execute"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"ojq62k45h8x\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "33"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:20:28 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Time limit exceeded\"\n}"
+						}
+					]
+				},
+				{
+					"name": "RunBasicCPPScript",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code",
+									"value": "#include <iostream>\n\nint main() {\n    std::cout << \"Hello, World!\" << std::endl;\n    return 0;\n}\n",
+									"type": "text"
+								},
+								{
+									"key": "language",
+									"value": "cpp",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code/execute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code",
+								"execute"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RunBasicCPPScript",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "code",
+											"value": "#include <iostream>\n\nint main() {\n    std::cout << \"Hello, World!\" << std::endl;\n    return 0;\n}\n",
+											"type": "text"
+										},
+										{
+											"key": "language",
+											"value": "cpp",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code/execute",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code",
+										"execute"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"ixznhpraat1q\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "62"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:20:35 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stdout\": \"Hello, World!\\n\",\n    \"stderr\": \"\",\n    \"compilerWarnings\": \"\"\n}"
+						}
+					]
+				},
+				{
+					"name": "RunCWithInput",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code",
+									"value": "#include <stdio.h>\n\nint main() {\n    char buffer[100];\n    printf(\"Hello, World!\\n\");\n    fgets(buffer, sizeof(buffer), stdin);\n    printf(\"You printed: %s\", buffer);\n    return 0;\n}",
+									"type": "text"
+								},
+								{
+									"key": "language",
+									"value": "c",
+									"type": "text"
+								},
+								{
+									"key": "stdin",
+									"value": "I love pigs",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code/execute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code",
+								"execute"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RunCWithInput",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "code",
+											"value": "#include <stdio.h>\n\nint main() {\n    char buffer[100];\n    printf(\"Hello, World!\\n\");\n    fgets(buffer, sizeof(buffer), stdin);\n    printf(\"You printed: %s\", buffer);\n    return 0;\n}",
+											"type": "text"
+										},
+										{
+											"key": "language",
+											"value": "c",
+											"type": "text"
+										},
+										{
+											"key": "stdin",
+											"value": "I love pigs",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code/execute",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code",
+										"execute"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"d7q5n4762s2e\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "86"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:20:39 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stdout\": \"Hello, World!\\nYou printed: I love pigs\",\n    \"stderr\": \"\",\n    \"compilerWarnings\": \"\"\n}"
+						}
+					]
+				},
+				{
+					"name": "RunCWithWarnings",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code",
+									"value": "#include <stdio.h>\n\nint main() {\n    char buffer[100];\n    printf(\"Hello, World!\\n\");\n    fgets(buffer, sizeof(buffer), stdin);\n    printf(\"You printed: \");\n    printf(buffer);\n    return 0;\n}",
+									"type": "text"
+								},
+								{
+									"key": "language",
+									"value": "c",
+									"type": "text"
+								},
+								{
+									"key": "stdin",
+									"value": "I love pigs",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code/execute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code",
+								"execute"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RunCWithWarnings",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "code",
+											"value": "#include <stdio.h>\n\nint main() {\n    char buffer[100];\n    printf(\"Hello, World!\\n\");\n    fgets(buffer, sizeof(buffer), stdin);\n    printf(\"You printed: \");\n    printf(buffer);\n    return 0;\n}",
+											"type": "text"
+										},
+										{
+											"key": "language",
+											"value": "c",
+											"type": "text"
+										},
+										{
+											"key": "stdin",
+											"value": "I love pigs",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code/execute",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code",
+										"execute"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"6ljrygm08f2\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "542"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:20:43 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stdout\": \"Hello, World!\\nYou printed: I love pigs\",\n    \"stderr\": \"\",\n    \"compilerWarnings\": \"./client_files/609912ed-9809-4e8e-8d73-0afffd8d3ccc/609912ed-9809-4e8e-8d73-0afffd8d3ccc.c:8:12: warning: format string is not a string literal (potentially insecure) [-Wformat-security]\\n    printf(buffer);\\n           ^~~~~~\\n./client_files/609912ed-9809-4e8e-8d73-0afffd8d3ccc/609912ed-9809-4e8e-8d73-0afffd8d3ccc.c:8:12: note: treat the string as an argument to avoid this\\n    printf(buffer);\\n           ^\\n           \\\"%s\\\", \\n1 warning generated.\\n\"\n}"
+						}
+					]
+				},
+				{
+					"name": "RunBasicJavaScript",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code",
+									"value": "class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}",
+									"type": "text"
+								},
+								{
+									"key": "language",
+									"value": "java",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code/execute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code",
+								"execute"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RunBasicJavaScript",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "code",
+											"value": "class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World!\");\n    }\n}",
+											"type": "text"
+										},
+										{
+											"key": "language",
+											"value": "java",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code/execute",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code",
+										"execute"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"ixznhpraat1q\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "62"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:20:52 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stdout\": \"Hello, World!\\n\",\n    \"stderr\": \"\",\n    \"compilerWarnings\": \"\"\n}"
+						}
+					]
+				},
+				{
+					"name": "RunBasicJSScript",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "code",
+									"value": "console.log(\"I LOVE CATS\");",
+									"type": "text"
+								},
+								{
+									"key": "language",
+									"value": "js",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code/execute",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code",
+								"execute"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "RunBasicJSScript",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "code",
+											"value": "console.log(\"I LOVE CATS\");",
+											"type": "text"
+										},
+										{
+											"key": "language",
+											"value": "js",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code/execute",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code",
+										"execute"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"12tg7iup3u612\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "38"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:20:57 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"stdout\": \"I LOVE CATS\\n\",\n    \"stderr\": \"\"\n}"
+						}
+					]
+				}
+			]
+		},
 		{
 			"name": "Templates",
 			"item": [
 				{
 					"name": "Create template",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"templateID\", response.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Trapping rain water\",\r\n    \"explanation\": \"leetcode\",\r\n    \"code\": \"print(\\\"hi\\\")\",\r\n    \"languageId\": 2,\r\n    \"authorId\": 1,\r\n    \"tagIds\": [\r\n        1\r\n    ]\r\n}",
+							"raw": "{\r\n    \"title\": \"Trapping rain water\",\r\n    \"explanation\": \"leetcode\",\r\n    \"code\": \"print(\\\"hi\\\")\",\r\n    \"languageId\": 2,\r\n    \"tagIds\": [\r\n        1\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -37,21 +2617,428 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Create template",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Trapping rain water\",\r\n    \"explanation\": \"leetcode\",\r\n    \"code\": \"print(\\\"hi\\\")\",\r\n    \"languageId\": 2,\r\n    \"tagIds\": [\r\n        1\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code-templates/templates",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code-templates",
+										"templates"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"e40uq5cklv43\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "147"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:41:53 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"Trapping rain water\",\n    \"explanation\": \"leetcode\",\n    \"authorId\": 3,\n    \"languageId\": 2,\n    \"code\": \"print(\\\"hi\\\")\",\n    \"forkedId\": null,\n    \"isPublic\": false\n}"
+						}
+					]
 				},
 				{
-					"name": "Save template",
+					"name": "Get template",
 					"request": {
-						"method": "POST",
-						"header": [],
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3000/api/code-templates/templates/{{templateID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code-templates",
+								"templates",
+								"{{templateID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get template",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3000/api/code-templates/templates/{{templateID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code-templates",
+										"templates",
+										"{{templateID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"e40uq5cklv43\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "147"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:42:21 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"Trapping rain water\",\n    \"explanation\": \"leetcode\",\n    \"authorId\": 3,\n    \"languageId\": 2,\n    \"code\": \"print(\\\"hi\\\")\",\n    \"forkedId\": null,\n    \"isPublic\": false\n}"
+						}
+					]
+				},
+				{
+					"name": "Update template",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"templateId\": 3,\r\n    \"authorId\": 1\r\n}",
+							"raw": "{\r\n    \"title\": \"Trapping water\",\r\n    \"code\": \"print(\\\"bye\\\")\",\r\n    \"languageId\": 1,\r\n    \"tagIds\": [\r\n        2\r\n    ],\r\n    \"isPublic\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
 								}
 							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/code-templates/templates/{{templateID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code-templates",
+								"templates",
+								"{{templateID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Update template",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Trapping water\",\r\n    \"code\": \"print(\\\"bye\\\")\",\r\n    \"languageId\": 1,\r\n    \"tagIds\": [\r\n        2\r\n    ],\r\n    \"isPublic\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code-templates/templates/{{templateID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code-templates",
+										"templates",
+										"{{templateID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"11gofsx248j3y\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "142"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:42:40 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"Trapping water\",\n    \"explanation\": \"leetcode\",\n    \"authorId\": 3,\n    \"languageId\": 1,\n    \"code\": \"print(\\\"bye\\\")\",\n    \"forkedId\": null,\n    \"isPublic\": true\n}"
+						}
+					]
+				},
+				{
+					"name": "Get templates",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/code-templates/templates?languageId=1&query=",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"code-templates",
+								"templates"
+							],
+							"query": [
+								{
+									"key": "title",
+									"value": "trap",
+									"disabled": true
+								},
+								{
+									"key": "explanation",
+									"value": "leetcode",
+									"disabled": true
+								},
+								{
+									"key": "languageId",
+									"value": "1"
+								},
+								{
+									"key": "code",
+									"value": "print",
+									"disabled": true
+								},
+								{
+									"key": "query",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Get templates",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/code-templates/templates?languageId=1&query=",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code-templates",
+										"templates"
+									],
+									"query": [
+										{
+											"key": "title",
+											"value": "trap",
+											"disabled": true
+										},
+										{
+											"key": "explanation",
+											"value": "leetcode",
+											"disabled": true
+										},
+										{
+											"key": "languageId",
+											"value": "1"
+										},
+										{
+											"key": "code",
+											"value": "print",
+											"disabled": true
+										},
+										{
+											"key": "query",
+											"value": ""
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"x968t45ftf67\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "223"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:42:55 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"templates\": [\n        {\n            \"id\": 1,\n            \"title\": \"Trapping water\",\n            \"explanation\": \"leetcode\",\n            \"authorId\": 3,\n            \"languageId\": 1,\n            \"code\": \"print(\\\"bye\\\")\",\n            \"forkedId\": null,\n            \"isPublic\": true\n        }\n    ],\n    \"pagination\": {\n        \"totalTemplates\": 1,\n        \"totalPages\": 1,\n        \"currentPage\": 1\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get saved templates",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
 						},
 						"url": {
 							"raw": "http://localhost:3000/api/code-templates/saved-templates",
@@ -67,15 +3054,87 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Get saved templates",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": []
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code-templates/saved-templates",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code-templates",
+										"saved-templates"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"x968t45ftf67\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "223"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:43:11 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"templates\": [\n        {\n            \"id\": 1,\n            \"title\": \"Trapping water\",\n            \"explanation\": \"leetcode\",\n            \"authorId\": 3,\n            \"languageId\": 1,\n            \"code\": \"print(\\\"bye\\\")\",\n            \"forkedId\": null,\n            \"isPublic\": true\n        }\n    ],\n    \"pagination\": {\n        \"totalTemplates\": 1,\n        \"totalPages\": 1,\n        \"currentPage\": 1\n    }\n}"
+						}
+					]
 				},
 				{
 					"name": "Delete template",
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:3000/api/code-templates/templates/2",
+							"raw": "http://localhost:3000/api/code-templates/templates/{{templateID}}",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -85,20 +3144,108 @@
 								"api",
 								"code-templates",
 								"templates",
-								"2"
+								"{{templateID}}"
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Delete template",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3000/api/code-templates/templates/{{templateID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code-templates",
+										"templates",
+										"{{templateID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"o8nudfpkf417\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 19:22:48 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Template deleted successfully\"\n}"
+						}
+					]
 				},
 				{
-					"name": "Update template",
+					"name": "Create template Again",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"templateID\", response.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
-						"method": "PUT",
-						"header": [],
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"title\": \"Trapping water\",\r\n    \"code\": \"print(\\\"bye\\\")\",\r\n    \"languageId\": 1,\r\n    \"tagIds\": [\r\n        2\r\n    ]\r\n}",
+							"raw": "{\r\n    \"title\": \"Trapping rain water\",\r\n    \"explanation\": \"leetcode\",\r\n    \"code\": \"print(\\\"hi\\\")\",\r\n    \"languageId\": 2,\r\n    \"tagIds\": [\r\n        1\r\n    ]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -106,29 +3253,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3000/api/code-templates/templates/3",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"api",
-								"code-templates",
-								"templates",
-								"3"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get templates",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:3000/api/code-templates/templates?title=rain&explanation=leetcode&languageId=2&code=print",
+							"raw": "http://localhost:3000/api/code-templates/templates",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -138,36 +3263,498 @@
 								"api",
 								"code-templates",
 								"templates"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create template Copy",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"Trapping rain water\",\r\n    \"explanation\": \"leetcode\",\r\n    \"code\": \"print(\\\"hi\\\")\",\r\n    \"languageId\": 2,\r\n    \"tagIds\": [\r\n        1\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/code-templates/templates",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"code-templates",
+										"templates"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"16e3s19drst43\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "147"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:43:59 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 2,\n    \"title\": \"Trapping rain water\",\n    \"explanation\": \"leetcode\",\n    \"authorId\": 3,\n    \"languageId\": 2,\n    \"code\": \"print(\\\"hi\\\")\",\n    \"forkedId\": null,\n    \"isPublic\": false\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Blogs",
+			"item": [
+				{
+					"name": "Create Blog",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"blogID\", response.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"LOL\",\n    \"content\": \"Look at my code\",\n    \"tagIds\": [1, 2],\n    \"templateIds\": [{{templateID}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/blog-posts",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog-posts"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Blog",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"LOL\",\n    \"content\": \"Look at my code\",\n    \"tagIds\": [1, 2],\n    \"templateIds\": [{{templateID}}]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/blog-posts",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"blog-posts"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"75iyhcw8b3k\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "128"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:44:23 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"LOL\",\n    \"authorId\": 3,\n    \"content\": \"Look at my code\",\n    \"numReports\": 0,\n    \"isFlagged\": false,\n    \"numUpvotes\": 0,\n    \"numDownvotes\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "Edit blog",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"HELLO\",\r\n    \"content\": \"WPKDPWKDPWAKDPOWKD\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/blog-posts/{{blogID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog-posts",
+								"{{blogID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Edit blog",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"title\": \"HELLO\",\r\n    \"content\": \"WPKDPWKDPWAKDPOWKD\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/blog-posts/{{blogID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"blog-posts",
+										"{{blogID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"32onpq5hlf3p\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "133"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:45:33 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"HELLO\",\n    \"authorId\": 3,\n    \"content\": \"WPKDPWKDPWAKDPOWKD\",\n    \"numReports\": 0,\n    \"isFlagged\": false,\n    \"numUpvotes\": 0,\n    \"numDownvotes\": 0\n}"
+						}
+					]
+				},
+				{
+					"name": "Get blogs",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/blog-posts?query=wp&sortBy=upvotes&page=1&templateId={{templateID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"blog-posts"
 							],
 							"query": [
 								{
-									"key": "title",
-									"value": "rain"
-								},
-								{
-									"key": "explanation",
-									"value": "leetcode"
+									"key": "query",
+									"value": "wp"
 								},
 								{
 									"key": "languageId",
-									"value": "2"
+									"value": "1",
+									"disabled": true
 								},
 								{
-									"key": "code",
-									"value": "print"
+									"key": "tags",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "upvotes"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "templateId",
+									"value": "{{templateID}}"
 								}
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Get blogs",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/blog-posts?query=wp&sortBy=upvotes&page=1&templateId={{templateID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"blog-posts"
+									],
+									"query": [
+										{
+											"key": "query",
+											"value": "wp"
+										},
+										{
+											"key": "languageId",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "tags",
+											"value": "2",
+											"disabled": true
+										},
+										{
+											"key": "sortBy",
+											"value": "upvotes"
+										},
+										{
+											"key": "page",
+											"value": "1"
+										},
+										{
+											"key": "templateId",
+											"value": "{{templateID}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"z1bvliuuvkdk\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "488"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:46:05 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"blogPosts\": [\n        {\n            \"id\": 1,\n            \"title\": \"HELLO\",\n            \"authorId\": 3,\n            \"content\": \"WPKDPWKDPWAKDPOWKD\",\n            \"numUpvotes\": 0,\n            \"numDownvotes\": 0,\n            \"tags\": [\n                {\n                    \"id\": 1,\n                    \"name\": \"DP\",\n                    \"color\": \"[255, 255, 255]\"\n                },\n                {\n                    \"id\": 2,\n                    \"name\": \"Greedy\",\n                    \"color\": \"[0, 0, 255]\"\n                }\n            ],\n            \"Templates\": [\n                {\n                    \"id\": 2,\n                    \"title\": \"Trapping rain water\"\n                }\n            ],\n            \"author\": {\n                \"id\": 3,\n                \"firstName\": \"lala\",\n                \"lastName\": \"deviluke\",\n                \"avatar\": {\n                    \"type\": \"Buffer\",\n                    \"data\": [\n                        108,\n                        108,\n                        108,\n                        108,\n                        108,\n                        108,\n                        108,\n                        108,\n                        108,\n                        108\n                    ]\n                }\n            },\n            \"Comments\": []\n        }\n    ],\n    \"pagination\": {\n        \"totalBlogPosts\": 1,\n        \"totalPages\": 1,\n        \"currentPage\": \"1\"\n    }\n}"
+						}
+					]
 				},
 				{
-					"name": "Get template",
+					"name": "Delete blog",
 					"request": {
-						"method": "GET",
-						"header": [],
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "http://localhost:3000/api/code-templates/templates/3",
+							"raw": "http://localhost:3000/api/blog-posts/{{blogID}}",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -175,21 +3762,121 @@
 							"port": "3000",
 							"path": [
 								"api",
-								"code-templates",
-								"templates",
-								"3"
+								"blog-posts",
+								"{{blogID}}"
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Delete blog",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:3000/api/blog-posts/{{blogID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"blog-posts",
+										"{{blogID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"32onpq5hlf3p\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "133"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:46:23 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"title\": \"HELLO\",\n    \"authorId\": 3,\n    \"content\": \"WPKDPWKDPWAKDPOWKD\",\n    \"numReports\": 0,\n    \"isFlagged\": false,\n    \"numUpvotes\": 0,\n    \"numDownvotes\": 0\n}"
+						}
+					]
 				},
 				{
-					"name": "Get saved templates",
+					"name": "Create Blog Again",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"blogID\", response.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
 					"request": {
-						"method": "GET",
-						"header": [],
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"LOL\",\n    \"content\": \"Look at my code\",\n    \"tagIds\": [1, 2],\n    \"templateIds\": [{{templateID}}]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "http://localhost:3000/api/code-templates/saved-templates?authorId=1",
+							"raw": "http://localhost:3000/api/blog-posts",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -197,87 +3884,1386 @@
 							"port": "3000",
 							"path": [
 								"api",
-								"code-templates",
-								"saved-templates"
+								"blog-posts"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Blog Copy",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\": \"LOL\",\n    \"content\": \"Look at my code\",\n    \"tagIds\": [1, 2],\n    \"templateIds\": [{{templateID}}]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/blog-posts",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"blog-posts"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"10vtkqspi8x3k\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "128"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:47:16 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 2,\n    \"title\": \"LOL\",\n    \"authorId\": 3,\n    \"content\": \"Look at my code\",\n    \"numReports\": 0,\n    \"isFlagged\": false,\n    \"numUpvotes\": 0,\n    \"numDownvotes\": 0\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "Create comment",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let response = pm.response.json();",
+									"",
+									"pm.environment.set(\"commentID\", response.id);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "content",
+									"value": "Lol ur code sucks",
+									"type": "text"
+								},
+								{
+									"key": "blogId",
+									"value": "{{blogID}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"comments"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create comment",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "content",
+											"value": "Lol ur code sucks",
+											"type": "text"
+										},
+										{
+											"key": "blogId",
+											"value": "{{blogID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/comments",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"comments"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"6pynjsrili44\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "148"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:47:36 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"id\": 1,\n    \"blogId\": 2,\n    \"userId\": 3,\n    \"content\": \"Lol ur code sucks\",\n    \"numReports\": 0,\n    \"isFlagged\": false,\n    \"numUpvotes\": 0,\n    \"numDownvotes\": 0,\n    \"parentCommentId\": null\n}"
+						}
+					]
+				},
+				{
+					"name": "Get comments",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/comments?blogId={{blogID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"comments"
 							],
 							"query": [
 								{
-									"key": "authorId",
-									"value": "1"
+									"key": "blogId",
+									"value": "{{blogID}}"
 								}
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "Get comments",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:3000/api/comments?blogId={{blogID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"comments"
+									],
+									"query": [
+										{
+											"key": "blogId",
+											"value": "{{blogID}}"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"irscjnchbla0\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "360"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 22:47:58 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"comments\": [\n        {\n            \"id\": 1,\n            \"blogId\": 2,\n            \"userId\": 3,\n            \"content\": \"Lol ur code sucks\",\n            \"numReports\": 0,\n            \"isFlagged\": false,\n            \"numUpvotes\": 0,\n            \"numDownvotes\": 0,\n            \"parentCommentId\": null,\n            \"user\": {\n                \"id\": 3,\n                \"firstName\": \"lala\",\n                \"lastName\": \"deviluke\",\n                \"avatar\": {\n                    \"type\": \"Buffer\",\n                    \"data\": [\n                        108,\n                        108,\n                        108,\n                        108,\n                        108,\n                        108,\n                        108,\n                        108,\n                        108,\n                        108\n                    ]\n                }\n            }\n        }\n    ],\n    \"pagination\": {\n        \"totalComments\": 1,\n        \"totalPages\": 1,\n        \"currentPage\": 1\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Rating",
+			"item": [
+				{
+					"name": "Blog upvote",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"upvote\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ratings/blog/{{blogID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ratings",
+								"blog",
+								"{{blogID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Blog upvote",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": {{userID}},\r\n    \"action\": \"upvote\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/ratings/blog/{{blogID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"ratings",
+										"blog",
+										"{{blogID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"11e6mxr0oqq\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "26"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 20:36:09 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Rating added\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Blog remove upvote",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"remove-upvote\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ratings/blog/{{blogID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ratings",
+								"blog",
+								"{{blogID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Blog remove upvote",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"action\": \"remove-upvote\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/ratings/blog/{{blogID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"ratings",
+										"blog",
+										"{{blogID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"3xb70lb0i4t\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 20:50:06 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Rating recorded\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Blog downvote",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"downvote\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ratings/blog/{{blogID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ratings",
+								"blog",
+								"{{blogID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Blog remove upvote Copy",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": {{userID}},\r\n    \"action\": \"downvote\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/ratings/blog/{{blogID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"ratings",
+										"blog",
+										"{{blogID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"3xb70lb0i4t\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 20:39:29 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Rating recorded\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Blog remove downvote",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"remove-downvote\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ratings/blog/{{blogID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ratings",
+								"blog",
+								"{{blogID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Blog downvote Copy",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": {{userID}},\r\n    \"action\": \"remove-downvote\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/ratings/blog/{{blogID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"ratings",
+										"blog",
+										"{{blogID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"3xb70lb0i4t\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 20:40:02 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Rating recorded\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Blog invalid vote",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"remove-downvote\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ratings/blog/{{blogID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ratings",
+								"blog",
+								"{{blogID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Blog remove downvote Copy",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": {{userID}},\r\n    \"action\": \"remove-downvote\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/ratings/blog/{{blogID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"ratings",
+										"blog",
+										"{{blogID}}"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"6atxnq00vj14\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "40"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 20:40:41 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Cannot perform this action\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Comment upvote",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"upvote\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ratings/comment/{{commentID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ratings",
+								"comment",
+								"{{commentID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Comment upvote",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"action\": \"upvote\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/ratings/comment/{{commentID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"ratings",
+										"comment",
+										"{{commentID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"11e6mxr0oqq\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "26"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 20:53:42 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Rating added\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Comment remove upvote",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"remove-upvote\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ratings/comment/{{commentID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ratings",
+								"comment",
+								"{{commentID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Comment upvote Copy",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": 1,\r\n    \"action\": \"remove-upvote\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/ratings/comment/{{commentID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"ratings",
+										"comment",
+										"{{commentID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"3xb70lb0i4t\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 20:54:49 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Rating recorded\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Comment downvote",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"downvote\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ratings/comment/{{commentID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ratings",
+								"comment",
+								"{{commentID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Comment upvote Copy",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": 1,\r\n    \"action\": \"remove-upvote\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/ratings/comment/{{commentID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"ratings",
+										"comment",
+										"{{commentID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"3xb70lb0i4t\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 20:54:49 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Rating recorded\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Comment remove downvote",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"remove-downvote\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ratings/comment/{{commentID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ratings",
+								"comment",
+								"{{commentID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Comment upvote Copy",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"userId\": 1,\r\n    \"action\": \"remove-upvote\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/ratings/comment/{{commentID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"ratings",
+										"comment",
+										"{{commentID}}"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"3xb70lb0i4t\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "29"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 20:54:49 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Rating recorded\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Comment invalid vote",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"action\": \"remove-downvote\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/ratings/comment/{{commentID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"ratings",
+								"comment",
+								"{{commentID}}"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Comment remove downvote Copy",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{accessToken}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"action\": \"remove-downvote\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:3000/api/ratings/comment/{{commentID}}",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"ratings",
+										"comment",
+										"{{commentID}}"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "ETag",
+									"value": "\"6atxnq00vj14\""
+								},
+								{
+									"key": "Content-Length",
+									"value": "40"
+								},
+								{
+									"key": "Vary",
+									"value": "Accept-Encoding"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 03 Nov 2024 20:58:27 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Cannot perform this action\"\n}"
+						}
+					]
 				}
 			]
 		},
 		{
 			"name": "Content monitoring",
 			"item": [
-				{
-					"name": "Flags",
-					"item": [
-						{
-							"name": "blog",
-							"item": [
-								{
-									"name": "Flag blog",
-									"request": {
-										"method": "PUT",
-										"header": []
-									},
-									"response": []
-								},
-								{
-									"name": "Unflag blog",
-									"request": {
-										"method": "DELETE",
-										"header": []
-									},
-									"response": []
-								},
-								{
-									"name": "Get flagged blogs",
-									"request": {
-										"method": "GET",
-										"header": []
-									},
-									"response": []
-								}
-							]
-						},
-						{
-							"name": "comment",
-							"item": [
-								{
-									"name": "Flag comment",
-									"request": {
-										"method": "PUT",
-										"header": []
-									},
-									"response": []
-								},
-								{
-									"name": "Unflag comment",
-									"request": {
-										"method": "DELETE",
-										"header": []
-									},
-									"response": []
-								},
-								{
-									"name": "Get flagged comments",
-									"request": {
-										"method": "GET",
-										"header": []
-									},
-									"response": []
-								}
-							]
-						}
-					]
-				},
 				{
 					"name": "Reports",
 					"item": [
@@ -286,27 +5272,471 @@
 							"item": [
 								{
 									"name": "Create blog report",
+									"protocolProfileBehavior": {
+										"disabledSystemHeaders": {
+											"content-type": true
+										}
+									},
 									"request": {
 										"method": "POST",
-										"header": []
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"blogId\": {{blogID}},\r\n    \"reportId\": 1,\r\n    \"explanation\": \"Bad Bad text\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/reports/blog",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"reports",
+												"blog"
+											]
+										}
 									},
-									"response": []
+									"response": [
+										{
+											"name": "Create blog report",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"blogId\": {{blogID}},\r\n    \"reportId\": 1,\r\n    \"explanation\": \"Bad Bad text\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/reports/blog",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"reports",
+														"blog"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"9u8kvrdwwk20\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "72"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:49:28 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"id\": 1,\n    \"blogId\": 2,\n    \"userId\": 3,\n    \"reportId\": 1,\n    \"explanation\": \"Bad Bad text\"\n}"
+										}
+									]
+								},
+								{
+									"name": "Create blog report again",
+									"protocolProfileBehavior": {
+										"disabledSystemHeaders": {
+											"content-type": true
+										}
+									},
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											},
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"blogId\": {{blogID}},\r\n    \"reportId\": 1,\r\n    \"explanation\": \"Bad Bad text\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/reports/blog",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"reports",
+												"blog"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Create blog report Copy",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													},
+													{
+														"key": "Content-Type",
+														"value": "application/json",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"blogId\": {{blogID}},\r\n    \"reportId\": 1,\r\n    \"explanation\": \"Bad Bad text\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/reports/blog",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"reports",
+														"blog"
+													]
+												}
+											},
+											"status": "Conflict",
+											"code": 409,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"mim17dj89c17\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "43"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:05:04 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"message\": \"Blog already reported by user\"\n}"
+										}
+									]
 								},
 								{
 									"name": "Get reported blogs",
 									"request": {
 										"method": "GET",
-										"header": []
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/reports/blog?title=LOL&content=look at my code&authorFirstName=lala&authorLastName=deviluke",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"reports",
+												"blog"
+											],
+											"query": [
+												{
+													"key": "title",
+													"value": "LOL"
+												},
+												{
+													"key": "content",
+													"value": "look at my code"
+												},
+												{
+													"key": "authorFirstName",
+													"value": "lala"
+												},
+												{
+													"key": "authorLastName",
+													"value": "deviluke"
+												}
+											]
+										}
 									},
-									"response": []
+									"response": [
+										{
+											"name": "Get reported blogs",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/reports/blog?title=LOL&content=look at my code&authorFirstName=lala&authorLastName=deviluke",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"reports",
+														"blog"
+													],
+													"query": [
+														{
+															"key": "title",
+															"value": "LOL"
+														},
+														{
+															"key": "content",
+															"value": "look at my code"
+														},
+														{
+															"key": "authorFirstName",
+															"value": "lala"
+														},
+														{
+															"key": "authorLastName",
+															"value": "deviluke"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"sqrtu59xgn5l\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "201"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:49:40 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"blogs\": [\n        {\n            \"id\": 2,\n            \"title\": \"LOL\",\n            \"authorId\": 3,\n            \"content\": \"Look at my code\",\n            \"numReports\": 1,\n            \"isFlagged\": false,\n            \"numUpvotes\": 0,\n            \"numDownvotes\": 0\n        }\n    ],\n    \"pagination\": {\n        \"totalBlogs\": 1,\n        \"totalPages\": 1,\n        \"currentPage\": 1\n    }\n}"
+										}
+									]
 								},
 								{
 									"name": "Get blog reports",
 									"request": {
 										"method": "GET",
-										"header": []
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/reports/blog/{{blogID}}",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"reports",
+												"blog",
+												"{{blogID}}"
+											]
+										}
 									},
-									"response": []
+									"response": [
+										{
+											"name": "Get blog reports",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/reports/blog/{{blogID}}",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"reports",
+														"blog",
+														"{{blogID}}"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"7jbwqytb3f5j\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "199"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:49:47 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"blogReports\": [\n        {\n            \"id\": 1,\n            \"blogId\": 2,\n            \"userId\": 3,\n            \"reportId\": 1,\n            \"explanation\": \"Bad Bad text\",\n            \"report\": {\n                \"id\": 1,\n                \"message\": \"Pornography\"\n            }\n        }\n    ],\n    \"pagination\": {\n        \"totalBlogReports\": 1,\n        \"totalPages\": 1,\n        \"currentPage\": 1\n    }\n}"
+										}
+									]
 								}
 							]
 						},
@@ -317,70 +5747,1281 @@
 									"name": "Create comment report",
 									"request": {
 										"method": "POST",
-										"header": []
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"commentId\": {{commentID}},\r\n    \"reportId\": 2,\r\n    \"explanation\": \"THEY ARE KILLING EACH OTHER HOLYYY\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/reports/comment",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"reports",
+												"comment"
+											]
+										}
 									},
-									"response": []
+									"response": [
+										{
+											"name": "Create comment report",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"commentId\": {{commentID}},\r\n    \"reportId\": 2,\r\n    \"explanation\": \"THEY ARE KILLING EACH OTHER HOLYYY\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/reports/comment",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"reports",
+														"comment"
+													]
+												}
+											},
+											"status": "Created",
+											"code": 201,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"j1oif36n272p\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "97"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:50:11 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"id\": 1,\n    \"commentId\": 1,\n    \"userId\": 3,\n    \"reportId\": 2,\n    \"explanation\": \"THEY ARE KILLING EACH OTHER HOLYYY\"\n}"
+										}
+									]
+								},
+								{
+									"name": "Create comment report again",
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"commentId\": {{commentID}},\r\n    \"reportId\": 2,\r\n    \"explanation\": \"THEY ARE KILLING EACH OTHER HOLYYY\"\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/reports/comment",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"reports",
+												"comment"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Create comment report again",
+											"originalRequest": {
+												"method": "POST",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "{\r\n    \"commentId\": {{commentID}},\r\n    \"reportId\": 2,\r\n    \"explanation\": \"THEY ARE KILLING EACH OTHER HOLYYY\"\r\n}",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/reports/comment",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"reports",
+														"comment"
+													]
+												}
+											},
+											"status": "Conflict",
+											"code": 409,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"15hw6s0tsf11a\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "46"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:50:19 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"message\": \"Comment already reported by user\"\n}"
+										}
+									]
 								},
 								{
 									"name": "Get reported comments",
 									"request": {
 										"method": "GET",
-										"header": []
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/reports/comment?content=sucks&authorFirstName=lala&authorLastName=deviluke",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"reports",
+												"comment"
+											],
+											"query": [
+												{
+													"key": "content",
+													"value": "sucks"
+												},
+												{
+													"key": "authorFirstName",
+													"value": "lala"
+												},
+												{
+													"key": "authorLastName",
+													"value": "deviluke"
+												}
+											]
+										}
 									},
-									"response": []
+									"response": [
+										{
+											"name": "Get reported comments",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/reports/comment?content=sucks&authorFirstName=lala&authorLastName=deviluke",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"reports",
+														"comment"
+													],
+													"query": [
+														{
+															"key": "content",
+															"value": "sucks"
+														},
+														{
+															"key": "authorFirstName",
+															"value": "lala"
+														},
+														{
+															"key": "authorLastName",
+															"value": "deviluke"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"t6i6xy7j6z6b\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "227"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:51:36 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"comments\": [\n        {\n            \"id\": 1,\n            \"blogId\": 2,\n            \"userId\": 3,\n            \"content\": \"Lol ur code sucks\",\n            \"numReports\": 1,\n            \"isFlagged\": false,\n            \"numUpvotes\": 0,\n            \"numDownvotes\": 0,\n            \"parentCommentId\": null\n        }\n    ],\n    \"pagination\": {\n        \"totalComments\": 1,\n        \"totalPages\": 1,\n        \"currentPage\": 1\n    }\n}"
+										}
+									]
 								},
 								{
 									"name": "Get comment reports",
+									"protocolProfileBehavior": {
+										"disableBodyPruning": true
+									},
 									"request": {
 										"method": "GET",
-										"header": []
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/reports/comment/{{commentID}}",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"reports",
+												"comment",
+												"{{commentID}}"
+											]
+										}
 									},
-									"response": []
+									"response": [
+										{
+											"name": "Get comment reports",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "raw",
+													"raw": "",
+													"options": {
+														"raw": {
+															"language": "json"
+														}
+													}
+												},
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/reports/comment/{{commentID}}",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"reports",
+														"comment",
+														"{{commentID}}"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"154ym49sxxe6k\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "236"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:51:44 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"commentReports\": [\n        {\n            \"id\": 1,\n            \"commentId\": 1,\n            \"userId\": 3,\n            \"reportId\": 2,\n            \"explanation\": \"THEY ARE KILLING EACH OTHER HOLYYY\",\n            \"report\": {\n                \"id\": 2,\n                \"message\": \"Physical Violence\"\n            }\n        }\n    ],\n    \"pagination\": {\n        \"totalCommentReports\": 1,\n        \"totalPages\": 1,\n        \"currentPage\": 1\n    }\n}"
+										}
+									]
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Flags",
+					"item": [
+						{
+							"name": "blog",
+							"item": [
+								{
+									"name": "Flag blog",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": []
+										},
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/flag/blog/{{blogID}}",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"flag",
+												"blog",
+												"{{blogID}}"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Flag blog",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"body": {
+													"mode": "urlencoded",
+													"urlencoded": []
+												},
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/flag/blog/{{blogID}}",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"flag",
+														"blog",
+														"{{blogID}}"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"jse7xcs1v93j\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "127"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:52:00 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"id\": 2,\n    \"title\": \"LOL\",\n    \"authorId\": 3,\n    \"content\": \"Look at my code\",\n    \"numReports\": 1,\n    \"isFlagged\": true,\n    \"numUpvotes\": 0,\n    \"numDownvotes\": 0\n}"
+										}
+									]
+								},
+								{
+									"name": "Unflag blog",
+									"request": {
+										"method": "DELETE",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/flag/blog/{{blogID}}",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"flag",
+												"blog",
+												"{{blogID}}"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Unflag blog",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/flag/blog/{{blogID}}",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"flag",
+														"blog",
+														"{{blogID}}"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"wj4e6y6jqp3k\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "128"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:52:14 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"id\": 2,\n    \"title\": \"LOL\",\n    \"authorId\": 3,\n    \"content\": \"Look at my code\",\n    \"numReports\": 1,\n    \"isFlagged\": false,\n    \"numUpvotes\": 0,\n    \"numDownvotes\": 0\n}"
+										}
+									]
+								},
+								{
+									"name": "Flag again",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/flag/blog/{{blogID}}",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"flag",
+												"blog",
+												"{{blogID}}"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Flag again",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/flag/blog/{{blogID}}",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"flag",
+														"blog",
+														"{{blogID}}"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"jse7xcs1v93j\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "127"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:52:20 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"id\": 2,\n    \"title\": \"LOL\",\n    \"authorId\": 3,\n    \"content\": \"Look at my code\",\n    \"numReports\": 1,\n    \"isFlagged\": true,\n    \"numUpvotes\": 0,\n    \"numDownvotes\": 0\n}"
+										}
+									]
+								},
+								{
+									"name": "Get flagged blogs",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/flag/blog?title=LOL&content=look at my code&authorFirstName=lala&authorLastName=deviluke",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"flag",
+												"blog"
+											],
+											"query": [
+												{
+													"key": "title",
+													"value": "LOL"
+												},
+												{
+													"key": "content",
+													"value": "look at my code"
+												},
+												{
+													"key": "authorFirstName",
+													"value": "lala"
+												},
+												{
+													"key": "authorLastName",
+													"value": "deviluke"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Get flagged blogs",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/flag/blog?title=LOL&content=look at my code&authorFirstName=lala&authorLastName=deviluke",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"flag",
+														"blog"
+													],
+													"query": [
+														{
+															"key": "title",
+															"value": "LOL"
+														},
+														{
+															"key": "content",
+															"value": "look at my code"
+														},
+														{
+															"key": "authorFirstName",
+															"value": "lala"
+														},
+														{
+															"key": "authorLastName",
+															"value": "deviluke"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"n94chk62f65k\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "200"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:52:28 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"blogs\": [\n        {\n            \"id\": 2,\n            \"title\": \"LOL\",\n            \"authorId\": 3,\n            \"content\": \"Look at my code\",\n            \"numReports\": 1,\n            \"isFlagged\": true,\n            \"numUpvotes\": 0,\n            \"numDownvotes\": 0\n        }\n    ],\n    \"pagination\": {\n        \"totalBlogs\": 1,\n        \"totalPages\": 1,\n        \"currentPage\": 1\n    }\n}"
+										}
+									]
 								}
 							]
 						},
 						{
-							"name": "report",
+							"name": "comment",
 							"item": [
 								{
-									"name": "Create report type",
-									"request": {
-										"method": "POST",
-										"header": []
-									},
-									"response": []
-								},
-								{
-									"name": "Get report types",
-									"request": {
-										"method": "GET",
-										"header": []
-									},
-									"response": []
-								},
-								{
-									"name": "Get report type",
-									"request": {
-										"method": "GET",
-										"header": []
-									},
-									"response": []
-								},
-								{
-									"name": "Update report type",
+									"name": "Flag comment",
 									"request": {
 										"method": "PUT",
-										"header": []
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/flag/comment/{{commentID}}",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"flag",
+												"comment",
+												"{{commentID}}"
+											]
+										}
 									},
-									"response": []
+									"response": [
+										{
+											"name": "Flag comment",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/flag/comment/{{commentID}}",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"flag",
+														"comment",
+														"{{commentID}}"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"131g3bgakfs43\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "147"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:52:37 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"id\": 1,\n    \"blogId\": 2,\n    \"userId\": 3,\n    \"content\": \"Lol ur code sucks\",\n    \"numReports\": 1,\n    \"isFlagged\": true,\n    \"numUpvotes\": 0,\n    \"numDownvotes\": 0,\n    \"parentCommentId\": null\n}"
+										}
+									]
 								},
 								{
-									"name": "Delete report type",
+									"name": "Unflag comment",
 									"request": {
 										"method": "DELETE",
-										"header": []
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/flag/comment/{{commentID}}",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"flag",
+												"comment",
+												"{{commentID}}"
+											]
+										}
 									},
-									"response": []
+									"response": [
+										{
+											"name": "Unflag comment",
+											"originalRequest": {
+												"method": "DELETE",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/flag/comment/{{commentID}}",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"flag",
+														"comment",
+														"{{commentID}}"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"fj9ume71e044\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "148"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:52:44 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"id\": 1,\n    \"blogId\": 2,\n    \"userId\": 3,\n    \"content\": \"Lol ur code sucks\",\n    \"numReports\": 1,\n    \"isFlagged\": false,\n    \"numUpvotes\": 0,\n    \"numDownvotes\": 0,\n    \"parentCommentId\": null\n}"
+										}
+									]
+								},
+								{
+									"name": "Flag again",
+									"request": {
+										"method": "PUT",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/flag/comment/{{commentID}}",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"flag",
+												"comment",
+												"{{commentID}}"
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Flag comment Copy",
+											"originalRequest": {
+												"method": "PUT",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/flag/comment/{{commentID}}",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"flag",
+														"comment",
+														"{{commentID}}"
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"131g3bgakfs43\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "147"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:52:50 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"id\": 1,\n    \"blogId\": 2,\n    \"userId\": 3,\n    \"content\": \"Lol ur code sucks\",\n    \"numReports\": 1,\n    \"isFlagged\": true,\n    \"numUpvotes\": 0,\n    \"numDownvotes\": 0,\n    \"parentCommentId\": null\n}"
+										}
+									]
+								},
+								{
+									"name": "Get flagged comments",
+									"request": {
+										"method": "GET",
+										"header": [
+											{
+												"key": "Authorization",
+												"value": "Bearer {{accessToken}}",
+												"type": "text"
+											}
+										],
+										"url": {
+											"raw": "http://localhost:3000/api/content-monitoring/flag/comment/?content=sucks&authorFirstName=lala&authorLastName=deviluke",
+											"protocol": "http",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"api",
+												"content-monitoring",
+												"flag",
+												"comment",
+												""
+											],
+											"query": [
+												{
+													"key": "content",
+													"value": "sucks"
+												},
+												{
+													"key": "authorFirstName",
+													"value": "lala"
+												},
+												{
+													"key": "authorLastName",
+													"value": "deviluke"
+												}
+											]
+										}
+									},
+									"response": [
+										{
+											"name": "Get flagged comments",
+											"originalRequest": {
+												"method": "GET",
+												"header": [
+													{
+														"key": "Authorization",
+														"value": "Bearer {{accessToken}}",
+														"type": "text"
+													}
+												],
+												"url": {
+													"raw": "http://localhost:3000/api/content-monitoring/flag/comment/?content=sucks&authorFirstName=lala&authorLastName=deviluke",
+													"protocol": "http",
+													"host": [
+														"localhost"
+													],
+													"port": "3000",
+													"path": [
+														"api",
+														"content-monitoring",
+														"flag",
+														"comment",
+														""
+													],
+													"query": [
+														{
+															"key": "content",
+															"value": "sucks"
+														},
+														{
+															"key": "authorFirstName",
+															"value": "lala"
+														},
+														{
+															"key": "authorLastName",
+															"value": "deviluke"
+														}
+													]
+												}
+											},
+											"status": "OK",
+											"code": 200,
+											"_postman_previewlanguage": "json",
+											"header": [
+												{
+													"key": "Content-Type",
+													"value": "application/json; charset=utf-8"
+												},
+												{
+													"key": "ETag",
+													"value": "\"oxvacsbx3m6a\""
+												},
+												{
+													"key": "Content-Length",
+													"value": "226"
+												},
+												{
+													"key": "Vary",
+													"value": "Accept-Encoding"
+												},
+												{
+													"key": "Date",
+													"value": "Sun, 03 Nov 2024 22:52:56 GMT"
+												},
+												{
+													"key": "Connection",
+													"value": "keep-alive"
+												},
+												{
+													"key": "Keep-Alive",
+													"value": "timeout=5"
+												}
+											],
+											"cookie": [],
+											"body": "{\n    \"comments\": [\n        {\n            \"id\": 1,\n            \"blogId\": 2,\n            \"userId\": 3,\n            \"content\": \"Lol ur code sucks\",\n            \"numReports\": 1,\n            \"isFlagged\": true,\n            \"numUpvotes\": 0,\n            \"numDownvotes\": 0,\n            \"parentCommentId\": null\n        }\n    ],\n    \"pagination\": {\n        \"totalComments\": 1,\n        \"totalPages\": 1,\n        \"currentPage\": 1\n    }\n}"
+										}
+									]
 								}
 							]
 						}
