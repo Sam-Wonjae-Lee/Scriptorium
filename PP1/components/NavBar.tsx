@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import Router from "next/router";
 
+import ThemeSwitcher from "./ThemeSwitcher";
+
 const NavBar: React.FC = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,7 +80,8 @@ const NavBar: React.FC = () => {
             </div>
 
             {/* Right Section */}
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-6">
+              <ThemeSwitcher />
               <button 
                   className="bg-background-light w-10 h-10 rounded-full border-none flex items-center justify-center p-2 cursor-pointer"
                   onClick={() => Router.push("/profile")}
