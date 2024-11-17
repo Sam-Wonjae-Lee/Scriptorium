@@ -1,7 +1,6 @@
-import { error } from "console";
+import type { Config } from "tailwindcss";
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   darkMode: "class",
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
@@ -11,6 +10,18 @@ module.exports = {
   ],
   theme: {
     extend: {
+      left: {
+        "2px": "2px",
+      },
+      borderRadius: {
+        "22": "22px",
+      },
+      maxWidth: {
+        "900": "900px",
+      },
+      width: {
+        "900": "900px",
+      },
       colors: {
         background: {
           dark: "#282828",
@@ -44,4 +55,4 @@ module.exports = {
     },
   },
   plugins: [],
-};
+} satisfies Config;
