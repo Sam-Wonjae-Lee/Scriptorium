@@ -1,40 +1,22 @@
 import React, { useState, useRef, useEffect } from "react";
 
 interface DropdownProps {
-  options: { id: number; name: string; color?: string }[];
-  selectedOptions: { id: number; name: string; color?: string }[];
-  setSelectedOptions: (
-    options: { id: number; name: string; color?: string }[]
-  ) => void;
+  options: string[];
+  selectedOption: string;
+  setSelectedOption: (option: string) => void;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
   options,
-  selectedOptions,
-  setSelectedOptions,
+  selectedOption,
+  setSelectedOption,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const handleOptionClick = (option: { id: number; name: string }) => {
-    if (selectedOptions.includes(option)) {
-      setSelectedOptions(selectedOptions.filter((opt) => opt !== option));
-    } else {
-      setSelectedOptions([...selectedOptions, option]);
-    }
-    console.log(selectedOptions);
-  };
-
-  const handleRemoveClick = (option: { id: number; name: string }) => {
-    console.log(selectedOptions);
-  };
-
-  const getOptionColor = (option: {
-    id: number;
-    name: string;
-    color?: string;
-  }) => {
-    return option.color ? option.color : "transparent";
+  const handleOptionClick = (option: string) => {
+    setSelectedOption(option);
+    setIsOpen(false);
   };
 
   const handleClickOutside = (event: MouseEvent) => {
@@ -55,57 +37,37 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <div
-      className={`relative border-2  border-text-light dark:border-text-dark text-text-light dark:text-text-dark p-2 w-full`}
+      className={`relative border-2 "px-4"
+       ${
+         isOpen
+           ? "rounded-t-22 border-hot_pink-normal dark:border-hot_pink-normal"
+           : "rounded-22 border-text-light dark:border-text-dark"
+       }  text-text-light dark:text-text-dark p-2 w-44`}
       ref={dropdownRef}
-      // Keep consistent border radius when many tags are added
-      style={{ borderRadius: "22px" }}
     >
       <div
-        className="flex items-center gap-2 container flex-wrap w-full"
+        className="flex items-center gap-2 w-full"
         onClick={() => setIsOpen(!isOpen)}
       >
-        {selectedOptions.length > 0 ? (
-          selectedOptions.map((option) => (
-            <div
-              key={option.id}
-              className={`flex justify-between items-center gap-1 px-1 rounded-full`}
-              style={{ backgroundColor: getOptionColor(option) }}
-            >
-              <span>{option.name} </span>
-              <div className="w-5 h-5 cursor-pointer">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  className="text-text-light dark:text-text-dark"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6 18 18 6M6 6l12 12"
-                  />
-                </svg>
-              </div>
-            </div>
-          ))
-        ) : (
-          <span>Select options</span>
-        )}
+        <span>{`Sort by ${selectedOption}`}</span>
       </div>
       {isOpen && (
-        <div className="absolute bottom-0 left-0 translate-y-full z-50 border-2 border-text-light dark:border-text-dark">
+        <div
+          // FIXME: I legit couldnt get this to work with tailwind, so I had to use inline styles
+          style={{ left: "-1px" }}
+          className={`absolute w-44 rounded-b-22 p-2 bottom-0 translate-y-full z-50 border-2 ${
+            isOpen
+              ? "border-hot_pink-normal dark:border-hot_pink-normal"
+              : "border-text-light dark:border-text-dark"
+          } bg-background-light dark:bg-background-dark flex flex-col gap-2 `}
+        >
           {options.map((option) => (
             <div
-              key={option.id}
-              // className={`dropdown-option ${
-              //   selectedOptions.includes(option) ? "selected" : ""
-              // }`}
-              className="dropdown-option"
+              key={option}
+              className="px-2 rounded-full cursor-pointer select-none"
               onClick={() => handleOptionClick(option)}
             >
-              {option.name}
+              {option}
             </div>
           ))}
         </div>

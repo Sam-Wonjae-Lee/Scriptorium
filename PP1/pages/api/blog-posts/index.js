@@ -86,7 +86,7 @@ export default async function handler(req, res) {
   } else if (req.method === "GET") {
     const {
       query = "",
-      languageId,
+      languages,
       tags,
       templateId,
       page = 1,
@@ -102,12 +102,17 @@ export default async function handler(req, res) {
     }
 
     // Check language exists if provided
-    if (languageId) {
-      const language = await prisma.languages.findUnique({
-        where: { id: parseInt(languageId) },
-      });
-      if (!language) {
-        return res.status(400).json({ message: "Language does not exist" });
+    const languageIds = languages
+      ? languages.split(",").map((language) => parseInt(language))
+      : [];
+    if (languages) {
+      for (const languageId of languageIds) {
+        const language = await prisma.languages.findUnique({
+          where: { id: parseInt(languageId) },
+        });
+        if (!language) {
+          return res.status(400).json({ message: "Language does not exist" });
+        }
       }
     }
 
@@ -138,29 +143,24 @@ export default async function handler(req, res) {
     const filters = {};
     if (tags) {
       filters.tags = {
-        every: {
+        some: {
           id: { in: tagIds },
         },
       };
     }
-
-    // filters.OR = [
-    //   { title: { contains: query, lte: "insensitive" } },
-    //   { content: { contains: query, lte: "insensitive" } },
-    // ];
+    if (languages) {
+      filters.Templates = {
+        some: {
+          languageId: { in: languageIds },
+        },
+      };
+    }
 
     filters.OR = [
       { title: { contains: query } },
       { content: { contains: query } },
     ];
 
-    if (languageId) {
-      filters.Templates = {
-        some: {
-          languageId: parseInt(languageId),
-        },
-      };
-    }
     if (templateId) {
       filters.Templates = {
         some: {

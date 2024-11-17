@@ -10,6 +10,12 @@ export default {
   ],
   theme: {
     extend: {
+      left: {
+        "2px": "2px",
+      },
+      borderRadius: {
+        "22": "22px",
+      },
       maxWidth: {
         "900": "900px",
       },

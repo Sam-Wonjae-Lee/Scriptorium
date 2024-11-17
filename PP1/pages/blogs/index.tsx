@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import InputField from "@/components/InputField";
 import Card from "@/components/Card";
+import MultiSelectDropdown from "@/components/MultiSelectDropdown";
+import { Option } from "@/utils/types";
 import Dropdown from "@/components/Dropdown";
 
-// TODO blog interface
 interface Blog {
   id: number;
   title: string;
@@ -19,21 +20,32 @@ const Blogs = () => {
   const [blogQuery, setBlogQuery] = useState("");
 
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [selectedTags, setSelectedTags] = useState<
-    { id: number; name: string }[]
-  >([]);
-  const [tags, setTags] = useState<
-    { id: number; name: string; color: string }[]
-  >([]);
+
+  // Tags
+  const [selectedTags, setSelectedTags] = useState<Option[]>([]);
+  const [tags, setTags] = useState<Option[]>([]);
   const [tagQuery, setTagQuery] = useState("");
+
+  // Languages
+  const [selectedLanguages, setSelectedLanguages] = useState<Option[]>([]);
+  const [languages, setLanguages] = useState<Option[]>([]);
+  const [languageQuery, setLanguageQuery] = useState("");
+
+  // Sort by
+  const [sortBy, setSortBy] = useState("upvotes");
+  const sortTypes = ["upvotes", "downvotes", "controversial"];
 
   useEffect(() => {
     fetchTags();
-  }, []);
+  }, [tagQuery]);
+
+  useEffect(() => {
+    fetchLanguages();
+  }, [languageQuery]);
 
   useEffect(() => {
     fetchBlogs();
-  }, [blogQuery]);
+  }, [blogQuery, selectedTags, selectedLanguages, sortBy]);
 
   const fetchTags = async () => {
     try {
@@ -45,9 +57,25 @@ const Blogs = () => {
     }
   };
 
+  const fetchLanguages = async () => {
+    try {
+      const response = await fetch(`/api/languages?query=${languageQuery}`);
+      const data = await response.json();
+      setLanguages(data);
+    } catch (error) {
+      console.error("Error fetching languages:", error);
+    }
+  };
+
   const fetchBlogs = async () => {
     try {
-      const response = await fetch(`/api/blog-posts?query=${blogQuery}`);
+      const query = `/api/blog-posts?query=${blogQuery}&tags=${selectedTags
+        .map((tag) => tag.id)
+        .join(",")}&languages=${selectedLanguages
+        .map((language) => language.id)
+        .join(",")}&sortBy=${sortBy}`;
+      console.log(query);
+      const response = await fetch(query);
       const data = await response.json();
       setBlogs(data.blogPosts);
     } catch (error) {
@@ -56,7 +84,7 @@ const Blogs = () => {
   };
 
   return (
-    <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark">
+    <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
       <div className="absolute top-0 left-0">
         <ThemeSwitcher />
       </div>
@@ -76,15 +104,39 @@ const Blogs = () => {
               />
             </div>
           </div>
-          <h2 className="text-lg text-text-light dark:text-text-dark">
+          <h2 className="text-lg mb-4 text-text-light dark:text-text-dark">
             Explore blogs to learn how to code!
           </h2>
-          <div className="w-48">
-            <Dropdown
-              options={tags}
-              selectedOptions={selectedTags}
-              setSelectedOptions={setSelectedTags}
-            />
+          <div className="flex gap-5">
+            <div className="w-80">
+              <MultiSelectDropdown
+                placeholder="Select tags"
+                searchPlaceholder="Search tags"
+                options={tags}
+                selectedOptions={selectedTags}
+                setSelectedOptions={setSelectedTags}
+                query={tagQuery}
+                onQueryChange={setTagQuery}
+              />
+            </div>
+            <div className="w-80">
+              <MultiSelectDropdown
+                placeholder="Select language"
+                searchPlaceholder="Search languages"
+                options={languages}
+                selectedOptions={selectedLanguages}
+                setSelectedOptions={setSelectedLanguages}
+                query={languageQuery}
+                onQueryChange={setLanguageQuery}
+              />
+            </div>
+            <div className="w-62">
+              <Dropdown
+                options={sortTypes}
+                selectedOption={sortBy}
+                setSelectedOption={setSortBy}
+              />
+            </div>
           </div>
         </section>
         <section className="w-full">

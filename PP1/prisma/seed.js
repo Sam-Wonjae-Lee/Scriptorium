@@ -10,13 +10,26 @@ export async function hashPassword(password) {
 
 async function main() {
   await prisma.languages.createMany({
-    data: [{ name: "py" }, { name: "cpp" }],
+    data: [
+      { name: "Python" },
+      { name: "C++" },
+      { name: "C" },
+      { name: "Java" },
+      { name: "JavaScript" },
+    ],
   });
   await prisma.tags.createMany({
     data: [
-      { name: "Easy", color: "#23d97e" },
-      { name: "Medium", color: "#b9803f" },
-      { name: "Hard", color: "#d93434" },
+      { name: "Algorithm", color: "#FF5733" },
+      { name: "Data Structure", color: "#33FF57" },
+      { name: "Database", color: "#3357FF" },
+      { name: "Networking", color: "#FF33A1" },
+      { name: "Security", color: "#FF8C33" },
+      { name: "Web Development", color: "#33FFF5" },
+      { name: "Mobile Development", color: "#FF33D4" },
+      { name: "Machine Learning", color: "#33FF8C" },
+      { name: "Artificial Intelligence", color: "#FF3333" },
+      { name: "Cloud Computing", color: "#3333FF" },
     ],
   });
   await prisma.reports.createMany({
@@ -58,28 +71,91 @@ async function main() {
       },
     ],
   });
-  await prisma.blogs.createMany({
-    data: [
-      {
-        title: "How to be a good programmer",
-        authorId: 2,
-        content:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec pur",
+
+  const templateData = [
+    {
+      title: "Two Sum Solution",
+      explanation: "This is a solution to the Two Sum problem",
+      code: "def two_sum(nums, target):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                return [i, j]",
+      languageId: 1,
+      authorId: 2,
+      tags: [1, 2],
+      isPublic: true,
+    },
+    {
+      title: "Three Sum Solution",
+      explanation: "This is a solution to the Two Sum problem",
+      code: "class Solution {\npublic:\n  vector<vector<int>> threeSum(vector<int>& nums) {\n    set<vector<int>> res;\n    sort(nums.begin(), nums.end());\n    for (int i = 0; i < nums.size(); i++) {\n      for (int j = i + 1; j < nums.size(); j++) {\n        for (int k = j + 1; k < nums.size(); k++) {\n          if (nums[i] + nums[j] + nums[k] == 0) {\n            res.insert({nums[i], nums[j], nums[k]});\n          }\n        }\n      }\n    }\n    return vector<vector<int>>(res.begin(), res.end());\n  }\n};",
+      languageId: 2,
+      authorId: 2,
+      tags: [1, 2],
+      isPublic: true,
+    },
+  ];
+  for (const template of templateData) {
+    await prisma.templates.create({
+      data: {
+        title: template.title,
+        explanation: template.explanation,
+        code: template.code,
+        languageId: template.languageId,
+        authorId: template.authorId,
+        tags: {
+          connect: template.tags.map((id) => ({ id })),
+        },
+        isPublic: template.isPublic,
       },
-      {
-        title: "How to solve Two Sum",
-        authorId: 2,
-        content:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec pur",
+    });
+  }
+
+  const blogData = [
+    {
+      title: "How to be a good programmer",
+      authorId: 2,
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec pur",
+      tags: [1, 2],
+      templates: [],
+      numUpvotes: 10,
+      numDownvotes: 5,
+    },
+    {
+      title: "How to solve Two Sum",
+      authorId: 2,
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec pur",
+      tags: [2, 3],
+      templates: [1],
+      numUpvotes: 15,
+      numDownvotes: 14,
+    },
+    {
+      title: "How to solve Three Sum",
+      authorId: 3,
+      content:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec pur",
+      tags: [1, 4],
+      templates: [2],
+    },
+  ];
+
+  for (const blog of blogData) {
+    await prisma.blogs.create({
+      data: {
+        title: blog.title,
+        content: blog.content,
+        authorId: blog.authorId,
+        tags: {
+          connect: blog.tags.map((id) => ({ id })),
+        },
+        Templates: {
+          connect: blog.templates.map((id) => ({ id })),
+        },
+        numUpvotes: blog.numUpvotes,
+        numDownvotes: blog.numDownvotes,
       },
-      {
-        title: "How to solve Three Sum",
-        authorId: 3,
-        content:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec pur",
-      },
-    ],
-  });
+    });
+  }
 }
 
 main()
