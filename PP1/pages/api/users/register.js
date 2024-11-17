@@ -1,14 +1,22 @@
-import prisma from "@/utils/db"
-import { hashPassword } from "@/utils/auth";
+import prisma from "/utils/db"
+import { hashPassword } from "/utils/auth";
 
 export default async function handler(req, res) {
     if (req.method === "POST") {
         if (!req.body.firstName || !req.body.lastName || !req.body.password || 
-            !req.body.email || !req.body.phone || !req.body.avatar) {
-            return res.status(400).json({"message": "Invalid fields"});
+            !req.body.email || !req.body.phone) {
+            return res.status(400).json({error: "Invalid fields"});
         }
         try {
-            const rawAvatar = Buffer.from(req.body.avatar, "utf-8");
+            const user = await prisma.users.findUnique({
+                where: {
+                    email: req.body.email.toLowerCase()
+                }
+            })
+            if (user) {
+                return res.status(400).json({emailError: "User already exists"});
+            }
+            const rawAvatar = Buffer.from(req.body.avatar || "None", "utf-8");
             const result = await prisma.users.create({
                 data: {
                     firstName: req.body.firstName.toLowerCase(),
@@ -20,14 +28,14 @@ export default async function handler(req, res) {
                     avatar: rawAvatar
                 }
             })
-            res.status(201).json({"user": result});
+            return res.status(201).json({"user": result});
         }
         catch (error) {
             console.log(error)
-            res.status(500).json({"error": "failed to create user"});
+            res.status(500).json({error: "failed to create user"});
         }
     } 
     else {
-        res.status(405).json({ message: "Method not allowed" });
+        return res.status(405).json({ error: "Method not allowed" });
     }
 }

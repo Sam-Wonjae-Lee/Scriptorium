@@ -12,7 +12,9 @@
   "dependencies": {
     "@prisma/client": "^5.20.0",
     "@prisma/studio": "^0.502.0",
+    "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
+    "cookie": "^1.0.1",
     "highlight.js": "^11.10.0",
     "jsonwebtoken": "^9.0.2",
     "next": "14.2.14",
