@@ -1,12 +1,15 @@
 import React from "react";
+import { showAlert } from "@/components/Alert";
+import { useRouter } from "next/router";
+import { Rating, Tag } from "@/utils/types";
 
 interface CardProps {
   id: number;
   title: string;
   author: { firstName: string; lastName: string; id: number };
   description: string;
-  tags: { name: string; color: string; id: number }[];
-  rating?: { upvotes: number; downvotes: number };
+  tags: Tag[];
+  rating?: Rating;
   language?: string;
 }
 
@@ -19,11 +22,60 @@ const Card: React.FC<CardProps> = ({
   rating,
   language,
 }) => {
+  const router = useRouter();
   const truncateDescription = (desc: string) => {
     const cutoffLength = language ? 100 : 250;
     return desc.length > cutoffLength
       ? desc.substring(0, cutoffLength) + "..."
       : desc;
+  };
+
+  const handleUpvote = async () => {
+    try {
+      const response = await fetch(`/api/ratings/blog/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: 2, // TODO: Replace with actual user id
+          action: "upvote",
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          showAlert("You must be logged in to upvote", "error");
+        }
+      }
+      const data = await response.json();
+    } catch (error) {
+      console.error("Error upvoting:", error);
+    }
+  };
+
+  const handleDownvote = async () => {
+    try {
+      const response = await fetch(`/api/ratings/blog/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: 2, // TODO: Replace with actual user id
+          action: "downvote",
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          showAlert("You must be logged in to downvote", "error");
+        }
+      }
+      const data = await response.json();
+    } catch (error) {
+      console.error("Error upvoting:", error);
+    }
   };
 
   const getForkIcon = () => {
@@ -117,9 +169,9 @@ const Card: React.FC<CardProps> = ({
       <div className="flex gap-2 absolute bottom-2 right-2">
         <div className="flex items-center gap-1">
           <div
-            className="h-5 w-5 cursor-pointer"
+            className="h-5 w-5 cursor-pointer hover:scale-105 transform transition-transform"
             onClick={() => {
-              console.log("Upvote");
+              handleUpvote();
             }}
           >
             {getUpvoteIcon()}
@@ -128,9 +180,9 @@ const Card: React.FC<CardProps> = ({
         </div>
         <div className="flex items-center gap-1">
           <div
-            className="h-5 w-5 cursor-pointer"
+            className="h-5 w-5 cursor-pointer hover:scale-105 transform transition-transform"
             onClick={() => {
-              console.log("Downvote");
+              handleDownvote();
             }}
           >
             {getDownvoteIcon()}
@@ -142,16 +194,23 @@ const Card: React.FC<CardProps> = ({
   };
 
   return (
-    <div className="relative rounded p-2 h-56 max-w-96 text-text-light dark:text-text-dark border-2 border-text-light dark:border-text-dark bg-element_background-light dark:bg-element_background-dark">
+    <div className="relative rounded p-2 h-56 text-text-light dark:text-text-dark border-2 border-text-light dark:border-text-dark bg-element_background-light dark:bg-element_background-dark">
       {language && renderCodeTemplateSection()}
-      <h2 className="text-xl mb-2">{title}</h2>
-      <h3 className="text-xs mb-2">
+      <h2
+        className="text-xl mb-2 cursor-pointer hover:underline"
+        onClick={() => {
+          router.push(`/blogs/${id}`);
+        }}
+      >
+        {title}
+      </h2>
+      <h3 className="text-xs mb-2 hover:underline">
         {/* TODO change this link to a like to the profile page of this user */}
         by{" "}
         <span
           className="cursor-pointer"
           onClick={() => {
-            console.log("Search for user id " + author.id);
+            router.push(`/profile/${author.id}`);
           }}
         >
           {author.firstName} {author.lastName}
@@ -161,8 +220,8 @@ const Card: React.FC<CardProps> = ({
         {tags.map((tag, index) => (
           <div
             key={tag.id}
-            onClick={() => console.log(`Search for ${tag.name}, id: ${tag.id}`)}
-            className="px-2 py-1 rounded-full flex items-center justify-center cursor-pointer bg-background_secondary-light dark:bg-background_secondary-dark"
+            className="px-2 py-1 rounded-full flex items-center justify-center bg-background_secondary-light dark:bg-background_secondary-dark
+            "
           >
             <span className="uppercase text-xs" style={{ color: tag.color }}>
               {tag.name}

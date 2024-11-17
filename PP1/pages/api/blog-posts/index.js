@@ -4,15 +4,17 @@
  * links to code templates (either mine or someone else’s).
  */
 
-import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
-import { verifyJWT } from "@/utils/auth";
+import prisma, { PAGINATION_LIMIT, get_skip } from "../../../utils/db";
+import { verifyJWT } from "../../../utils/auth";
+// import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
+// import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
   // Create blog posts
   if (req.method === "POST") {
     const result = verifyJWT(req);
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     // Check if body type is JSON
     console.log(req.headers);
@@ -84,7 +86,7 @@ export default async function handler(req, res) {
   } else if (req.method === "GET") {
     const {
       query = "",
-      languageId,
+      languages,
       tags,
       templateId,
       page = 1,
@@ -100,12 +102,17 @@ export default async function handler(req, res) {
     }
 
     // Check language exists if provided
-    if (languageId) {
-      const language = await prisma.languages.findUnique({
-        where: { id: parseInt(languageId) },
-      });
-      if (!language) {
-        return res.status(400).json({ message: "Language does not exist" });
+    const languageIds = languages
+      ? languages.split(",").map((language) => parseInt(language))
+      : [];
+    if (languages) {
+      for (const languageId of languageIds) {
+        const language = await prisma.languages.findUnique({
+          where: { id: parseInt(languageId) },
+        });
+        if (!language) {
+          return res.status(400).json({ message: "Language does not exist" });
+        }
       }
     }
 
@@ -136,29 +143,32 @@ export default async function handler(req, res) {
     const filters = {};
     if (tags) {
       filters.tags = {
-        every: {
+        some: {
           id: { in: tagIds },
         },
       };
     }
-
-    // filters.OR = [
-    //   { title: { contains: query, lte: "insensitive" } },
-    //   { content: { contains: query, lte: "insensitive" } },
-    // ];
+    if (languages) {
+      filters.Templates = {
+        some: {
+          languageId: { in: languageIds },
+        },
+      };
+    }
 
     filters.OR = [
       { title: { contains: query } },
       { content: { contains: query } },
-    ];
-  
-    if (languageId) {
-      filters.Templates = {
-        some: {
-          languageId: parseInt(languageId),
+      {
+        author: {
+          OR: [
+            { firstName: { contains: query } },
+            { lastName: { contains: query } },
+          ],
         },
-      };
-    }
+      },
+    ];
+
     if (templateId) {
       filters.Templates = {
         some: {

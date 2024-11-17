@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useTheme } from "@/context/ThemeContext";
 
 const ThemeSwitcher: React.FC = () => {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+  const { theme, toggleTheme } = useTheme();
 
   const getSunSvg = () => {
     return (
@@ -39,14 +40,6 @@ const ThemeSwitcher: React.FC = () => {
         />
       </svg>
     );
-  };
-
-  useEffect(() => {
-    document.body.className = theme;
-  }, [theme]);
-
-  const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
   return (
