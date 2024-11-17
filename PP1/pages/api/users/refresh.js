@@ -1,4 +1,4 @@
-import { verifyRefreshToken } from "@/utils/auth";
+import { verifyRefreshToken } from "/utils/auth";
 
 
 export default function handler(req, res) {

@@ -1,5 +1,5 @@
-import prisma from "@/utils/db"
-import { verifyJWT, generateRefreshToken, generateToken } from "@/utils/auth";
+import prisma from "/utils/db"
+import { verifyJWT, generateRefreshToken, generateToken } from "/utils/auth";
 
 export default async function handler(req, res) {
     const result = verifyJWT(req);
