@@ -1,4 +1,6 @@
 import React from "react";
+import { showAlert } from "@/components/Alert";
+import { useRouter } from "next/router";
 
 interface CardProps {
   id: number;
@@ -19,11 +21,60 @@ const Card: React.FC<CardProps> = ({
   rating,
   language,
 }) => {
+  const router = useRouter();
   const truncateDescription = (desc: string) => {
     const cutoffLength = language ? 100 : 250;
     return desc.length > cutoffLength
       ? desc.substring(0, cutoffLength) + "..."
       : desc;
+  };
+
+  const handleUpvote = async () => {
+    try {
+      const response = await fetch(`/api/ratings/blog/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: 2, // TODO: Replace with actual user id
+          action: "upvote",
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          showAlert("You must be logged in to upvote", "error");
+        }
+      }
+      const data = await response.json();
+    } catch (error) {
+      console.error("Error upvoting:", error);
+    }
+  };
+
+  const handleDownvote = async () => {
+    try {
+      const response = await fetch(`/api/ratings/blog/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId: 2, // TODO: Replace with actual user id
+          action: "downvote",
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          showAlert("You must be logged in to downvote", "error");
+        }
+      }
+      const data = await response.json();
+    } catch (error) {
+      console.error("Error upvoting:", error);
+    }
   };
 
   const getForkIcon = () => {
@@ -119,7 +170,7 @@ const Card: React.FC<CardProps> = ({
           <div
             className="h-5 w-5 cursor-pointer"
             onClick={() => {
-              console.log("Upvote");
+              handleUpvote();
             }}
           >
             {getUpvoteIcon()}
@@ -130,7 +181,7 @@ const Card: React.FC<CardProps> = ({
           <div
             className="h-5 w-5 cursor-pointer"
             onClick={() => {
-              console.log("Downvote");
+              handleDownvote();
             }}
           >
             {getDownvoteIcon()}
@@ -142,9 +193,16 @@ const Card: React.FC<CardProps> = ({
   };
 
   return (
-    <div className="relative rounded p-2 h-56 max-w-96 text-text-light dark:text-text-dark border-2 border-text-light dark:border-text-dark bg-element_background-light dark:bg-element_background-dark">
+    <div className="relative rounded p-2 h-56 text-text-light dark:text-text-dark border-2 border-text-light dark:border-text-dark bg-element_background-light dark:bg-element_background-dark">
       {language && renderCodeTemplateSection()}
-      <h2 className="text-xl mb-2">{title}</h2>
+      <h2
+        className="text-xl mb-2 cursor-pointer"
+        onClick={() => {
+          router.push(`/blogs/${id}`);
+        }}
+      >
+        {title}
+      </h2>
       <h3 className="text-xs mb-2">
         {/* TODO change this link to a like to the profile page of this user */}
         by{" "}

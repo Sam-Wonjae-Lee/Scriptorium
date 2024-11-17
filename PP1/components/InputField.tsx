@@ -72,7 +72,7 @@ const InputField: React.FC<InputFieldProps> = ({
   };
 
   return (
-    <div className="flex-row justify-between w-full relative mb-4 h-10 md:h-12">
+    <div className="flex-row justify-between w-full relative h-10 md:h-12">
       <p
         className={`${
           hasError && errorMessage ? "" : "hidden"

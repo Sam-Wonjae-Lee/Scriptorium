@@ -4,15 +4,17 @@
  * links to code templates (either mine or someone else’s).
  */
 
-import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
-import { verifyJWT } from "@/utils/auth";
+import prisma, { PAGINATION_LIMIT, get_skip } from "../../../utils/db";
+import { verifyJWT } from "../../../utils/auth";
+// import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
+// import { verifyJWT } from "@/utils/auth";
 
 export default async function handler(req, res) {
   // Create blog posts
   if (req.method === "POST") {
     const result = verifyJWT(req);
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     // Check if body type is JSON
     console.log(req.headers);
@@ -151,7 +153,7 @@ export default async function handler(req, res) {
       { title: { contains: query } },
       { content: { contains: query } },
     ];
-  
+
     if (languageId) {
       filters.Templates = {
         some: {
