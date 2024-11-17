@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     const result = verifyJWT(req);
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     // Check if body type is JSON
     if (req.headers["content-type"] !== "application/json") {
@@ -71,7 +71,33 @@ export default async function handler(req, res) {
 
     res.status(201).json(template);
   } else if (req.method === "GET") {
-    const { query = "", languageId, tags, page = 1 } = req.query;
+    const { query = "", languageId, tags, authorId, page = 1 } = req.query;
+
+    // Check that author exists if provided
+    if (authorId) {
+      const author = await prisma.users.findUnique({
+        where: { id: parseInt(authorId) },
+      });
+      if (!author) {
+        return res.status(400).json({ message: "Author does not exist" });
+      }
+
+      // Get many instances
+      const blogPosts = await prisma.blogs.findMany({
+        where: { authorId: parseInt(authorId) },
+        include: {
+          tags: true,
+          Templates: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
+      });
+
+      return res.status(200).json(blogPosts);
+    }
 
     const languageIdInt = parseInt(languageId);
     const tagsArray = tags ? tags.split(",") : [];
@@ -114,9 +140,9 @@ export default async function handler(req, res) {
     }
 
     filters.OR = [
-      { title: { contains: query} },
-      { explanation: { contains: query} },
-      { code: { contains: query} },
+      { title: { contains: query } },
+      { explanation: { contains: query } },
+      { code: { contains: query } },
     ];
 
     if (languageId) filters.languageId = languageIdInt;
