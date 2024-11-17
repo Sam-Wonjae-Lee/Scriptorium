@@ -159,6 +159,14 @@ export default async function handler(req, res) {
     filters.OR = [
       { title: { contains: query } },
       { content: { contains: query } },
+      {
+        author: {
+          OR: [
+            { firstName: { contains: query } },
+            { lastName: { contains: query } },
+          ],
+        },
+      },
     ];
 
     if (templateId) {

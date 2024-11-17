@@ -59,7 +59,9 @@ const Blogs = () => {
 
   const fetchLanguages = async () => {
     try {
-      const response = await fetch(`/api/languages?query=${languageQuery}`);
+      // This pretty much only exists for c++
+      const formattedQuery = languageQuery.split("+").join("%2B");
+      const response = await fetch(`/api/languages?query=${formattedQuery}`);
       const data = await response.json();
       setLanguages(data);
     } catch (error) {
@@ -74,7 +76,6 @@ const Blogs = () => {
         .join(",")}&languages=${selectedLanguages
         .map((language) => language.id)
         .join(",")}&sortBy=${sortBy}`;
-      console.log(query);
       const response = await fetch(query);
       const data = await response.json();
       setBlogs(data.blogPosts);
@@ -130,7 +131,7 @@ const Blogs = () => {
                 onQueryChange={setLanguageQuery}
               />
             </div>
-            <div className="w-62">
+            <div className="flex flex-grow">
               <Dropdown
                 options={sortTypes}
                 selectedOption={sortBy}

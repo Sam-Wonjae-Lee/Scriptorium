@@ -41,8 +41,8 @@ const Dropdown: React.FC<DropdownProps> = ({
        ${
          isOpen
            ? "rounded-t-22 border-hot_pink-normal dark:border-hot_pink-normal"
-           : "rounded-22 border-text-light dark:border-text-dark"
-       }  text-text-light dark:text-text-dark p-2 w-44`}
+           : "rounded-22 border-text-light dark:border-text-dark cursor-pointer"
+       }  text-text-light dark:text-text-dark p-2 w-44 select-none`}
       ref={dropdownRef}
     >
       <div
@@ -55,16 +55,16 @@ const Dropdown: React.FC<DropdownProps> = ({
         <div
           // FIXME: I legit couldnt get this to work with tailwind, so I had to use inline styles
           style={{ left: "-1px" }}
-          className={`absolute w-44 rounded-b-22 p-2 bottom-0 translate-y-full z-50 border-2 ${
+          className={`absolute w-44 rounded-b-22  bottom-0 translate-y-full z-50 border-2 ${
             isOpen
               ? "border-hot_pink-normal dark:border-hot_pink-normal"
               : "border-text-light dark:border-text-dark"
-          } bg-background-light dark:bg-background-dark flex flex-col gap-2 `}
+          } bg-background-light dark:bg-background-dark flex flex-col gap-2 overflow-hidden`}
         >
           {options.map((option) => (
             <div
               key={option}
-              className="px-2 rounded-full cursor-pointer select-none"
+              className="px-4 py-1 cursor-pointer select-none hover:bg-background_secondary-light dark:hover:bg-background_secondary-dark"
               onClick={() => handleOptionClick(option)}
             >
               {option}
