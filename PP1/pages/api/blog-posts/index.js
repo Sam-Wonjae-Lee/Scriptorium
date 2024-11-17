@@ -91,7 +91,34 @@ export default async function handler(req, res) {
       templateId,
       page = 1,
       sortBy = "upvotes",
+      authorId,
     } = req.query;
+
+    // Check that author exists if provided
+    if (authorId) {
+      const author = await prisma.users.findUnique({
+        where: { id: parseInt(authorId) },
+      });
+      if (!author) {
+        return res.status(400).json({ message: "Author does not exist" });
+      }
+
+      // Get many instances
+      const blogPosts = await prisma.blogs.findMany({
+        where: { authorId: parseInt(authorId) },
+        include: {
+          tags: true,
+          Templates: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
+      });
+
+      return res.status(200).json(blogPosts);
+    }
 
     // Check that sortBy is valid
     if (!sortBy in ["upvotes", "downvotes", "controversial"]) {
