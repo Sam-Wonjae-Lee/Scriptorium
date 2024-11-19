@@ -20,7 +20,7 @@ interface Template {
     title: string;
     explanation: string;
     author: { id: number; firstName: string; lastName: string };
-    code: string;
+    languageId: number;
 }
 
 const Home = () => {
@@ -29,6 +29,19 @@ const Home = () => {
     const [trendingBlogs, setTrendingBlogs] = useState<Blog[]>([]);
     const [controversialBlogs, setControversialBlogs] = useState<Blog[]>([]);
     const [templates, setTemplates] = useState<Template[]>([]);
+    
+    // Convert template languageId to language name
+    const [languages, setLanguages] = useState<{[key: number]: string}>({});
+
+    const getLanguage = async (langaugeId: number) => {
+        try {
+            const response = await fetch(`/api/languages/${langaugeId}`);
+            const data = await response.json();
+            setLanguages((prev) => ({ ...prev, [langaugeId]: data.name }));
+        } catch (error) {
+            console.error("Error getting language:", error);
+        }
+    };    
 
     const getTrendingBlogs = async () => {
         try {
@@ -131,18 +144,18 @@ const Home = () => {
                     <h2 className="text-xl font-bold mb-4">Templates</h2>
                     <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
                         <div className="inline-flex gap-4 pb-4 w-max">
-                            {templates?.map((template) => (
-                                <div key={template.id} className="w-[300px] shrink-0">
-                                    <Card
-                                        id={template.id}
-                                        title={template.title}
-                                        author={template.author}
-                                        description={template.explanation}
-                                        // language={template.languageId}
-                                        tags={[]}
-                                    />
-                                </div>
-                            ))}
+                        {templates?.map((template) => (
+                            <div key={template.id} className="w-[300px] shrink-0">
+                                <Card
+                                    id={template.id}
+                                    title={template.title}
+                                    author={template.author}
+                                    description={template.explanation}
+                                    language={languages[template.languageId]}
+                                    tags={[]}
+                                />
+                            </div>
+                        ))}
                         </div>
                     </div>
                 </section>
