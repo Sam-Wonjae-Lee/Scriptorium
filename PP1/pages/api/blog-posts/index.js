@@ -84,6 +84,10 @@ export default async function handler(req, res) {
 
     res.status(201).json(blogPost);
   } else if (req.method === "GET") {
+
+    // const result = verifyJWT(req);
+    // const userId = result.id;
+
     const {
       query = "",
       languages,

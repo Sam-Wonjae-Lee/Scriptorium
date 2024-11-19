@@ -18,22 +18,17 @@ interface Blog {
 interface Template {
     id: number;
     title: string;
-    content: string;
+    explanation: string;
     author: { id: number; firstName: string; lastName: string };
-    tags: { id: number; name: string; color: string }[];
-    numUpvotes: number;
-    numDownvotes: number;
-    language: string;
+    code: string;
 }
 
 const Home = () => {
     const scrollbarHideClass = "scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']";
 
     const [trendingBlogs, setTrendingBlogs] = useState<Blog[]>([]);
-    const [trendingTemplates, setTrendingTemplates] = useState<Template[]>([]);
-
     const [controversialBlogs, setControversialBlogs] = useState<Blog[]>([]);
-    const [controversialTemplates, setControversialTemplates] = useState<Template[]>([]);
+    const [templates, setTemplates] = useState<Template[]>([]);
 
     const getTrendingBlogs = async () => {
         try {
@@ -55,12 +50,26 @@ const Home = () => {
         }
     };
 
+    const getTemplates = async () => {
+        try {
+            const response = await fetch('/api/code-templates/templates');
+            const data = await response.json();
+            setTemplates(data.templates);
+        } catch (error) {
+            console.error("Error getting templates:", error);
+        }
+    };
+
     useEffect(() => {
         getTrendingBlogs();
     }, []);
 
     useEffect(() => {
         getControversialBlogs();
+    }, []);
+
+    useEffect(() => {
+        getTemplates();
     }, []);
 
     return (
@@ -92,28 +101,6 @@ const Home = () => {
                     </div>
                 </section>
 
-                {/* Trending Templates Section */}
-                <section className="w-full p-4 bg-pink-200">
-                    <h2 className="text-xl font-bold mb-4">Trending Templates</h2>
-                    <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
-                        <div className="inline-flex gap-4 pb-4 w-max">
-                            {[1, 2, 3, 4, 5].map((index) => (
-                                <div key={index} className="w-[300px] shrink-0">
-                                    <Card
-                                        id={index}
-                                        title="Trapping Rainwater"
-                                        author={{ firstName: "John", lastName: "Smith", id: 1 }}
-                                        description="lorem ipsum dolor sit amet"
-                                        tags={[
-                                            { name: "hard", color: "#FF0000", id: 1 },
-                                            { name: "array", color: "#00FF00", id: 2 },
-                                        ]}
-                                    />
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
 
                 {/* Controversial Blogs Section */}
                 <section className="w-full p-4 bg-pink-200">
@@ -139,22 +126,20 @@ const Home = () => {
                     </div>
                 </section>
 
-                {/* Controversial Templates Section */}
+                {/* Templates Section */}
                 <section className="w-full p-4 bg-pink-200">
-                    <h2 className="text-xl font-bold mb-4">Controversial Templates</h2>
+                    <h2 className="text-xl font-bold mb-4">Templates</h2>
                     <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
                         <div className="inline-flex gap-4 pb-4 w-max">
-                            {[1, 2, 3, 4, 5].map((index) => (
-                                <div key={index} className="w-[300px] shrink-0">
+                            {templates?.map((template) => (
+                                <div key={template.id} className="w-[300px] shrink-0">
                                     <Card
-                                        id={index}
-                                        title="Trapping Rainwater"
-                                        author={{ firstName: "John", lastName: "Smith", id: 1 }}
-                                        description="lorem ipsum dolor sit amet"
-                                        tags={[
-                                            { name: "hard", color: "#FF0000", id: 1 },
-                                            { name: "array", color: "#00FF00", id: 2 },
-                                        ]}
+                                        id={template.id}
+                                        title={template.title}
+                                        author={template.author}
+                                        description={template.explanation}
+                                        // language={template.languageId}
+                                        tags={[]}
                                     />
                                 </div>
                             ))}

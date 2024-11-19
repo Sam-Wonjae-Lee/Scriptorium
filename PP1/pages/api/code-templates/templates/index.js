@@ -153,6 +153,16 @@ export default async function handler(req, res) {
 
     const templates = await prisma.templates.findMany({
       where: filters,
+      include: {
+        author: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            avatar: true,
+          },
+        },
+      },
       skip: skip,
       take: PAGINATION_LIMIT,
     });

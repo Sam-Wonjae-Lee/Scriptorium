@@ -60,7 +60,7 @@ const NavBar: React.FC = () => {
                 </svg>
               </button>
               <div className="ml-4 flex items-center">
-                <span className="text-xl font-bold text-black-600">Scriptorium</span>
+                <span className="text-base sm:text-sm md:text-base lg:text-xl font-bold text-black-600">Scriptorium</span>
               </div>
             </div>
 
