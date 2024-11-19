@@ -7,3 +7,20 @@ export type Option = {
 export type Tag = { name: string; color: string; id: number };
 
 export type Rating = { upvotes: number; downvotes: number };
+
+export type User = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  avatar: string;
+};
+
+export interface Comment {
+  id: number;
+  user: User;
+  content: string;
+  numUpvotes: number;
+  numDownvotes: number;
+  Comments: { id: number }[];
+  replies: Comment[];
+}

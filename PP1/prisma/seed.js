@@ -123,7 +123,7 @@ async function main() {
       title: "How to solve Two Sum",
       authorId: 2,
       content:
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla nec pur",
+        "# Introduction\n   *This* is a **solution** to the [Two Sum problem](https://leetcode.com/problems/two-sum/)\n\n# Code\n    ```python\n    def two_sum(nums, target):\n        for i in range(len(nums)):\n            for j in range(i + 1, len(nums)):\n                if nums[i] + nums[j] == target:\n                    return [i, j]\n    ```\n## Explanation\n    The code above is a ***brute force*** solution to the __Two Sum problem__ `print('Hello World')`\n|Method|Complexity|\n|-------------|------------|\n|Brute Force|O(n^2)|\n|Hashmap|O(n)|\n\n# Conclusion\n    In conclusion, the brute force solution is not the most efficient solution to the Two Sum problem",
       tags: [2, 3],
       templates: [1],
       numUpvotes: 15,
@@ -157,6 +157,39 @@ async function main() {
     });
   }
 }
+
+// const parentComment = await prisma.comments.create({
+//   data: {
+//     blogId: 2,
+//     userId: 1,
+//     content: "Two Sum is a classic problem",
+//   },
+// });
+
+// await prisma.comments.createMany({
+//   data: [
+//     {
+//       blogId: 2,
+//       userId: 1,
+//       content: "Two Sum is a classic problem",
+//     },
+//     {
+//       content: "I totally agree haha",
+//       userId: 2,
+//       blogId: 2,
+//     },
+//     {
+//       content: "Yeah, but have you seen Three Sum?",
+//       userId: 3,
+//       blogId: 2,
+//     },
+//     {
+//       content: "Cool blog man",
+//       userId: 3,
+//       blogId: 2,
+//     },
+//   ],
+// });
 
 main()
   .then(async () => {

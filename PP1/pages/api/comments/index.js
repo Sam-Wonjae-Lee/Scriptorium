@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   if (req.method === "POST") {
     const result = verifyJWT(req);
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     const { content, blogId, parentCommentid } = req.body;
     const newUserId = parseInt(result.id);
@@ -73,7 +73,11 @@ export default async function handler(req, res) {
             avatar: true,
           },
         },
-        Comments: false,
+        Comments: {
+          select: {
+            id: true,
+          },
+        },
       },
       skip: get_skip(page, PAGINATION_LIMIT),
       take: PAGINATION_LIMIT,

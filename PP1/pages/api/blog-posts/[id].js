@@ -14,6 +14,7 @@ export default async function handler(req, res) {
       const blogPost = await prisma.blogs.findUnique({
         where: { id: parseInt(id) },
         include: {
+          author: { select: { id: true, firstName: true, lastName: true } },
           tags: true,
           Templates: true,
           Comments: true,
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
   else if (req.method === "PUT") {
     const result = verifyJWT(req);
     if (!result) {
-      return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     const { title, authorId, content, tagIds, templateIds } = req.body;
 
@@ -129,7 +130,7 @@ export default async function handler(req, res) {
   else if (req.method === "DELETE") {
     const result = verifyJWT(req);
     if (!result) {
-      return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     try {
       // Check if blog exists
