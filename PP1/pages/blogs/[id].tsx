@@ -6,27 +6,29 @@ import InputField from "@/components/InputField";
 import { Comment } from "@/utils/types";
 import CommentRenderer from "@/components/CommentRenderer";
 import { get } from "http";
-import { getSendIcon } from "@/utils/svg";
+import { getReportIcon, getSendIcon } from "@/utils/svg";
 import { showAlert } from "@/components/Alert";
-
-interface Blog {
-  id: number;
-  title: string;
-  content: string;
-  author: { id: number; firstName: string; lastName: string };
-  tags: { id: number; name: string; color: string }[];
-  numUpvotes: number;
-  numDownvotes: number;
-  Templates: { id: number; title: string; languageId: number }[];
-}
+import BlogRatingSection from "@/components/BlogRatingSection";
+import { BlogType } from "@/utils/types";
+import ReportModal from "@/components/ReportModal";
+import Dropdown from "@/components/Dropdown";
 
 const Blog = () => {
   const router = useRouter();
   const { id } = router.query;
 
-  const [blog, setBlog] = useState<Blog | null>(null);
+  const [blog, setBlog] = useState<BlogType | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentInput, setCommentInput] = useState("");
+
+  const [reportModalIsOpen, setReportModalIsOpen] = useState(false);
+
+  const [commentSortBy, setCommentSortBy] = useState("upvotes");
+
+  // Pagination states
+  const [page, setPage] = useState(1);
+  const [hasMoreComments, setHasMoreComments] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
 
   const fetchBlog = async () => {
     try {
@@ -38,16 +40,39 @@ const Blog = () => {
     }
   };
 
-  const fetchComments = async () => {
+  const fetchComments = async (currentPage: number) => {
     try {
-      const response = await fetch(`/api/comments?blogId=${id}`);
+      setIsFetching(true);
+      console.log(commentSortBy);
+      const response = await fetch(
+        `/api/comments?blogId=${id}&page=${currentPage}&sortBy=${commentSortBy}`
+      );
       const data = await response.json();
       for (const comment of data.comments) {
         await fetchReplies(comment);
       }
-      setComments(data.comments);
+      setComments((prevComments) => [...prevComments, ...data.comments]);
+      setHasMoreComments(
+        data.pagination.currentPage < data.pagination.totalPages
+      );
+      setIsFetching(false);
     } catch (error) {
       console.error("Error fetching comments:", error);
+    }
+  };
+
+  const handleScroll = () => {
+    if (!hasMoreComments || isFetching) {
+      console.log("No more comments to fetch");
+      return;
+    }
+
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+
+    if (scrollTop + clientHeight >= scrollHeight - 20) {
+      setPage((prevPage) => prevPage + 1);
     }
   };
 
@@ -81,7 +106,7 @@ const Blog = () => {
     );
   };
 
-  const renderBlog = (blog: Blog) => {
+  const renderBlog = (blog: BlogType) => {
     return (
       <div className="text-text-light dark:text-text-dark">
         <h1 className="text-3xl font-bold">{blog.title}</h1>
@@ -93,6 +118,16 @@ const Blog = () => {
         >
           By {blog.author.firstName} {blog.author.lastName}{" "}
         </p>
+        <div className="flex gap-2 mb-4">
+          <BlogRatingSection blog={blog} />
+          <div
+            className="flex gap-2 p-2 rounded-full cursor-pointer hover:bg-background_secondary-light dark:hover:bg-background_secondary-dark"
+            onClick={() => setReportModalIsOpen(true)}
+          >
+            <div>{getReportIcon()}</div>
+            <span>Report</span>
+          </div>
+        </div>
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
           {blog.tags.map((tag) => (
@@ -107,7 +142,7 @@ const Blog = () => {
         </div>
 
         {/* Templates */}
-        <div className="flex flex-wrap gap-2 mt-2 mb-6">
+        <div className="flex flex-wrap gap-2 mt-2 pb-4 mb-2  border-b border-text-light dark:border-text-dark">
           <h2>Linked Code Templates</h2>
           {blog.Templates.map((template) => (
             <span
@@ -126,13 +161,33 @@ const Blog = () => {
       </div>
     );
   };
+  // TODO fix comment pagination with sortby
+  useEffect(() => {
+    setComments([]);
+    setPage(1);
+    fetchComments(page);
+  }, [commentSortBy]);
 
   useEffect(() => {
     if (id) {
       fetchBlog();
-      fetchComments();
+      fetchComments(page);
     }
   }, [id]);
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchComments(page);
+    }
+  }, [page]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [hasMoreComments, isFetching]);
 
   const handleSendReply = async () => {
     try {
@@ -160,8 +215,53 @@ const Blog = () => {
     }
   };
 
+  const handleBlogReportSubmit = async (
+    reportType: string,
+    description: string
+  ) => {
+    try {
+      const response = await fetch(`/api/content-monitoring/reports/blog`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+        body: JSON.stringify({
+          blogId: id,
+          reportId: reportType,
+          explanation: description,
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          showAlert("You must be logged in to report", "error");
+          return;
+        }
+
+        if (response.status === 409) {
+          showAlert("You have already reported this blog", "error");
+          return;
+        }
+
+        showAlert("Failed to report blog", "error");
+        return;
+      }
+      showAlert("Blog reported successfully", "success");
+    } catch (error) {
+      console.error("Error reporting blog:", error);
+    }
+  };
+
   return (
     <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
+      <ReportModal
+        show={reportModalIsOpen}
+        onHide={() => setReportModalIsOpen(false)}
+        onSubmit={(reportType, description) => {
+          handleBlogReportSubmit(reportType, description);
+        }}
+      />
       <div className="absolute top-0 left-0">
         <ThemeSwitcher />
       </div>
@@ -173,7 +273,6 @@ const Blog = () => {
             Comments
           </h2>
           <div className="mt-4">
-            {/* TODO add button in input field */}
             <InputField
               placeholder="Write a comment..."
               value={commentInput}
@@ -188,6 +287,13 @@ const Blog = () => {
                 },
               ]}
             />
+            <div>
+              <Dropdown
+                options={["upvotes", "downvotes", "controversial"]}
+                selectedOption={commentSortBy}
+                setSelectedOption={setCommentSortBy}
+              />
+            </div>
             {comments && blog ? (
               <CommentRenderer comments={comments} blogId={blog.id} />
             ) : (

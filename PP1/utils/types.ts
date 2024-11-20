@@ -29,3 +29,14 @@ export interface ReportType {
   id: string;
   message: string;
 }
+
+export interface BlogType {
+  id: number;
+  title: string;
+  content: string;
+  author: { id: number; firstName: string; lastName: string };
+  tags: { id: number; name: string; color: string }[];
+  numUpvotes: number;
+  numDownvotes: number;
+  Templates: { id: number; title: string; languageId: number }[];
+}

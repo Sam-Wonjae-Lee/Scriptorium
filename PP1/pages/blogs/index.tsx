@@ -5,21 +5,12 @@ import Card from "@/components/Card";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import { Option } from "@/utils/types";
 import Dropdown from "@/components/Dropdown";
-
-interface Blog {
-  id: number;
-  title: string;
-  content: string;
-  author: { id: number; firstName: string; lastName: string };
-  tags: { id: number; name: string; color: string }[];
-  numUpvotes: number;
-  numDownvotes: number;
-}
+import { BlogType } from "@/utils/types";
 
 const Blogs = () => {
   const [blogQuery, setBlogQuery] = useState("");
 
-  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [blogs, setBlogs] = useState<BlogType[]>([]);
 
   // Tags
   const [selectedTags, setSelectedTags] = useState<Option[]>([]);
@@ -153,12 +144,9 @@ const Blogs = () => {
                     lastName: blog.author.lastName,
                     id: blog.author.id,
                   }}
-                  description={blog.content}
+                  description={""}
                   tags={blog.tags}
-                  rating={{
-                    upvotes: blog.numUpvotes,
-                    downvotes: blog.numDownvotes,
-                  }}
+                  blog={blog}
                 />
               </div>
             ))}

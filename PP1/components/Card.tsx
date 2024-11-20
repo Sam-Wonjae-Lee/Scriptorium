@@ -1,7 +1,8 @@
 import React from "react";
 import { showAlert } from "@/components/Alert";
 import { useRouter } from "next/router";
-import { Rating, Tag } from "@/utils/types";
+import { BlogType, Rating, Tag } from "@/utils/types";
+import BlogRatingSection from "./BlogRatingSection";
 
 interface CardProps {
   id: number;
@@ -9,8 +10,9 @@ interface CardProps {
   author: { firstName: string; lastName: string; id: number };
   description: string;
   tags: Tag[];
-  rating?: Rating;
+  ratings?: Rating;
   language?: string;
+  blog?: BlogType;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -19,8 +21,9 @@ const Card: React.FC<CardProps> = ({
   author,
   description,
   tags,
-  rating,
+  ratings,
   language,
+  blog,
 }) => {
   const router = useRouter();
   const truncateDescription = (desc: string) => {
@@ -177,7 +180,7 @@ const Card: React.FC<CardProps> = ({
           >
             {getUpvoteIcon()}
           </div>
-          <span>{rating?.upvotes}</span>
+          <span>{ratings?.upvotes}</span>
         </div>
         <div className="flex items-center gap-1">
           <div
@@ -188,7 +191,7 @@ const Card: React.FC<CardProps> = ({
           >
             {getDownvoteIcon()}
           </div>
-          <span>{rating?.downvotes}</span>
+          <span>{ratings?.downvotes}</span>
         </div>
       </div>
     );
@@ -231,7 +234,12 @@ const Card: React.FC<CardProps> = ({
         ))}
       </div>
       <p className="text-sm">{truncateDescription(description)}</p>
-      {rating && renderRatingSection()}
+
+      {blog && (
+        <div className="absolute bottom-2 right-3">
+          <BlogRatingSection blog={blog} />
+        </div>
+      )}
     </div>
   );
 };
