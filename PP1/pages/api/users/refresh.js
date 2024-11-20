@@ -2,7 +2,7 @@ import { verifyRefreshToken } from "/utils/auth";
 
 
 export default function handler(req, res) {
-    if (req.method === "POST") {
+    if (req.method === "GET") {
         const newToken = verifyRefreshToken(req);
         if (newToken) {
             res.status(200).json({ accessToken: newToken });

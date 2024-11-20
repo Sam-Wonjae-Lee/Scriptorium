@@ -23,7 +23,8 @@ export default async function handler(req, res) {
                 const refreshToken = generateRefreshToken(payload);
                 res.setHeader('Set-Cookie', cookie.serialize('refreshToken', refreshToken, {
                     httpOnly: true,
-                    secure: false // change to true in production
+                    secure: false, // change to true in production
+                    path: "/"
                   }));
                 res.status(200).json({"accessToken": token});
             }

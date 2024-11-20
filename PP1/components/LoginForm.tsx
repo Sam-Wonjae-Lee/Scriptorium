@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRouter } from "next/router";
 import InputField from "./InputField";
 import ActionButton from "./ActionButton";
 import { isValidEmail } from "../utils/validation";
@@ -8,6 +9,8 @@ const USER_NOTEXISTS_MSG : string = "User Not Found";
 const PASS_ERR_MSG : string = "Invalid Password";
 
 const LoginForm = () => {
+    
+    const router = useRouter();
 
     const [email, setEmail] = useState("");
     const [emailError, setEmailError] = useState(false);
@@ -42,7 +45,8 @@ const LoginForm = () => {
         }
         else {
             sessionStorage.setItem('accessToken', data.accessToken);
-            console.log(data);
+            // timeout for cookies to go in browser 
+            setTimeout(() => router.push("/home"), 100); 
         }
     }
 
