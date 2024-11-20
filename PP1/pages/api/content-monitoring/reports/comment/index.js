@@ -4,9 +4,8 @@ import { verifyJWT } from "@/utils/auth";
 export default async function handler(req, res) {
   if (req.method === "POST") {
     const result = verifyJWT(req);
-    console.log(result);
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     // Check body is json
     if (req.headers["content-type"] !== "application/json") {
@@ -17,7 +16,7 @@ export default async function handler(req, res) {
     const { commentId, reportId, explanation } = req.body;
 
     // Check fields are not empty
-    if (!commentId || !explanation || !reportId) {
+    if (!commentId || !reportId) {
       res.status(400).json({ message: "Invalid Fields" });
       return;
     }
@@ -73,7 +72,7 @@ export default async function handler(req, res) {
         commentId: Number(commentId),
         userId: Number(result.id),
         reportId: Number(reportId),
-        explanation
+        explanation: explanation || "",
       },
     });
 
@@ -81,10 +80,10 @@ export default async function handler(req, res) {
   } else if (req.method === "GET") {
     const result = verifyJWT(req);
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     if (result.role != "ADMIN") {
-      return res.status(403).json({"error": "Lack of permissions"});
+      return res.status(403).json({ error: "Lack of permissions" });
     }
     const { content, authorFirstName, authorLastName, page = 1 } = req.query;
 

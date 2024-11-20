@@ -24,3 +24,8 @@ export interface Comment {
   Comments: { id: number }[];
   replies: Comment[];
 }
+
+export interface ReportType {
+  id: string;
+  message: string;
+}

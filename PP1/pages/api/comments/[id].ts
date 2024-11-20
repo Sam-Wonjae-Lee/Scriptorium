@@ -13,8 +13,7 @@ export default async function handler(
         where: {
           id: Number(id),
         },
-        select: {
-          content: true,
+        include: {
           user: {
             select: {
               id: true,
@@ -23,8 +22,6 @@ export default async function handler(
               avatar: true,
             },
           },
-          numUpvotes: true,
-          numDownvotes: true,
           Comments: { select: { id: true } },
         },
       });

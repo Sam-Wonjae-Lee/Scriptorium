@@ -1,5 +1,5 @@
 /**
- * THIS FILE IS FOR TESTING ONLY 
+ * THIS FILE IS FOR TESTING ONLY
  * DO NOT MARK THIS FILE
  */
 
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
 
     res.status(201).json(report);
   } else if (req.method === "GET") {
-    const { message, page = 1 } = req.query;
+    const { message = "", page = 1 } = req.query;
 
     const reports = await prisma.reports.findMany({
       where: {

@@ -5,6 +5,9 @@ import MarkdownFormatter from "@/components/MarkdownFormatter";
 import InputField from "@/components/InputField";
 import { Comment } from "@/utils/types";
 import CommentRenderer from "@/components/CommentRenderer";
+import { get } from "http";
+import { getSendIcon } from "@/utils/svg";
+import { showAlert } from "@/components/Alert";
 
 interface Blog {
   id: number;
@@ -39,7 +42,6 @@ const Blog = () => {
     try {
       const response = await fetch(`/api/comments?blogId=${id}`);
       const data = await response.json();
-      console.log(data.comments);
       for (const comment of data.comments) {
         await fetchReplies(comment);
       }
@@ -92,11 +94,12 @@ const Blog = () => {
           By {blog.author.firstName} {blog.author.lastName}{" "}
         </p>
         {/* Tags */}
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-4">
           {blog.tags.map((tag) => (
             <span
               key={tag.id}
-              className="bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded-lg text-sm select-none"
+              className="px-2 py-1 rounded-lg text-sm select-none"
+              style={{ backgroundColor: tag.color }}
             >
               {tag.name}
             </span>
@@ -104,11 +107,15 @@ const Blog = () => {
         </div>
 
         {/* Templates */}
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="flex flex-wrap gap-2 mt-2 mb-6">
+          <h2>Linked Code Templates</h2>
           {blog.Templates.map((template) => (
             <span
               key={template.id}
-              className="bg-gray-200 dark:bg-gray-800 px-2 py-1 rounded-lg text-sm select-none"
+              className="bg-element_background-light dark:bg-element_background-dark px-2 py-1 rounded-lg text-sm select-none cursor-pointer hover:"
+              onClick={() => {
+                router.push(`/templates/${template.id}`);
+              }}
             >
               {template.title}
             </span>
@@ -126,6 +133,32 @@ const Blog = () => {
       fetchComments();
     }
   }, [id]);
+
+  const handleSendReply = async () => {
+    try {
+      console.log("Sending reply");
+      const response = await fetch(`/api/comments/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          content: commentInput,
+          blogId: id,
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          showAlert("You must be logged in to reply", "error");
+        }
+      }
+      const data = response.json();
+    } catch (error) {
+      console.error("Error replying:", error);
+    }
+  };
 
   return (
     <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
@@ -145,9 +178,18 @@ const Blog = () => {
               placeholder="Write a comment..."
               value={commentInput}
               onChangeText={setCommentInput}
+              buttonActions={[
+                {
+                  icon: getSendIcon(),
+                  label: "Send",
+                  onClick: () => {
+                    handleSendReply();
+                  },
+                },
+              ]}
             />
-            {comments ? (
-              <CommentRenderer comments={comments} />
+            {comments && blog ? (
+              <CommentRenderer comments={comments} blogId={blog.id} />
             ) : (
               renderLoading()
             )}

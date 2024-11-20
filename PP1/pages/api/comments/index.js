@@ -12,7 +12,7 @@ export default async function handler(req, res) {
     if (!result) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-    const { content, blogId, parentCommentid } = req.body;
+    const { content, blogId, parentCommentId } = req.body;
     const newUserId = parseInt(result.id);
     const newBlogId = parseInt(blogId);
 
@@ -25,8 +25,8 @@ export default async function handler(req, res) {
       const comment = await prisma.comments.create({
         data: {
           content,
-          parentComment: parentCommentid
-            ? { connect: { id: parentCommentid } }
+          parentComment: parentCommentId
+            ? { connect: { id: parentCommentId } }
             : undefined,
           blog: { connect: { id: newBlogId } }, // Always connect to the blog
           user: { connect: { id: newUserId } },
@@ -73,12 +73,14 @@ export default async function handler(req, res) {
             avatar: true,
           },
         },
+
         Comments: {
           select: {
             id: true,
           },
         },
       },
+
       skip: get_skip(page, PAGINATION_LIMIT),
       take: PAGINATION_LIMIT,
     });

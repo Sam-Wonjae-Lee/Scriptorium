@@ -2,24 +2,98 @@ import React, { useState, useEffect } from "react";
 import { Comment } from "@/utils/types";
 import { showAlert } from "./Alert";
 import InputField from "./InputField";
+import { getCancelIcon, getReportIcon, getSendIcon } from "@/utils/svg";
+import ReportModal from "@/components/ReportModal";
 
 interface CommentRendererProps {
   comments: Comment[];
+  blogId: number;
 }
 
-const RenderComments: React.FC<CommentRendererProps> = ({ comments }) => {
+const RenderComments: React.FC<CommentRendererProps> = ({
+  comments,
+  blogId,
+}) => {
   const [openedReply, setOpenedReply] = useState<number | null>(null);
   const [replyContent, setReplyContent] = useState<string>("");
+  const [commentRatings, setCommentRatings] = useState<{
+    [key: number]: number;
+  }>({});
+  const [commentUpvotes, setCommentUpvotes] = useState<{
+    [key: number]: number;
+  }>({});
+  const [commentDownvotes, setCommentDownvotes] = useState<{
+    [key: number]: number;
+  }>({});
+
+  const [reportModalIsOpen, setReportModalIsOpen] = useState(false);
+  const [reportingCommentId, setReportingCommentId] = useState<number>(0);
 
   useEffect(() => {
-    console.log("open reply " + openedReply);
-  }, [openedReply]);
+    const fetchRatings = async () => {
+      const ratings: { [key: number]: number } = {};
 
-  const getDownvoteIcon = () => {
+      const exploreComments = async (comments: Comment[]) => {
+        for (const comment of comments) {
+          const rating = await getCommentRating(comment.id);
+          ratings[comment.id] = rating;
+          if (comment.replies && comment.replies.length > 0) {
+            await exploreComments(comment.replies);
+          }
+        }
+      };
+
+      await exploreComments(comments);
+      setCommentRatings(ratings);
+    };
+
+    const fetchUpvotes = async () => {
+      const upvotes: { [key: number]: number } = {};
+
+      const exploreComments = async (comments: Comment[]) => {
+        for (const comment of comments) {
+          const upvote = comment.numUpvotes;
+          upvotes[comment.id] = upvote;
+          if (comment.replies && comment.replies.length > 0) {
+            await exploreComments(comment.replies);
+          }
+        }
+      };
+
+      await exploreComments(comments);
+      setCommentUpvotes(upvotes);
+    };
+
+    const fetchDownvotes = async () => {
+      const downvotes: { [key: number]: number } = {};
+
+      const exploreComments = async (comments: Comment[]) => {
+        for (const comment of comments) {
+          const downvote = comment.numDownvotes;
+          downvotes[comment.id] = downvote;
+          if (comment.replies && comment.replies.length > 0) {
+            await exploreComments(comment.replies);
+          }
+        }
+      };
+
+      await exploreComments(comments);
+      setCommentDownvotes(downvotes);
+    };
+
+    fetchUpvotes();
+    fetchDownvotes();
+
+    fetchRatings();
+  }, [comments]);
+
+  const getDownvoteIcon = (rating: number) => {
     return (
       <svg
         fill="currentColor"
-        className="text-text-light dark:text-text-dark"
+        className={`${
+          rating == -1 ? "text-red-500" : "text-text-light dark:text-text-dark"
+        }`}
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -28,11 +102,13 @@ const RenderComments: React.FC<CommentRendererProps> = ({ comments }) => {
     );
   };
 
-  const getUpvoteIcon = () => {
+  const getUpvoteIcon = (rating: number) => {
     return (
       <svg
         fill="currentColor"
-        className="text-text-light dark:text-text-dark"
+        className={`${
+          rating == 1 ? "text-green-500" : "text-text-light dark:text-text-dark"
+        }`}
         viewBox="0 0 24 24"
         xmlns="http://www.w3.org/2000/svg"
       >
@@ -62,49 +138,124 @@ const RenderComments: React.FC<CommentRendererProps> = ({ comments }) => {
 
   const handleUpvote = async (id: number) => {
     try {
+      const action = commentRatings[id] === 1 ? "remove-upvote" : "upvote";
+
       const response = await fetch(`/api/ratings/comment/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({
-          userId: 2, // TODO: Replace with actual user id
-          action: "upvote",
+          action: action,
         }),
       });
 
       if (!response.ok) {
         if (response.status === 401) {
           showAlert("You must be logged in to upvote", "error");
+          return;
         }
       }
-      const data = await response.json();
+
+      if (commentRatings[id] === -1) {
+        setCommentDownvotes({
+          ...commentDownvotes,
+          [id]: commentDownvotes[id] - 1,
+        });
+        setCommentUpvotes({
+          ...commentUpvotes,
+          [id]: commentUpvotes[id] + 1,
+        });
+      } else if (commentRatings[id] === 0) {
+        setCommentUpvotes({
+          ...commentUpvotes,
+          [id]: commentUpvotes[id] + 1,
+        });
+      } else {
+        setCommentUpvotes({
+          ...commentUpvotes,
+          [id]: commentUpvotes[id] - 1,
+        });
+      }
+
+      setCommentRatings({
+        ...commentRatings,
+        [id]: commentRatings[id] === 1 ? 0 : 1,
+      });
     } catch (error) {
       console.error("Error upvoting:", error);
+      showAlert("Error upvoting", "error");
     }
   };
 
   const handleDownvote = async (id: number) => {
     try {
+      const action = commentRatings[id] === -1 ? "remove-downvote" : "downvote";
+
       const response = await fetch(`/api/ratings/comment/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({
-          userId: 2, // TODO: Replace with actual user id
-          action: "downvote",
+          action: action,
         }),
       });
 
       if (!response.ok) {
         if (response.status === 401) {
           showAlert("You must be logged in to downvote", "error");
+          return;
         }
       }
-      const data = await response.json();
+
+      if (commentRatings[id] === -1) {
+        setCommentDownvotes({
+          ...commentDownvotes,
+          [id]: commentDownvotes[id] - 1,
+        });
+      } else if (commentRatings[id] === 0) {
+        setCommentDownvotes({
+          ...commentDownvotes,
+          [id]: commentDownvotes[id] + 1,
+        });
+      } else {
+        setCommentDownvotes({
+          ...commentDownvotes,
+          [id]: commentDownvotes[id] + 1,
+        });
+        setCommentUpvotes({
+          ...commentUpvotes,
+          [id]: commentUpvotes[id] - 1,
+        });
+      }
+
+      setCommentRatings({
+        ...commentRatings,
+        [id]: commentRatings[id] === -1 ? 0 : -1,
+      });
     } catch (error) {
-      console.error("Error upvoting:", error);
+      console.error("Error downvoting:", error);
+      showAlert("Error upvoting", "error");
+    }
+  };
+
+  const getCommentRating = async (id: number) => {
+    try {
+      const response = await fetch(`/api/ratings/comment/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+
+      const data = await response.json();
+      return data.rating;
+    } catch (error) {
+      console.error("Error getting comment rating data:", error);
     }
   };
 
@@ -113,25 +264,25 @@ const RenderComments: React.FC<CommentRendererProps> = ({ comments }) => {
       <div className="flex gap-2">
         <div className="flex items-center gap-1">
           <div
-            className="h-5 w-5 cursor-pointer hover:scale-105 transform transition-transform hover:bg-background_secondary-light dark:hover:bg-background_secondary-dark rounded-full"
+            className="h-5 w-5 cursor-pointer hover:scale-110 transform transition-transform rounded-full"
             onClick={() => {
               handleUpvote(comment.id);
             }}
           >
-            {getUpvoteIcon()}
+            {getUpvoteIcon(commentRatings[comment.id])}
           </div>
-          <span>{comment.numUpvotes}</span>
+          <span>{commentUpvotes[comment.id]}</span>
         </div>
         <div className="flex items-center gap-1">
           <div
-            className="h-5 w-5 cursor-pointer hover:scale-105 transform transition-transform"
+            className="h-5 w-5 cursor-pointer hover:scale-110 transform transition-transform"
             onClick={() => {
               handleDownvote(comment.id);
             }}
           >
-            {getDownvoteIcon()}
+            {getDownvoteIcon(commentRatings[comment.id])}
           </div>
-          <span>{comment.numDownvotes}</span>
+          <span>{commentDownvotes[comment.id]}</span>
         </div>
       </div>
     );
@@ -139,14 +290,16 @@ const RenderComments: React.FC<CommentRendererProps> = ({ comments }) => {
 
   const handleSendReply = async (comment: Comment) => {
     try {
-      const response = await fetch(`/api/comments/${comment.id}/reply`, {
+      const response = await fetch(`/api/comments/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({
-          userId: 2, // TODO: Replace with actual user id
-          content: "This is a reply",
+          content: replyContent,
+          blogId: blogId,
+          parentCommentId: comment.id,
         }),
       });
 
@@ -161,10 +314,51 @@ const RenderComments: React.FC<CommentRendererProps> = ({ comments }) => {
     }
   };
 
+  const handleCommentReportSubmit = async (
+    reportType: string,
+    description: string
+  ) => {
+    try {
+      const response = await fetch(`/api/content-monitoring/reports/comment`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+        body: JSON.stringify({
+          commentId: reportingCommentId,
+          reportId: reportType,
+          explanation: description,
+        }),
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          showAlert("You must be logged in to report", "error");
+          return;
+        }
+
+        if (response.status === 409) {
+          showAlert("You have already reported this comment", "error");
+          return;
+        }
+
+        showAlert("Failed to report comment", "error");
+        return;
+      }
+      showAlert("Comment reported successfully", "success");
+    } catch (error) {
+      console.error("Error reporting comment:", error);
+    }
+  };
+
   const renderReplies = (replies: Comment[]): JSX.Element[] => {
     return replies.map((reply) => (
-      <div key={reply.id} className="ml-6 border-l border-gray-300 pl-4 mt-2">
-        <div className="flex flex-col p-4">
+      <div
+        key={reply.id}
+        className="ml-6 border-l border-text-light dark:border-text-dark pl-4 mt-2"
+      >
+        <div className="flex flex-col p-2">
           <p className="font-semibold">
             {reply.user.firstName} {reply.user.lastName}:
           </p>
@@ -180,14 +374,41 @@ const RenderComments: React.FC<CommentRendererProps> = ({ comments }) => {
               <div>{getChatIcon()}</div>
               <span>Reply</span>
             </div>
+            <div
+              className="flex items-center gap-2 cursor-pointer hover:bg-background_secondary-light dark:hover:bg-background_secondary-dark py-1 px-2 rounded-full"
+              onClick={() => {
+                setReportModalIsOpen(true);
+                setReportingCommentId(reply.id);
+              }}
+            >
+              <div>{getReportIcon()}</div>
+              <span>Report</span>
+            </div>
           </div>
         </div>
         {openedReply === reply.id && (
-          <div className="mt-2" key={reply.id}>
+          <div className="mb-2" key={reply.id}>
             <InputField
               placeholder="Write your reply..."
               value={replyContent}
               onChangeText={setReplyContent}
+              buttonActions={[
+                {
+                  icon: getCancelIcon(),
+                  label: "Cancel",
+                  onClick: () => {
+                    setOpenedReply(null);
+                    setReplyContent("");
+                  },
+                },
+                {
+                  icon: getSendIcon(),
+                  label: "Send",
+                  onClick: () => {
+                    handleSendReply(reply);
+                  },
+                },
+              ]}
             />
           </div>
         )}
@@ -200,24 +421,72 @@ const RenderComments: React.FC<CommentRendererProps> = ({ comments }) => {
 
   return (
     <div>
+      <ReportModal
+        show={reportModalIsOpen}
+        onHide={() => setReportModalIsOpen(false)}
+        onSubmit={(reportType, description) => {
+          handleCommentReportSubmit(reportType, description);
+        }}
+      />
       {comments.map((comment) => (
         <div
           key={comment.id}
           className="py-4 text-text-light dark:text-text-dark"
         >
-          <div className="flex flex-col p-4">
+          <div className="flex flex-col p-2">
             <p className="font-bold">
               {comment.user.firstName} {comment.user.lastName}:
             </p>
             <p>{comment.content}</p>
             <div className="flex items-center gap-2 text-sm mt-2">
               {renderRatingSection(comment)}
-              <div className="flex items-center gap-2 cursor-pointer hover:bg-background_secondary-light dark:hover:bg-background_secondary-dark py-1 px-2 rounded-full">
+              <div
+                className="flex items-center gap-2 cursor-pointer hover:bg-background_secondary-light dark:hover:bg-background_secondary-dark py-1 px-2 rounded-full"
+                onClick={() => {
+                  setOpenedReply(comment.id);
+                }}
+              >
                 <div>{getChatIcon()}</div>
                 <span>Reply</span>
               </div>
+              <div
+                className="flex items-center gap-2 cursor-pointer hover:bg-background_secondary-light dark:hover:bg-background_secondary-dark py-1 px-2 rounded-full"
+                onClick={() => {
+                  setReportModalIsOpen(true);
+                  setReportingCommentId(comment.id);
+                }}
+              >
+                <div>{getReportIcon()}</div>
+                <span>Report</span>
+              </div>
             </div>
           </div>
+          {openedReply === comment.id && (
+            <div className="mb-4" key={comment.id}>
+              <InputField
+                placeholder="Write your reply..."
+                value={replyContent}
+                onChangeText={setReplyContent}
+                buttonActions={[
+                  {
+                    icon: getCancelIcon(),
+                    label: "Cancel",
+                    onClick: () => {
+                      setOpenedReply(null);
+                      setReplyContent("");
+                    },
+                  },
+                  {
+                    icon: getSendIcon(),
+                    label: "Send",
+                    onClick: () => {
+                      handleSendReply(comment);
+                    },
+                  },
+                ]}
+              />
+            </div>
+          )}
           {comment.replies && comment.replies.length > 0 && (
             <div className="mt-2">{renderReplies(comment.replies)}</div>
           )}
