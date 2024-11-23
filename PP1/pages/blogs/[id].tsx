@@ -163,6 +163,7 @@ const Blog = () => {
   };
 
   useEffect(() => {
+    console.log("fetching comments");
     setComments([]);
     setPage(1);
     fetchComments(1);

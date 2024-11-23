@@ -43,14 +43,8 @@ const Blogs = () => {
     console.log("fetching blogs");
     setBlogs([]);
     setPage(1);
-    fetchBlogs(page);
+    fetchBlogs(1);
   }, [blogQuery, selectedTags, selectedLanguages, sortBy]);
-
-  // useEffect(() => {
-  //   setBlogs([]);
-  //   setPage(1);
-  //   fetchBlogs(1);
-  // }, [sortBy]);
 
   useEffect(() => {
     if (page > 1) {
@@ -96,11 +90,17 @@ const Blogs = () => {
         .join(",")}&languages=${selectedLanguages
         .map((language) => language.id)
         .join(",")}&sortBy=${sortBy}`;
-
       const response = await fetch(query);
       const data = await response.json();
 
-      setBlogs((prevBlogs) => [...prevBlogs, ...data.blogPosts]);
+      setBlogs((prevBlogs) => {
+        const newBlogs = [...prevBlogs, ...data.blogPosts];
+        const uniqueBlogs = newBlogs.filter(
+          (blog, index, self) =>
+            index === self.findIndex((b) => b.id === blog.id)
+        );
+        return uniqueBlogs;
+      });
       setHasMoreBlogs(data.pagination.currentPage < data.pagination.totalPages);
       setIsFetching(false);
     } catch (error) {
@@ -129,7 +129,6 @@ const Blogs = () => {
     const clientHeight = document.documentElement.clientHeight;
 
     if (scrollTop + clientHeight >= scrollHeight - 20) {
-      console.log("BBBBBBBBBBBBBBBBB");
       setPage((prevPage) => prevPage + 1);
     }
   };
