@@ -137,8 +137,6 @@ const Blogs = () => {
     <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
       <div className="absolute top-0 left-0">
         <ThemeSwitcher />
-        <button onClick={() => console.log(page)}>Page</button>
-        <button onClick={() => console.log(blogs)}>Blogs</button>
       </div>
       <div className="max-w-900 w-900">
         <section className="w-full my-12">
