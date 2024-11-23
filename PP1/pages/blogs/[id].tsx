@@ -5,7 +5,6 @@ import MarkdownFormatter from "@/components/MarkdownFormatter";
 import InputField from "@/components/InputField";
 import { Comment } from "@/utils/types";
 import CommentRenderer from "@/components/CommentRenderer";
-import { get } from "http";
 import { getReportIcon, getSendIcon } from "@/utils/svg";
 import { showAlert } from "@/components/Alert";
 import BlogRatingSection from "@/components/BlogRatingSection";
@@ -41,9 +40,11 @@ const Blog = () => {
   };
 
   const fetchComments = async (currentPage: number) => {
+    if (!id) {
+      return;
+    }
     try {
       setIsFetching(true);
-      console.log(commentSortBy);
       const response = await fetch(
         `/api/comments?blogId=${id}&page=${currentPage}&sortBy=${commentSortBy}`
       );
@@ -63,7 +64,6 @@ const Blog = () => {
 
   const handleScroll = () => {
     if (!hasMoreComments || isFetching) {
-      console.log("No more comments to fetch");
       return;
     }
 
@@ -161,11 +161,11 @@ const Blog = () => {
       </div>
     );
   };
-  // TODO fix comment pagination with sortby
+
   useEffect(() => {
     setComments([]);
     setPage(1);
-    fetchComments(page);
+    fetchComments(1);
   }, [commentSortBy]);
 
   useEffect(() => {
@@ -191,7 +191,6 @@ const Blog = () => {
 
   const handleSendReply = async () => {
     try {
-      console.log("Sending reply");
       const response = await fetch(`/api/comments/`, {
         method: "POST",
         headers: {
@@ -287,7 +286,7 @@ const Blog = () => {
                 },
               ]}
             />
-            <div>
+            <div className="mt-4">
               <Dropdown
                 options={["upvotes", "downvotes", "controversial"]}
                 selectedOption={commentSortBy}

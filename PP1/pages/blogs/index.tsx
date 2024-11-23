@@ -26,6 +26,11 @@ const Blogs = () => {
   const [sortBy, setSortBy] = useState("upvotes");
   const sortTypes = ["upvotes", "downvotes", "controversial"];
 
+  // Pagination states
+  const [page, setPage] = useState(1);
+  const [hasMoreBlogs, setHasMoreBlogs] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
+
   useEffect(() => {
     fetchTags();
   }, [tagQuery]);
@@ -35,8 +40,31 @@ const Blogs = () => {
   }, [languageQuery]);
 
   useEffect(() => {
-    fetchBlogs();
+    console.log("fetching blogs");
+    setBlogs([]);
+    setPage(1);
+    fetchBlogs(page);
   }, [blogQuery, selectedTags, selectedLanguages, sortBy]);
+
+  // useEffect(() => {
+  //   setBlogs([]);
+  //   setPage(1);
+  //   fetchBlogs(1);
+  // }, [sortBy]);
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchBlogs(page);
+    }
+  }, [page]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [hasMoreBlogs, isFetching]);
 
   const fetchTags = async () => {
     try {
@@ -60,18 +88,49 @@ const Blogs = () => {
     }
   };
 
-  const fetchBlogs = async () => {
+  const fetchBlogs = async (currentPage: number) => {
     try {
-      const query = `/api/blog-posts?query=${blogQuery}&tags=${selectedTags
+      setIsFetching(true);
+      const query = `/api/blog-posts?query=${blogQuery}&page=${currentPage}&tags=${selectedTags
         .map((tag) => tag.id)
         .join(",")}&languages=${selectedLanguages
         .map((language) => language.id)
         .join(",")}&sortBy=${sortBy}`;
+
       const response = await fetch(query);
       const data = await response.json();
-      setBlogs(data.blogPosts);
+
+      setBlogs((prevBlogs) => [...prevBlogs, ...data.blogPosts]);
+      setHasMoreBlogs(data.pagination.currentPage < data.pagination.totalPages);
+      setIsFetching(false);
     } catch (error) {
       console.error("Error fetching blogs:", error);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (!isFetching && hasMoreBlogs) {
+  //     const scrollHeight = document.documentElement.scrollHeight;
+  //     const clientHeight = document.documentElement.clientHeight;
+
+  //     // If content is smaller than the viewport
+  //     if (scrollHeight <= clientHeight) {
+  //       console.log("AAAAAAAAAAAAAAAAAAAA");
+  //       setPage((prevPage) => prevPage + 1);
+  //     }
+  //   }
+  // }, [blogs, isFetching, hasMoreBlogs]);
+
+  const handleScroll = () => {
+    if (isFetching || !hasMoreBlogs) return;
+
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+
+    if (scrollTop + clientHeight >= scrollHeight - 20) {
+      console.log("BBBBBBBBBBBBBBBBB");
+      setPage((prevPage) => prevPage + 1);
     }
   };
 
@@ -79,6 +138,8 @@ const Blogs = () => {
     <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
       <div className="absolute top-0 left-0">
         <ThemeSwitcher />
+        <button onClick={() => console.log(page)}>Page</button>
+        <button onClick={() => console.log(blogs)}>Blogs</button>
       </div>
       <div className="max-w-900 w-900">
         <section className="w-full my-12">

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import hljs from "highlight.js";
 import javascript from "highlight.js/lib/languages/javascript";
 import python from "highlight.js/lib/languages/python";
@@ -6,9 +6,14 @@ import c from "highlight.js/lib/languages/c";
 import cpp from "highlight.js/lib/languages/cpp";
 import java from "highlight.js/lib/languages/java";
 
+const supportedLanguages = ["javascript", "python", "c", "cpp", "java"];
+
 type MarkdownRendererProps = {
   content: string;
 };
+
+// TODO fix table
+// TODO add bullet points
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   const parseMarkdown = (markdown: string): string => {
@@ -18,20 +23,8 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
     hljs.registerLanguage("cpp", cpp);
     hljs.registerLanguage("java", java);
 
-    // Escape HTML entities to prevent XSS
-    const escapeHtml = (str: string) =>
-      str
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-    // Parsing order matters to avoid collisions!
-    const escaped = escapeHtml(markdown);
-
     // Bold Italic
-    let html = escaped.replace(
+    let html = markdown.replace(
       /\*\*\*(.*?)\*\*\*/g,
       "<strong><em>$1</em></strong>"
     );
@@ -47,6 +40,9 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
 
     // Code blocks (multiline)
     html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
+      if (!supportedLanguages.includes(lang)) {
+        lang = "plaintext";
+      }
       const highlightedCode = hljs.highlight(code, {
         language: lang,
       }).value;

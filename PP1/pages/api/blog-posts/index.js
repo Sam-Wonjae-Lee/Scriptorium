@@ -20,8 +20,9 @@ export default async function handler(req, res) {
     console.log(req.headers);
     console.log(req.headers["content-type"]);
 
-    // WHY THE FUCK IS CONTENT TYPE UNDEFINED
+    // WHY THE heck IS CONTENT TYPE UNDEFINED
     if (req.headers["content-type"] !== "application/json") {
+      console.log("content type is not json");
       res
         .status(400)
         .json({ message: "Content-Type must be application/json" });
@@ -40,6 +41,7 @@ export default async function handler(req, res) {
       where: { id: parseInt(result.id) },
     });
     if (!author) {
+      console.log("author does not exist");
       return res.status(400).json({ message: "Author does not exist" });
     }
 
@@ -50,6 +52,7 @@ export default async function handler(req, res) {
           where: { id: parseInt(tagId) },
         });
         if (!tag) {
+          console.log("tag does not exist");
           return res.status(400).json({ message: "Tag does not exist" });
         }
       }
@@ -62,6 +65,7 @@ export default async function handler(req, res) {
           where: { id: parseInt(templateId) },
         });
         if (!template) {
+          console.log("template does not exist");
           return res.status(400).json({ message: "Template does not exist" });
         }
       }
