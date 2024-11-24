@@ -17,6 +17,7 @@ const EditBlog = () => {
     "markdown"
   );
   const [helpModalIsOpen, setHelpModalIsOpen] = useState(false);
+  const [blogExists, setBlogExists] = useState<boolean>(true);
 
   const [title, setTitle] = useState<string>("");
   const [titleHasError, setTitleHasError] = useState<boolean>(false);
@@ -47,6 +48,10 @@ const EditBlog = () => {
       const data = await response.json();
 
       if (!response.ok) {
+        if (response.status === 404) {
+          setBlogExists(false);
+          return;
+        }
         showAlert("Error fetching blog post", "error");
         return;
       }
@@ -147,6 +152,15 @@ const EditBlog = () => {
     fetchTemplates();
   }, [templateQuery]);
 
+  const render404 = () => {
+    return (
+      <div className="w-full text-text-light dark:text-text-dark mt-10 flex flex-col gap-2 items-center justify-center">
+        <div className="text-3xl font-bold">404</div>
+        <div className="text-2xl">Blog not found</div>
+      </div>
+    );
+  };
+
   const renderHelpModal = () => {
     return (
       <div
@@ -198,13 +212,9 @@ const EditBlog = () => {
     );
   };
 
-  return (
-    <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
-      <div className="absolute top-0 left-0">
-        <ThemeSwitcher />
-      </div>
-      {renderHelpModal()}
-      <div className="max-w-3xl mx-auto p-4 w-900">
+  const renderEditBlog = () => {
+    return (
+      <>
         <h1 className="text-3xl font-bold mb-6 text-text-light dark:text-text-dark">
           Edit Blog
         </h1>
@@ -308,6 +318,18 @@ const EditBlog = () => {
         <div className="flex justify-center mt-4">
           <ActionButton text="Edit Blog" onClick={handleEditBlog} />
         </div>
+      </>
+    );
+  };
+
+  return (
+    <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
+      <div className="absolute top-0 left-0">
+        <ThemeSwitcher />
+      </div>
+      {renderHelpModal()}
+      <div className="max-w-3xl mx-auto p-4 w-900">
+        {blogExists ? renderEditBlog() : render404()}
       </div>
     </main>
   );

@@ -17,6 +17,7 @@ const Blog = () => {
   const { id } = router.query;
 
   const [blog, setBlog] = useState<BlogType | null>(null);
+  const [blogExists, setBlogExists] = useState(true);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentInput, setCommentInput] = useState("");
 
@@ -33,6 +34,15 @@ const Blog = () => {
     try {
       const response = await fetch(`/api/blog-posts/${id}`);
       const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status == 404) {
+          setBlogExists(false);
+          return;
+        }
+        showAlert("Error fetching blog", "error");
+        return;
+      }
       setBlog(data);
     } catch (error) {
       console.error("Error fetching blog:", error);
@@ -49,6 +59,14 @@ const Blog = () => {
         `/api/comments?blogId=${id}&page=${currentPage}&sortBy=${commentSortBy}`
       );
       const data = await response.json();
+
+      if (!response.ok) {
+        if (response.status !== 404) {
+          showAlert("Error fetching comments", "error");
+        }
+        return;
+      }
+
       for (const comment of data.comments) {
         await fetchReplies(comment);
       }
@@ -96,6 +114,15 @@ const Blog = () => {
     } catch (error) {
       console.error("Error fetching comment:", error);
     }
+  };
+
+  const render404 = () => {
+    return (
+      <div className="w-full text-text-light dark:text-text-dark mt-10 flex flex-col gap-2 items-center justify-center">
+        <div className="text-3xl font-bold">404</div>
+        <div className="text-2xl">Blog not found</div>
+      </div>
+    );
   };
 
   const renderLoading = () => {
@@ -266,7 +293,7 @@ const Blog = () => {
         <ThemeSwitcher />
       </div>
       <section className="w-900 py-10">
-        {blog ? renderBlog(blog) : renderLoading()}
+        {blog ? renderBlog(blog) : blogExists ? renderLoading() : render404()}
         {/* Comment Section */}
         <div className="mt-10 border-t py-5">
           <h2 className="text-3xl font-bold text-text-light dark:text-text-dark">
@@ -296,8 +323,10 @@ const Blog = () => {
             </div>
             {comments && blog ? (
               <CommentRenderer comments={comments} blogId={blog.id} />
-            ) : (
+            ) : blogExists ? (
               renderLoading()
+            ) : (
+              <></>
             )}
           </div>
         </div>
