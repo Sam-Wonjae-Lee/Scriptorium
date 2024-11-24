@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import cookie from 'cookie';
 
 const SALT_ROUNDS = 10;
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -47,12 +48,13 @@ export function verifyJWT(req) {
 };
 
 export function verifyRefreshToken(req) {
-    const token = req.body.refreshToken;
-    if (!token) {
+    const cookies = cookie.parse(req.headers.cookie || ''); 
+    const refreshToken = cookies.refreshToken;
+    if (!refreshToken) {
         return null;
     }
     try {
-      const {expiresAt, exp, iat, ...newDecoded} = jwt.verify(token, JWT_REFRESH_SECRET);
+      const {expiresAt, exp, iat, ...newDecoded} = jwt.verify(refreshToken, JWT_REFRESH_SECRET);
       console.log(newDecoded)
       const newToken = generateToken(newDecoded);
       return newToken;
