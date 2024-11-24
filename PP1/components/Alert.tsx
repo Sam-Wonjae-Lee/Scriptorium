@@ -11,7 +11,7 @@ const Alert: React.FC<AlertProps> = ({ message, type }) => {
   return (
     <div
       className={`flex justify-between items-center gap-2 fixed p-2 top-2 z-50 left-1/2 -translate-x-1/2 border-2 rounded border-text-light dark:border-text-dark`}
-    >
+    > 
       <div className="w-6 h-6">{getTypeIcon(type)}</div>
       <div className="text-text-light dark:text-text-dark">{message}</div>
     </div>

@@ -42,7 +42,7 @@ export default async function handler(req, res) {
 async function executeCode(req, identifier) {
     let executableArgs;
     let execProgram;
-    let compilerWarnings;
+    let compilerWarnings = "";
     console.log(identifier);
     await fs.mkdir(`./client_files/${identifier}`);
     const srcPath = `./client_files/${identifier}/${identifier}.${req.body.language}`;
