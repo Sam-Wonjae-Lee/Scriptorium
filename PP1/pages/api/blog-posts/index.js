@@ -20,8 +20,9 @@ export default async function handler(req, res) {
     console.log(req.headers);
     console.log(req.headers["content-type"]);
 
-    // WHY THE FUCK IS CONTENT TYPE UNDEFINED
+    // WHY THE heck IS CONTENT TYPE UNDEFINED
     if (req.headers["content-type"] !== "application/json") {
+      console.log("content type is not json");
       res
         .status(400)
         .json({ message: "Content-Type must be application/json" });
@@ -40,6 +41,7 @@ export default async function handler(req, res) {
       where: { id: parseInt(result.id) },
     });
     if (!author) {
+      console.log("author does not exist");
       return res.status(400).json({ message: "Author does not exist" });
     }
 
@@ -50,6 +52,7 @@ export default async function handler(req, res) {
           where: { id: parseInt(tagId) },
         });
         if (!tag) {
+          console.log("tag does not exist");
           return res.status(400).json({ message: "Tag does not exist" });
         }
       }
@@ -62,6 +65,7 @@ export default async function handler(req, res) {
           where: { id: parseInt(templateId) },
         });
         if (!template) {
+          console.log("template does not exist");
           return res.status(400).json({ message: "Template does not exist" });
         }
       }
@@ -203,10 +207,9 @@ export default async function handler(req, res) {
         },
       };
     }
-    filters.isFlagged = false;
 
     // Get many instances
-    const blogPosts = await prisma.blogs.findMany({
+    let blogPosts = await prisma.blogs.findMany({
       where: filters,
       include: {
         tags: true,
@@ -225,8 +228,6 @@ export default async function handler(req, res) {
           },
         },
         Comments: true,
-        isFlagged: false,
-        numReports: false,
       },
       skip: get_skip(page, PAGINATION_LIMIT),
       take: PAGINATION_LIMIT,
@@ -253,6 +254,21 @@ export default async function handler(req, res) {
         (a, b) =>
           b.numUpvotes - b.numDownvotes - (a.numUpvotes - a.numDownvotes)
       );
+    }
+
+    // Check if user is logged in to specify owned blog posts
+    const result = verifyJWT(req);
+    if (result) {
+      blogPosts.forEach((post) => {
+        post.owned = post.authorId === parseInt(result.id);
+      });
+      blogPosts = blogPosts.filter(
+        (post) =>
+          (post.isFlagged && post.authorId === parseInt(result.id)) ||
+          !post.isFlagged
+      );
+    } else {
+      blogPosts = blogPosts.filter((post) => !post.isFlagged);
     }
 
     const totalBlogPosts = await prisma.blogs.count({ where: filters });

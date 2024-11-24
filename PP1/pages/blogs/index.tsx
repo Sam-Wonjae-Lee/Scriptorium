@@ -5,21 +5,16 @@ import Card from "@/components/Card";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import { Option } from "@/utils/types";
 import Dropdown from "@/components/Dropdown";
-
-interface Blog {
-  id: number;
-  title: string;
-  content: string;
-  author: { id: number; firstName: string; lastName: string };
-  tags: { id: number; name: string; color: string }[];
-  numUpvotes: number;
-  numDownvotes: number;
-}
+import { BlogType } from "@/utils/types";
+import { useRouter } from "next/router";
+import { showAlert } from "@/components/Alert";
+import ActionButton from "@/components/ActionButton";
 
 const Blogs = () => {
+  const router = useRouter();
   const [blogQuery, setBlogQuery] = useState("");
 
-  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [blogs, setBlogs] = useState<BlogType[]>([]);
 
   // Tags
   const [selectedTags, setSelectedTags] = useState<Option[]>([]);
@@ -35,6 +30,18 @@ const Blogs = () => {
   const [sortBy, setSortBy] = useState("upvotes");
   const sortTypes = ["upvotes", "downvotes", "controversial"];
 
+  // Pagination states
+  const [page, setPage] = useState(1);
+  const [hasMoreBlogs, setHasMoreBlogs] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
+
+  // Delete modal
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
+  const [deleteBlogId, setDeleteBlogId] = useState<number | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [deleteConfirmationHasError, setDeleteConfirmationHasError] =
+    useState(false);
+
   useEffect(() => {
     fetchTags();
   }, [tagQuery]);
@@ -44,8 +51,24 @@ const Blogs = () => {
   }, [languageQuery]);
 
   useEffect(() => {
-    fetchBlogs();
+    setBlogs([]);
+    setPage(1);
+    fetchBlogs(1);
   }, [blogQuery, selectedTags, selectedLanguages, sortBy]);
+
+  useEffect(() => {
+    if (page > 1) {
+      fetchBlogs(page);
+    }
+  }, [page]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [hasMoreBlogs, isFetching]);
 
   const fetchTags = async () => {
     try {
@@ -69,19 +92,126 @@ const Blogs = () => {
     }
   };
 
-  const fetchBlogs = async () => {
+  const fetchBlogs = async (currentPage: number) => {
     try {
-      const query = `/api/blog-posts?query=${blogQuery}&tags=${selectedTags
+      setIsFetching(true);
+      const query = `/api/blog-posts?query=${blogQuery}&page=${currentPage}&tags=${selectedTags
         .map((tag) => tag.id)
         .join(",")}&languages=${selectedLanguages
         .map((language) => language.id)
         .join(",")}&sortBy=${sortBy}`;
-      const response = await fetch(query);
+      const response = await fetch(query, {
+        headers: {
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
       const data = await response.json();
-      setBlogs(data.blogPosts);
+
+      setBlogs((prevBlogs) => {
+        const newBlogs = [...prevBlogs, ...data.blogPosts];
+        const uniqueBlogs = newBlogs.filter(
+          (blog, index, self) =>
+            index === self.findIndex((b) => b.id === blog.id)
+        );
+        return uniqueBlogs;
+      });
+      setHasMoreBlogs(data.pagination.currentPage < data.pagination.totalPages);
+      setIsFetching(false);
     } catch (error) {
       console.error("Error fetching blogs:", error);
     }
+  };
+
+  const handleScroll = () => {
+    if (isFetching || !hasMoreBlogs) return;
+
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = document.documentElement.clientHeight;
+
+    if (scrollTop + clientHeight >= scrollHeight - 20) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    setDeleteConfirmationHasError(false);
+    if (deleteConfirmation !== "CONFIRM") {
+      setDeleteConfirmationHasError(true);
+      return;
+    }
+    handleCloseDeleteModal();
+
+    try {
+      const response = await fetch(`/api/blog-posts/${id}`, {
+        method: "DELETE",
+        headers: {
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          showAlert("You must be logged in to delete a blog", "error");
+          return;
+        }
+        showAlert("Error deleting blog", "error");
+        return;
+      } else {
+        setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== id));
+        showAlert("Blog deleted successfully", "success");
+      }
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+    }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalIsOpen(false);
+    setDeleteConfirmation("");
+    setDeleteBlogId(null);
+    setDeleteConfirmationHasError(false);
+  };
+
+  const renderDeleteModal = () => {
+    return (
+      <div
+        className="fixed z-40 inset-0 flex items-center justify-center bg-black bg-opacity-50"
+        onClick={handleCloseDeleteModal}
+      >
+        <div
+          className="w-96 bg-background-light dark:bg-background-dark border border-text-light dark:border-text-dark rounded-xl p-6 shadow-lg flex flex-col items-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 className="text-lg font-bold mb-4 text-text-light dark:text-text-dark">
+            Are you sure you would like to delete this blog?
+          </h2>
+          <div className="w-10/12 mb-4">
+            <InputField
+              placeholder="Type CONFIRM to delete this blog"
+              value={deleteConfirmation}
+              onChangeText={setDeleteConfirmation}
+              hasError={deleteConfirmationHasError}
+              errorMessage="You must type CONFIRM"
+            />
+          </div>
+
+          <div className="flex justify-center gap-2">
+            <ActionButton
+              onClick={() => handleDelete(deleteBlogId!)}
+              text="Submit"
+              size="small"
+            />
+            <ActionButton
+              onClick={handleCloseDeleteModal}
+              text="Cancel"
+              size="small"
+              secondaryButton
+            />
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -89,6 +219,8 @@ const Blogs = () => {
       <div className="absolute top-0 left-0">
         <ThemeSwitcher />
       </div>
+      {deleteModalIsOpen && renderDeleteModal()}
+
       <div className="max-w-900 w-900">
         <section className="w-full my-12">
           {/* Page search section */}
@@ -153,11 +285,14 @@ const Blogs = () => {
                     lastName: blog.author.lastName,
                     id: blog.author.id,
                   }}
-                  description={blog.content}
+                  description={""}
                   tags={blog.tags}
-                  rating={{
-                    upvotes: blog.numUpvotes,
-                    downvotes: blog.numDownvotes,
+                  blog={blog}
+                  owned={blog.owned}
+                  handleEdit={(id) => router.push(`/blogs/${id}/edit`)}
+                  handleDelete={(id) => {
+                    setDeleteBlogId(id);
+                    setDeleteModalIsOpen(true);
                   }}
                 />
               </div>
