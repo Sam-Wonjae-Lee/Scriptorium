@@ -32,6 +32,11 @@ const Blog = () => {
 
   const fetchBlog = async () => {
     try {
+      if (isNaN(Number(id))) {
+        setBlogExists(false);
+        return;
+      }
+
       const response = await fetch(`/api/blog-posts/${id}`);
       const data = await response.json();
 
@@ -51,6 +56,11 @@ const Blog = () => {
 
   const fetchComments = async (currentPage: number) => {
     if (!id) {
+      return;
+    }
+
+    if (isNaN(Number(id))) {
+      setBlogExists(false);
       return;
     }
     try {

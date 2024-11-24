@@ -7,8 +7,10 @@ import { Option } from "@/utils/types";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import { showAlert } from "@/components/Alert";
 import { getInfoIcon } from "@/utils/svg";
+import { useRouter } from "next/router";
 
 const CreateBlog = () => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<"markdown" | "preview">(
     "markdown"
   );
@@ -94,12 +96,13 @@ const CreateBlog = () => {
         showAlert("Error creating blog", "error");
         return;
       }
+      showAlert("Blog created successfully", "success");
+      const data = await response.json();
+      router.push(`/blogs/${data.id}`);
     } catch (error) {
       console.error("Error creating blog:", error);
       showAlert("Error creating blog", "error");
     }
-
-    showAlert("Blog created successfully", "success");
   };
 
   useEffect(() => {

@@ -44,6 +44,11 @@ const EditBlog = () => {
 
   const fetchBlogPost = async () => {
     try {
+      if (isNaN(Number(id))) {
+        setBlogExists(false);
+        return;
+      }
+
       const response = await fetch(`/api/blog-posts/${id}`);
       const data = await response.json();
 
