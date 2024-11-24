@@ -32,7 +32,7 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <div className="w-full mb-8">
+    <div className="w-full mb-14">
         {/* Main Nav Bar */}
         <nav className="fixed top-0 left-0 right-0 flex items-center justify-between h-14 px-4 bg-light_pink-darken border-b z-10">
             {/* Left Section */}

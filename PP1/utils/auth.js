@@ -55,7 +55,9 @@ export function verifyRefreshToken(req) {
     }
     try {
       const {expiresAt, exp, iat, ...newDecoded} = jwt.verify(refreshToken, JWT_REFRESH_SECRET);
+      console.log("LOL\n")
       console.log(newDecoded)
+      console.log("LOL\n")
       const newToken = generateToken(newDecoded);
       return newToken;
     } catch (error) {
