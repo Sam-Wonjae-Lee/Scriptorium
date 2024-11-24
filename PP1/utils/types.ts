@@ -23,6 +23,8 @@ export interface Comment {
   numDownvotes: number;
   Comments: { id: number }[];
   replies: Comment[];
+  isFlagged: boolean;
+  owned?: boolean;
 }
 
 export interface ReportType {
@@ -39,4 +41,6 @@ export interface BlogType {
   numUpvotes: number;
   numDownvotes: number;
   Templates: { id: number; title: string; languageId: number }[];
+  isFlagged: boolean;
+  owned?: boolean;
 }

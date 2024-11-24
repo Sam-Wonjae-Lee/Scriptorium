@@ -6,8 +6,12 @@ import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import { Option } from "@/utils/types";
 import Dropdown from "@/components/Dropdown";
 import { BlogType } from "@/utils/types";
+import { useRouter } from "next/router";
+import { showAlert } from "@/components/Alert";
+import ActionButton from "@/components/ActionButton";
 
 const Blogs = () => {
+  const router = useRouter();
   const [blogQuery, setBlogQuery] = useState("");
 
   const [blogs, setBlogs] = useState<BlogType[]>([]);
@@ -31,6 +35,13 @@ const Blogs = () => {
   const [hasMoreBlogs, setHasMoreBlogs] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
 
+  // Delete modal
+  const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
+  const [deleteBlogId, setDeleteBlogId] = useState<number | null>(null);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [deleteConfirmationHasError, setDeleteConfirmationHasError] =
+    useState(false);
+
   useEffect(() => {
     fetchTags();
   }, [tagQuery]);
@@ -40,7 +51,6 @@ const Blogs = () => {
   }, [languageQuery]);
 
   useEffect(() => {
-    console.log("fetching blogs");
     setBlogs([]);
     setPage(1);
     fetchBlogs(1);
@@ -90,7 +100,11 @@ const Blogs = () => {
         .join(",")}&languages=${selectedLanguages
         .map((language) => language.id)
         .join(",")}&sortBy=${sortBy}`;
-      const response = await fetch(query);
+      const response = await fetch(query, {
+        headers: {
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
       const data = await response.json();
 
       setBlogs((prevBlogs) => {
@@ -108,19 +122,6 @@ const Blogs = () => {
     }
   };
 
-  // useEffect(() => {
-  //   if (!isFetching && hasMoreBlogs) {
-  //     const scrollHeight = document.documentElement.scrollHeight;
-  //     const clientHeight = document.documentElement.clientHeight;
-
-  //     // If content is smaller than the viewport
-  //     if (scrollHeight <= clientHeight) {
-  //       console.log("AAAAAAAAAAAAAAAAAAAA");
-  //       setPage((prevPage) => prevPage + 1);
-  //     }
-  //   }
-  // }, [blogs, isFetching, hasMoreBlogs]);
-
   const handleScroll = () => {
     if (isFetching || !hasMoreBlogs) return;
 
@@ -133,11 +134,93 @@ const Blogs = () => {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    setDeleteConfirmationHasError(false);
+    if (deleteConfirmation !== "CONFIRM") {
+      setDeleteConfirmationHasError(true);
+      return;
+    }
+    handleCloseDeleteModal();
+
+    try {
+      const response = await fetch(`/api/blog-posts/${id}`, {
+        method: "DELETE",
+        headers: {
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          showAlert("You must be logged in to delete a blog", "error");
+          return;
+        }
+        showAlert("Error deleting blog", "error");
+        return;
+      } else {
+        setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== id));
+        showAlert("Blog deleted successfully", "success");
+      }
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+    }
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalIsOpen(false);
+    setDeleteConfirmation("");
+    setDeleteBlogId(null);
+    setDeleteConfirmationHasError(false);
+  };
+
+  const renderDeleteModal = () => {
+    return (
+      <div
+        className="fixed z-40 inset-0 flex items-center justify-center bg-black bg-opacity-50"
+        onClick={handleCloseDeleteModal}
+      >
+        <div
+          className="w-96 bg-background-light dark:bg-background-dark border border-text-light dark:border-text-dark rounded-xl p-6 shadow-lg flex flex-col items-center"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <h2 className="text-lg font-bold mb-4 text-text-light dark:text-text-dark">
+            Are you sure you would like to delete this blog?
+          </h2>
+          <div className="w-10/12 mb-4">
+            <InputField
+              placeholder="Type CONFIRM to delete this blog"
+              value={deleteConfirmation}
+              onChangeText={setDeleteConfirmation}
+              hasError={deleteConfirmationHasError}
+              errorMessage="You must type CONFIRM"
+            />
+          </div>
+
+          <div className="flex justify-center gap-2">
+            <ActionButton
+              onClick={() => handleDelete(deleteBlogId!)}
+              text="Submit"
+              size="small"
+            />
+            <ActionButton
+              onClick={handleCloseDeleteModal}
+              text="Cancel"
+              size="small"
+              secondaryButton
+            />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
       <div className="absolute top-0 left-0">
         <ThemeSwitcher />
       </div>
+      {deleteModalIsOpen && renderDeleteModal()}
+
       <div className="max-w-900 w-900">
         <section className="w-full my-12">
           {/* Page search section */}
@@ -205,6 +288,12 @@ const Blogs = () => {
                   description={""}
                   tags={blog.tags}
                   blog={blog}
+                  owned={blog.owned}
+                  handleEdit={(id) => router.push(`/blogs/${id}/edit`)}
+                  handleDelete={(id) => {
+                    setDeleteBlogId(id);
+                    setDeleteModalIsOpen(true);
+                  }}
                 />
               </div>
             ))}

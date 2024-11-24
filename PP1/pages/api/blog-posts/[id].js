@@ -56,6 +56,7 @@ export default async function handler(req, res) {
         title: true,
         authorId: true,
         content: true,
+        isFlagged: true,
         tags: { select: { id: true } },
         Templates: { select: { id: true } },
       },
@@ -63,6 +64,12 @@ export default async function handler(req, res) {
 
     if (!blogPost) {
       return res.status(404).json({ error: "Blog post not found" });
+    }
+
+    if (blogPost.isFlagged) {
+      return res
+        .status(403)
+        .json({ error: "Blog post is flagged and cannot be edited" });
     }
 
     // Check if user exists

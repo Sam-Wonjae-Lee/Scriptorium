@@ -207,10 +207,9 @@ export default async function handler(req, res) {
         },
       };
     }
-    filters.isFlagged = false;
 
     // Get many instances
-    const blogPosts = await prisma.blogs.findMany({
+    let blogPosts = await prisma.blogs.findMany({
       where: filters,
       include: {
         tags: true,
@@ -229,8 +228,6 @@ export default async function handler(req, res) {
           },
         },
         Comments: true,
-        isFlagged: false,
-        numReports: false,
       },
       skip: get_skip(page, PAGINATION_LIMIT),
       take: PAGINATION_LIMIT,
@@ -257,6 +254,21 @@ export default async function handler(req, res) {
         (a, b) =>
           b.numUpvotes - b.numDownvotes - (a.numUpvotes - a.numDownvotes)
       );
+    }
+
+    // Check if user is logged in to specify owned blog posts
+    const result = verifyJWT(req);
+    if (result) {
+      blogPosts.forEach((post) => {
+        post.owned = post.authorId === parseInt(result.id);
+      });
+      blogPosts = blogPosts.filter(
+        (post) =>
+          (post.isFlagged && post.authorId === parseInt(result.id)) ||
+          !post.isFlagged
+      );
+    } else {
+      blogPosts = blogPosts.filter((post) => !post.isFlagged);
     }
 
     const totalBlogPosts = await prisma.blogs.count({ where: filters });

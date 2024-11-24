@@ -1,14 +1,18 @@
 import MarkdownRenderer from "@/components/MarkdownFormatter";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, use } from "react";
 import InputField from "@/components/InputField";
 import ActionButton from "@/components/ActionButton";
 import { Option } from "@/utils/types";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import { showAlert } from "@/components/Alert";
 import { getInfoIcon } from "@/utils/svg";
+import { useRouter } from "next/router";
 
-const CreateBlog = () => {
+const EditBlog = () => {
+  const router = useRouter();
+  const { id } = router.query;
+
   const [activeTab, setActiveTab] = useState<"markdown" | "preview">(
     "markdown"
   );
@@ -30,6 +34,35 @@ const CreateBlog = () => {
   const [templateQuery, setTemplateQuery] = useState("");
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (router.isReady) {
+      fetchBlogPost();
+    }
+  }, [router.isReady]);
+
+  const fetchBlogPost = async () => {
+    try {
+      const response = await fetch(`/api/blog-posts/${id}`);
+      const data = await response.json();
+
+      if (!response.ok) {
+        showAlert("Error fetching blog post", "error");
+        return;
+      }
+
+      setTitle(data.title);
+      setMarkdown(data.content);
+      setSelectedTags(data.tags);
+      const transformedTemplates = data.Templates.map((template: any) => ({
+        ...template,
+        name: template.title,
+      }));
+      setSelectedTemplates(transformedTemplates);
+    } catch (error) {
+      console.error("Error fetching blog post:", error);
+    }
+  };
 
   const handleTabSwitch = (tab: "markdown" | "preview") => {
     setActiveTab(tab);
@@ -55,14 +88,13 @@ const CreateBlog = () => {
         ...template,
         name: template.title,
       }));
-      console.log(transformedTemplates);
       setTemplates(transformedTemplates);
     } catch (error) {
       console.error("Error fetching templates:", error);
     }
   };
 
-  const handleCreateBlog = async () => {
+  const handleEditBlog = async () => {
     setTitleHasError(false);
     if (!title) {
       setTitleHasError(true);
@@ -72,8 +104,8 @@ const CreateBlog = () => {
     const tagIds = selectedTags.map((tag) => tag.id);
     const templateIds = selectedTemplates.map((template) => template.id);
     try {
-      const response = await fetch("/api/blog-posts", {
-        method: "POST",
+      const response = await fetch(`/api/blog-posts/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -88,18 +120,23 @@ const CreateBlog = () => {
 
       if (!response.ok) {
         if (response.status === 401) {
-          showAlert("You must be logged in to create a blog", "error");
+          showAlert("You must be logged in to edit a blog", "error");
           return;
         }
-        showAlert("Error creating blog", "error");
+        if (response.status === 403) {
+          showAlert("The blog post is flagged and cannot be edited", "error");
+          return;
+        }
+        showAlert("Error editing blog", "error");
         return;
       }
     } catch (error) {
-      console.error("Error creating blog:", error);
-      showAlert("Error creating blog", "error");
+      console.error("Error editing blog:", error);
+      showAlert("Error editing blog", "error");
     }
 
-    showAlert("Blog created successfully", "success");
+    showAlert("Blog editing successfully", "success");
+    router.push(`/blogs/${id}`);
   };
 
   useEffect(() => {
@@ -169,13 +206,13 @@ const CreateBlog = () => {
       {renderHelpModal()}
       <div className="max-w-3xl mx-auto p-4 w-900">
         <h1 className="text-3xl font-bold mb-6 text-text-light dark:text-text-dark">
-          Create Blog
+          Edit Blog
         </h1>
 
         {/* Title */}
         <div className="mb-6">
           <h2 className="text-xl mb-4 text-text-light dark:text-text-dark">
-            Name your blog
+            Blog title
           </h2>
           <InputField
             placeholder="Title"
@@ -214,7 +251,7 @@ const CreateBlog = () => {
         {/* Tabs */}
         <div className="flex items-center gap-2 mb-4">
           <h2 className="text-xl  text-text-light dark:text-text-dark">
-            Write your blog
+            Blog content
           </h2>
           <div
             className="w-5 h-5 cursor-pointer"
@@ -269,11 +306,11 @@ const CreateBlog = () => {
           </div>
         )}
         <div className="flex justify-center mt-4">
-          <ActionButton text="Create Blog" onClick={handleCreateBlog} />
+          <ActionButton text="Edit Blog" onClick={handleEditBlog} />
         </div>
       </div>
     </main>
   );
 };
 
-export default CreateBlog;
+export default EditBlog;

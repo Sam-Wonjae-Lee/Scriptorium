@@ -3,6 +3,7 @@ import { showAlert } from "@/components/Alert";
 import { useRouter } from "next/router";
 import { BlogType, Rating, Tag } from "@/utils/types";
 import BlogRatingSection from "./BlogRatingSection";
+import { getDeleteIcon, getEditIcon, getReportIcon } from "@/utils/svg";
 
 interface CardProps {
   id: number;
@@ -13,6 +14,9 @@ interface CardProps {
   ratings?: Rating;
   language?: string;
   blog?: BlogType;
+  owned?: boolean;
+  handleDelete?: (id: number) => void;
+  handleEdit?: (id: number) => void;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -24,6 +28,9 @@ const Card: React.FC<CardProps> = ({
   ratings,
   language,
   blog,
+  owned,
+  handleDelete,
+  handleEdit,
 }) => {
   const router = useRouter();
   const truncateDescription = (desc: string) => {
@@ -42,7 +49,6 @@ const Card: React.FC<CardProps> = ({
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
         body: JSON.stringify({
-          userId: 2, // TODO: Replace with actual user id
           action: "upvote",
         }),
       });
@@ -64,9 +70,9 @@ const Card: React.FC<CardProps> = ({
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
         body: JSON.stringify({
-          userId: 2, // TODO: Replace with actual user id
           action: "downvote",
         }),
       });
@@ -235,9 +241,35 @@ const Card: React.FC<CardProps> = ({
       </div>
       <p className="text-sm">{truncateDescription(description)}</p>
 
+      {owned && handleDelete && handleEdit && (
+        <div className="absolute bottom-2 left-2 flex gap-2">
+          <div
+            className="w-6 h-6 cursor-pointer hover:text-hot_pink-normal hover:scale-110 transform transition-transform"
+            onClick={() => handleEdit(id)}
+          >
+            {getEditIcon()}
+          </div>
+          <div
+            className="w-6 h-6 cursor-pointer hover:text-hot_pink-normal hover:scale-110 transform transition-transform"
+            onClick={() => handleDelete(id)}
+          >
+            {getDeleteIcon()}
+          </div>
+        </div>
+      )}
+
       {blog && (
         <div className="absolute bottom-2 right-3">
           <BlogRatingSection blog={blog} />
+        </div>
+      )}
+
+      {blog?.isFlagged && (
+        <div
+          className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded"
+          title="This content has been flagged by administrators and is no longer visible to the public"
+        >
+          {getReportIcon()}
         </div>
       )}
     </div>
