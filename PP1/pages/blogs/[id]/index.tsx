@@ -81,6 +81,14 @@ const Blog = () => {
         await fetchReplies(comment);
       }
       setComments((prevComments) => [...prevComments, ...data.comments]);
+      setComments((prevComments) => {
+        const newComments = [...prevComments, ...data.comments];
+        const uniqueComments = newComments.filter(
+          (comment, index, self) =>
+            index === self.findIndex((b) => b.id === comment.id)
+        );
+        return uniqueComments;
+      });
       setHasMoreComments(
         data.pagination.currentPage < data.pagination.totalPages
       );
@@ -200,7 +208,6 @@ const Blog = () => {
   };
 
   useEffect(() => {
-    console.log("fetching comments");
     setComments([]);
     setPage(1);
     fetchComments(1);
@@ -233,7 +240,7 @@ const Blog = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
         },
         body: JSON.stringify({
           content: commentInput,
@@ -246,7 +253,9 @@ const Blog = () => {
           showAlert("You must be logged in to reply", "error");
         }
       }
-      const data = response.json();
+      const data = await response.json();
+      setComments((prevComments) => [data, ...prevComments]);
+      setCommentInput("");
     } catch (error) {
       console.error("Error replying:", error);
     }
@@ -284,6 +293,7 @@ const Blog = () => {
         showAlert("Failed to report blog", "error");
         return;
       }
+
       showAlert("Blog reported successfully", "success");
     } catch (error) {
       console.error("Error reporting blog:", error);

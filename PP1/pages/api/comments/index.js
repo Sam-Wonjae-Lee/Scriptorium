@@ -31,6 +31,16 @@ export default async function handler(req, res) {
           blog: { connect: { id: newBlogId } }, // Always connect to the blog
           user: { connect: { id: newUserId } },
         },
+        include: {
+          user: {
+            select: {
+              id: true,
+              firstName: true,
+              lastName: true,
+              avatar: true,
+            },
+          },
+        },
       });
 
       res.status(201).json(comment);
