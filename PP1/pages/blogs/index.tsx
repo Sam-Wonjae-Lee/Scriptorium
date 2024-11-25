@@ -268,6 +268,7 @@ const Blogs = () => {
                 options={sortTypes}
                 selectedOption={sortBy}
                 setSelectedOption={setSortBy}
+                text="Sort by"
               />
             </div>
           </div>

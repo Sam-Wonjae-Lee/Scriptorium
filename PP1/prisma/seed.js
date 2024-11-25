@@ -12,7 +12,7 @@ async function main() {
   await prisma.languages.createMany({
     data: [
       { name: "Python" },
-      { name: "C++" },
+      { name: "Cpp" },
       { name: "C" },
       { name: "Java" },
       { name: "JavaScript" },

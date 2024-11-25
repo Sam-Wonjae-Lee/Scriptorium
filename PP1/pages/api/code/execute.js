@@ -15,6 +15,7 @@ const execPromise = promisify(exec);
 export default async function handler(req, res) {
     if (req.method === "POST") {
         if (!req.body.code || !req.body.language) {
+            console.log(req.body);
             return res.status(400).json({"message": "Invalid fields"});
         }
         if (!LANGUAGES.includes(req.body.language)) {
@@ -43,7 +44,11 @@ async function executeCode(req, identifier) {
     let executableArgs;
     let execProgram;
     let compilerWarnings = "";
+    let stdout = "";
+    let stderr = "";
+    let timeout = false;
     console.log(identifier);
+    
     await fs.mkdir(`./client_files/${identifier}`);
     const srcPath = `./client_files/${identifier}/${identifier}.${req.body.language}`;
     if (req.body.language == "py") {
@@ -59,24 +64,57 @@ async function executeCode(req, identifier) {
     else if (req.body.language == "cpp") {
         await fs.writeFile(srcPath, req.body.code);
         const compileCommand = `g++ ${srcPath} -o ./client_files/${identifier}/${identifier}`
-        const { stderr } = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
-        compilerWarnings = stderr;
+        const res = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
+        if (res.stderr) {
+            const isCriticalError = res.stderr.toLowerCase().includes("error");
+            if (isCriticalError) {
+                return {
+                    stdout,
+                    stderr,
+                    compilerWarnings: res.stderr,
+                    timeout
+                }
+            }
+        }
+        compilerWarnings = res.stderr;
         executableArgs = `./client_files/${identifier}/${identifier}`;
         execProgram = "";
     }
     else if (req.body.language == "c") {
         await fs.writeFile(srcPath, req.body.code);
         const compileCommand = `gcc -Wall ${srcPath} -o ./client_files/${identifier}/${identifier}`
-        const { stderr } = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
-        compilerWarnings = stderr;
+        const res = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
+        if (res.stderr) {
+            const isCriticalError = res.stderr.toLowerCase().includes("error");
+            if (isCriticalError) {
+                return {
+                    stdout,
+                    stderr,
+                    compilerWarnings: res.stderr,
+                    timeout
+                }
+            }
+        }
+        compilerWarnings = res.stderr;
         executableArgs = `./client_files/${identifier}/${identifier}`;
         execProgram = "";
     }
     else if (req.body.language == "java") {
         await fs.writeFile(srcPath, req.body.code);
         const compileCommand = `javac ${srcPath}`
-        const { stderr } = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
-        compilerWarnings = stderr;
+        const res = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
+        if (res.stderr) {
+            const isCriticalError = res.stderr.toLowerCase().includes("error");
+            if (isCriticalError) {
+                return {
+                    stdout,
+                    stderr,
+                    compilerWarnings: res.stderr,
+                    timeout
+                }
+            }
+        }
+        compilerWarnings = res.stderr;
         executableArgs = `-cp ./client_files/${identifier} ${srcPath}`;
         execProgram = "java";
     }
@@ -92,14 +130,13 @@ async function executeCode(req, identifier) {
     // await execPromise(memoryCommand);
 
     const command = `${execProgram} ${executableArgs}` + (req.body.stdin ? ` < ${stdinPath}` : ``);
-    let stdout, stderr, timeout;
     try {
         const result = await execPromise(command, {timeout: PROGRAM_TIMEOUT});
         stdout = result.stdout;
         stderr = result.stderr;
     }
     catch (error) {
-        console.log(error);
+        stderr = error.stderr;
         if (error.signal == "SIGTERM") {
             timeout = true;
         }
