@@ -40,7 +40,7 @@ const Create = () => {
                     <h3>Online Editor</h3>
                     <ActionButton text="Enter" onClick={() => handleOnlineEditorClick()}/>
                 </div>
-                <div className="h-full w-[50%] border-l-2 border-l-element_background-dark flex flex-col space-y-4 items-center justify-center">
+                <div className="h-full w-[50%] border-l-2 border-l-element_background-dark dark:border-l-element_background-light flex flex-col text-black dark:text-text-dark space-y-4 items-center justify-center">
                     <h3>Create Blog</h3>
                     <ActionButton text="Enter" onClick={() => handleBlogCreateClick()}/>
                 </div>

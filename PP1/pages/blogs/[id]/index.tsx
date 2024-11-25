@@ -339,6 +339,7 @@ const Blog = () => {
                 options={["upvotes", "downvotes", "controversial"]}
                 selectedOption={commentSortBy}
                 setSelectedOption={setCommentSortBy}
+                text="Sort by"
               />
             </div>
             {comments && blog ? (
