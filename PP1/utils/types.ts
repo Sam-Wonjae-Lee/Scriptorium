@@ -6,6 +6,8 @@ export type Option = {
 
 export type Tag = { name: string; color: string; id: number };
 
+export type SortBy = "upvotes" | "downvotes" | "controversial";
+
 export type Rating = { upvotes: number; downvotes: number };
 
 export type User = {

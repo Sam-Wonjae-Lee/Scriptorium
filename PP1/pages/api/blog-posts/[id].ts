@@ -1,8 +1,12 @@
 import prisma from "@/utils/db";
 import { verifyJWT } from "@/utils/auth";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req, res) {
-  const { id } = req.query;
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const { id } = req.query as { id: string };
 
   /**
    * As a visitor, I want to follow links from a blog post directly
@@ -119,12 +123,12 @@ export default async function handler(req, res) {
         content: content || blogPost.content,
         tags: {
           set: tagIds
-            ? tagIds.map((id) => ({ id: parseInt(id) }))
+            ? tagIds.map((id: string) => ({ id: parseInt(id) }))
             : blogPost.tags,
         },
         Templates: {
           set: templateIds
-            ? templateIds.map((id) => ({ id: parseInt(id) }))
+            ? templateIds.map((id: string) => ({ id: parseInt(id) }))
             : blogPost.Templates,
         },
       },

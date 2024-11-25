@@ -1,10 +1,14 @@
 import prisma from "@/utils/db";
 import { verifyJWT } from "@/utils/auth";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const result = verifyJWT(req);
   if (req.method === "GET") {
-    const { id } = req.query;
+    const { id } = req.query as { id: string };
 
     // Check if id is provided
     if (!id) {
@@ -27,7 +31,7 @@ export default async function handler(req, res) {
     res.status(200).json(template);
   } else if (req.method === "PUT") {
     if (!result) {
-      return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     // Check if the request body is json
     if (req.headers["content-type"] !== "application/json") {
@@ -36,7 +40,7 @@ export default async function handler(req, res) {
         .json({ message: "Content-Type must be application/json" });
       return;
     }
-    const { id } = req.query;
+    const { id } = req.query as { id: string };
 
     const { title, explanation, code, languageId, tagIds, isPublic } = req.body;
 
@@ -52,7 +56,7 @@ export default async function handler(req, res) {
         languageId: true,
         tags: true,
         authorId: true,
-        isPublic: true
+        isPublic: true,
       },
     });
 
@@ -71,7 +75,7 @@ export default async function handler(req, res) {
 
     // check if correct author
     if (result.id != template.authorId) {
-      return res.status(403).json({"error": "Forbidden from modifying"});
+      return res.status(403).json({ error: "Forbidden from modifying" });
     }
 
     // Update the author
@@ -85,7 +89,9 @@ export default async function handler(req, res) {
         code: code || template.code,
         languageId: languageId || template.languageId,
         tags: {
-          set: tagIds ? tagIds.map((tagId) => ({ id: tagId })) : template.tags,
+          set: tagIds
+            ? tagIds.map((tagId: string) => ({ id: tagId }))
+            : template.tags,
         },
         isPublic: isPublic || template.isPublic,
       },
@@ -93,9 +99,9 @@ export default async function handler(req, res) {
 
     return res.status(200).json(updatedTemplate);
   } else if (req.method === "DELETE") {
-    const { id } = req.query;
+    const { id } = req.query as { id: string };
     if (!result) {
-      return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     // Check if id exists in db
     const template = await prisma.templates.findUnique({
@@ -119,7 +125,7 @@ export default async function handler(req, res) {
 
     // check if correct author
     if (result.id != template.authorId) {
-      return res.status(403).json({"error": "Forbidden from modifying"});
+      return res.status(403).json({ error: "Forbidden from modifying" });
     }
 
     // Delete author

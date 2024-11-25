@@ -1,7 +1,11 @@
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
 import { verifyJWT } from "@/utils/auth";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === "POST") {
     const result = verifyJWT(req);
     if (!result) {
@@ -63,7 +67,7 @@ export default async function handler(req, res) {
         languageId,
         authorId: result.id,
         tags: {
-          connect: tagIds.map((tagId) => ({ id: tagId })),
+          connect: tagIds.map((tagId: string) => ({ id: tagId })),
         },
         isPublic: false,
       },
@@ -71,7 +75,19 @@ export default async function handler(req, res) {
 
     res.status(201).json(template);
   } else if (req.method === "GET") {
-    const { query = "", languageId, tags, authorId, page = 1 } = req.query;
+    const {
+      query = "",
+      languageId,
+      tags,
+      authorId,
+      page = 1,
+    } = req.query as {
+      query?: string;
+      languageId?: string;
+      tags?: string;
+      authorId?: string;
+      page?: number;
+    };
 
     // Check that author exists if provided
     if (authorId) {
@@ -99,7 +115,7 @@ export default async function handler(req, res) {
       return res.status(200).json(blogPosts);
     }
 
-    const languageIdInt = parseInt(languageId);
+    const languageIdInt = languageId ? parseInt(languageId) : undefined;
     const tagsArray = tags ? tags.split(",") : [];
     const tagsArrayInt = tagsArray.map((tag) => parseInt(tag));
 
@@ -130,7 +146,16 @@ export default async function handler(req, res) {
     }
 
     // Create filters
-    const filters = {};
+    const filters: {
+      tags?: { some: { id: { in: number[] } } };
+      OR?: (
+        | { title: { contains: string } }[]
+        | { explanation: { contains: string } }[]
+        | { code: { contains: string } }[]
+      )[];
+      languageId?: number;
+      isPublic?: boolean;
+    } = {};
     if (tagsArrayInt && tagsArrayInt.length > 0) {
       filters.tags = {
         some: {

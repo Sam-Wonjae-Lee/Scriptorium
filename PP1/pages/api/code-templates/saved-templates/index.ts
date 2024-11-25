@@ -1,11 +1,15 @@
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
 import { verifyJWT } from "@/utils/auth";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === "GET") {
     const result = verifyJWT(req);
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     const {
       title,
@@ -14,7 +18,14 @@ export default async function handler(req, res) {
       languageId,
       tags,
       page = 1,
-    } = req.query;
+    } = req.query as {
+      title?: string;
+      explanation?: string;
+      code: string;
+      languageId: string;
+      tags?: string;
+      page?: string;
+    };
 
     const languageIdInt = parseInt(languageId);
     const tagsArray = tags ? tags.split(",") : [];
@@ -62,7 +73,15 @@ export default async function handler(req, res) {
     }
 
     // Create filters
-    const filters = {};
+    const filters: {
+      tags?: { some: { id: { in: number[] } } };
+      authorId?: number;
+      title?: { contains: string };
+      explanation?: { contains: string };
+      code?: { contains: string };
+      languageId?: number;
+    } = {};
+
     if (tagsArrayInt && tagsArrayInt.length > 0) {
       filters.tags = {
         some: {
