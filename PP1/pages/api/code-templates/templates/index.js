@@ -73,6 +73,12 @@ export default async function handler(req, res) {
   } else if (req.method === "GET") {
     const { query = "", languageId, tags, authorId, page = 1 } = req.query;
 
+    const result = verifyJWT(req);
+
+    if (authorId == null) {
+      authorId = result.id;
+    }
+
     // Check that author exists if provided
     if (authorId) {
       const author = await prisma.users.findUnique({

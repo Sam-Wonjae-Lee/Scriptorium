@@ -45,7 +45,13 @@ const Home = () => {
 
     const getTrendingBlogs = async () => {
         try {
-            const response = await fetch('/api/blog-posts?sortBy=upvotes');
+            const response = await fetch('/api/blog-posts?sortBy=upvotes', {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            }
+        });
             const data = await response.json();
             setTrendingBlogs(data.blogPosts);
         } catch (error) {
@@ -55,7 +61,13 @@ const Home = () => {
 
     const getControversialBlogs = async () => {
         try {
-            const response = await fetch('/api/blog-posts?sortBy=controversial');
+            const response = await fetch('/api/blog-posts?sortBy=controversial', {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+                }
+            });
             const data = await response.json();
             setControversialBlogs(data.blogPosts);
         } catch (error) {
@@ -65,7 +77,13 @@ const Home = () => {
 
     const getTemplates = async () => {
         try {
-            const response = await fetch('/api/code-templates/templates');
+            const response = await fetch('/api/code-templates/templates', {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+                }
+            });
             const data = await response.json();
             setTemplates(data.templates);
         } catch (error) {

@@ -85,8 +85,9 @@ export default async function handler(req, res) {
     res.status(201).json(blogPost);
   } else if (req.method === "GET") {
 
-    // const result = verifyJWT(req);
-    // const userId = result.id;
+    const result = verifyJWT(req);
+
+    
 
     const {
       query = "",
@@ -97,6 +98,10 @@ export default async function handler(req, res) {
       sortBy = "upvotes",
       authorId,
     } = req.query;
+
+    if (authorId == null) {
+      authorId = result.id;
+    }
 
     // Check that author exists if provided
     if (authorId) {
