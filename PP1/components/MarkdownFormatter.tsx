@@ -13,7 +13,6 @@ type MarkdownRendererProps = {
 };
 
 // TODO fix table
-// TODO add bullet points
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   const parseMarkdown = (markdown: string): string => {

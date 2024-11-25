@@ -229,7 +229,7 @@ export default async function handler(req, res) {
         },
         Comments: true,
       },
-      skip: get_skip(page, PAGINATION_LIMIT),
+      skip: get_skip(page),
       take: PAGINATION_LIMIT,
     });
 

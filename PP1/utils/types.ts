@@ -44,3 +44,16 @@ export interface BlogType {
   isFlagged: boolean;
   owned?: boolean;
 }
+
+export interface Template {
+  id: number;
+  title: string;
+  language: { id: number; name: string };
+  code: string;
+  explanation: string;
+  author: { id: number; firstName: string; lastName: string };
+  tags: { id: number; name: string; color: string }[];
+  Blogs: { id: number; title: string }[];
+  isFlagged: boolean;
+  owned?: boolean;
+}
