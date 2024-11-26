@@ -98,12 +98,12 @@ const Profile = () => {
                 <div className="flex items-center space-x-4">
             
                     <button 
-                        className="bg-background-light w-20 h-20 rounded-full border-none flex items-center justify-center p-2 cursor-pointer"
+                        className="bg-background-light border-2 border-black w-20 h-20 rounded-full border-none flex items-center justify-center p-2 cursor-pointer"
                     >
                         {getProfileSvg()}
                     </button>
                     <button 
-                        className="bg-pink-500 w-40 h-10 rounded-full border-none flex items-center justify-center p-2 cursor-pointer text-white"
+                        className="bg-pink-200 w-40 h-10 rounded-full border-none flex items-center justify-center p-2 cursor-pointer text-black"
                         onClick={() => setShowEditProfile(true)}
                     >
                         Edit Profile

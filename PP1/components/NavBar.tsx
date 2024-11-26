@@ -159,7 +159,7 @@ const NavBar = () => {
 
           {/* Search Dropdown */}
           {isSearchOpen && (
-            <div className="absolute mt-1 w-full bg-white dark:bg-element_background-dark rounded-lg shadow-lg border border-gray-200 z-40">
+            <div className="absolute mt-1 w-full text-text-light dark:text-text-dark bg-background-light dark:bg-background-dark rounded-lg shadow-lg border border-gray-200 z-40">
               {/* Tags Filter */}
               <div className="p-2 border-b dark:border-gray-700">
                 <div className="flex flex-wrap gap-2">
@@ -217,7 +217,7 @@ const NavBar = () => {
 
           {/* Type Dropdown */}
           {isTypeDropdownOpen && (
-            <div className="absolute mt-1 w-48 bg-white dark:bg-element_background-dark rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+            <div className="absolute mt-1 w-48 text-text-light dark:text-text-dark bg-white dark:bg-element_background-dark rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
               <button
                 onClick={() => {
                   setContentType('templates');
