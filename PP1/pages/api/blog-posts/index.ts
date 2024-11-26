@@ -1,15 +1,37 @@
-/**
- * As a user, I want to create/edit/delete blog posts.
- * A blog post has a title, description, and tag. It might also include
- * links to code templates (either mine or someone else’s).
- */
+import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
+import { verifyJWT } from "@/utils/auth";
+import { NextApiRequest, NextApiResponse } from "next";
+import { SortBy } from "@/utils/types";
+import { Prisma } from "@prisma/client";
 
-import prisma, { PAGINATION_LIMIT, get_skip } from "../../../utils/db";
-import { verifyJWT } from "../../../utils/auth";
-// import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
-// import { verifyJWT } from "@/utils/auth";
+interface BlogPostWithOwnership
+  extends Prisma.BlogsGetPayload<{
+    include: {
+      tags: true;
+      Comments: true;
+      Templates: {
+        select: {
+          id: true;
+          title: true;
+        };
+      };
+      author: {
+        select: {
+          id: true;
+          firstName: true;
+          lastName: true;
+          avatar: true;
+        };
+      };
+    };
+  }> {
+  owned?: boolean;
+}
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   // Create blog posts
   if (req.method === "POST") {
     const result = verifyJWT(req);
@@ -49,7 +71,7 @@ export default async function handler(req, res) {
     if (tagIds) {
       for (const tagId of tagIds) {
         const tag = await prisma.tags.findUnique({
-          where: { id: parseInt(tagId) },
+          where: { id: tagId },
         });
         if (!tag) {
           console.log("tag does not exist");
@@ -78,10 +100,10 @@ export default async function handler(req, res) {
         content,
         authorId: parseInt(result.id),
         tags: {
-          connect: tagIds.map((id) => ({ id: parseInt(id) })),
+          connect: tagIds.map((id: string) => ({ id: parseInt(id) })),
         },
         Templates: {
-          connect: templateIds.map((id) => ({ id: parseInt(id) })),
+          connect: templateIds.map((id: string) => ({ id: parseInt(id) })),
         },
       },
     });
@@ -96,7 +118,15 @@ export default async function handler(req, res) {
       page = 1,
       sortBy = "upvotes",
       authorId,
-    } = req.query;
+    } = req.query as {
+      query?: string;
+      languages?: string;
+      tags?: string;
+      templateId?: string;
+      page?: number;
+      sortBy?: SortBy;
+      authorId?: string;
+    };
 
     // Check that author exists if provided
     if (authorId) {
@@ -125,7 +155,7 @@ export default async function handler(req, res) {
     }
 
     // Check that sortBy is valid
-    if (!sortBy in ["upvotes", "downvotes", "controversial"]) {
+    if (!["upvotes", "downvotes", "controversial"].includes(sortBy)) {
       return res.status(400).json({
         message:
           "sortBy must be either 'upvotes', 'downvotes', or 'controversial'",
@@ -139,7 +169,7 @@ export default async function handler(req, res) {
     if (languages) {
       for (const languageId of languageIds) {
         const language = await prisma.languages.findUnique({
-          where: { id: parseInt(languageId) },
+          where: { id: languageId },
         });
         if (!language) {
           return res.status(400).json({ message: "Language does not exist" });
@@ -152,7 +182,7 @@ export default async function handler(req, res) {
     if (tags) {
       for (const tagId of tagIds) {
         const tag = await prisma.tags.findUnique({
-          where: { id: parseInt(tagId) },
+          where: { id: tagId },
         });
         if (!tag) {
           return res.status(400).json({ message: "Tag does not exist" });
@@ -171,7 +201,22 @@ export default async function handler(req, res) {
     }
 
     // Create filters
-    const filters = {};
+    const filters: {
+      tags?: { some: { id: { in: number[] } } };
+      Templates?: { some: { languageId?: { in: number[] }; id?: number } };
+      OR?: (
+        | { title: { contains: string } }
+        | { content: { contains: string } }
+        | {
+            author: {
+              OR: (
+                | { firstName: { contains: string } }
+                | { lastName: { contains: string } }
+              )[];
+            };
+          }
+      )[];
+    } = {};
     if (tags) {
       filters.tags = {
         some: {
@@ -209,7 +254,7 @@ export default async function handler(req, res) {
     }
 
     // Get many instances
-    let blogPosts = await prisma.blogs.findMany({
+    let blogPosts: BlogPostWithOwnership[] = await prisma.blogs.findMany({
       where: filters,
       include: {
         tags: true,

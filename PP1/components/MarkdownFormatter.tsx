@@ -5,15 +5,30 @@ import python from "highlight.js/lib/languages/python";
 import c from "highlight.js/lib/languages/c";
 import cpp from "highlight.js/lib/languages/cpp";
 import java from "highlight.js/lib/languages/java";
+import rust from "highlight.js/lib/languages/rust";
+import ruby from "highlight.js/lib/languages/ruby";
+import r from "highlight.js/lib/languages/r";
+import php from "highlight.js/lib/languages/php";
+import csharp from "highlight.js/lib/languages/csharp";
 
-const supportedLanguages = ["javascript", "python", "c", "cpp", "java"];
+const supportedLanguages = [
+  "javascript",
+  "python",
+  "c",
+  "cpp",
+  "java",
+  "rust",
+  "ruby",
+  "r",
+  "php",
+  "csharp",
+];
 
 type MarkdownRendererProps = {
   content: string;
 };
 
 // TODO fix table
-// TODO add bullet points
 
 const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
   const parseMarkdown = (markdown: string): string => {
@@ -22,6 +37,11 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
     hljs.registerLanguage("c", c);
     hljs.registerLanguage("cpp", cpp);
     hljs.registerLanguage("java", java);
+    hljs.registerLanguage("rust", rust);
+    hljs.registerLanguage("ruby", ruby);
+    hljs.registerLanguage("r", r);
+    hljs.registerLanguage("php", php);
+    hljs.registerLanguage("csharp", csharp);
 
     // Bold Italic
     let html = markdown.replace(

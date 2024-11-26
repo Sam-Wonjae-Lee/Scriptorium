@@ -312,7 +312,7 @@ const Blog = () => {
       <div className="absolute top-0 left-0">
         <ThemeSwitcher />
       </div>
-      <section className="w-900 py-10">
+      <section className="w-full sm:w-11/12 md:w-900 py-10 px-4 sm:px-6 md:px-0">
         {blog ? renderBlog(blog) : blogExists ? renderLoading() : render404()}
         {/* Comment Section */}
         <div className="mt-10 border-t py-5">
@@ -343,7 +343,11 @@ const Blog = () => {
               />
             </div>
             {comments && blog ? (
-              <CommentRenderer comments={comments} blogId={blog.id} />
+              <CommentRenderer
+                comments={comments}
+                blogId={blog.id}
+                setComments={setComments}
+              />
             ) : blogExists ? (
               renderLoading()
             ) : (

@@ -68,7 +68,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
       onClick={handleClose}
     >
       <div
-        className="w-96 bg-background-light dark:bg-background-dark border border-text-light dark:border-text-dark rounded-xl p-6 shadow-lg"
+        className="w-full sm:w-3/4 md:w-1/2 lg:w-1/3 bg-background-light dark:bg-background-dark border border-text-light dark:border-text-dark rounded-xl p-6 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-lg font-bold mb-4 text-text-light dark:text-text-dark">

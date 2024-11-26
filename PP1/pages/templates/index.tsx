@@ -4,17 +4,16 @@ import InputField from "@/components/InputField";
 import Card from "@/components/Card";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import { Option } from "@/utils/types";
-import Dropdown from "@/components/Dropdown";
-import { BlogType } from "@/utils/types";
+import { Template } from "@/utils/types";
 import { useRouter } from "next/router";
 import { showAlert } from "@/components/Alert";
 import ActionButton from "@/components/ActionButton";
 
-const Blogs = () => {
+const Templates = () => {
   const router = useRouter();
-  const [blogQuery, setBlogQuery] = useState("");
+  const [templateQuery, setTemplateQuery] = useState("");
 
-  const [blogs, setBlogs] = useState<BlogType[]>([]);
+  const [templates, setTemplates] = useState<Template[]>([]);
 
   // Tags
   const [selectedTags, setSelectedTags] = useState<Option[]>([]);
@@ -26,18 +25,14 @@ const Blogs = () => {
   const [languages, setLanguages] = useState<Option[]>([]);
   const [languageQuery, setLanguageQuery] = useState("");
 
-  // Sort by
-  const [sortBy, setSortBy] = useState("upvotes");
-  const sortTypes = ["upvotes", "downvotes", "controversial"];
-
   // Pagination states
   const [page, setPage] = useState(1);
-  const [hasMoreBlogs, setHasMoreBlogs] = useState(true);
+  const [hasMoreTemplates, setHasMoreTemplates] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
 
   // Delete modal
   const [deleteModalIsOpen, setDeleteModalIsOpen] = useState(false);
-  const [deleteBlogId, setDeleteBlogId] = useState<number | null>(null);
+  const [deleteTemplateId, setDeleteTemplateId] = useState<number | null>(null);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
   const [deleteConfirmationHasError, setDeleteConfirmationHasError] =
     useState(false);
@@ -51,14 +46,14 @@ const Blogs = () => {
   }, [languageQuery]);
 
   useEffect(() => {
-    setBlogs([]);
+    setTemplates([]);
     setPage(1);
-    fetchBlogs(1);
-  }, [blogQuery, selectedTags, selectedLanguages, sortBy]);
+    fetchTemplates(1);
+  }, [templateQuery, selectedTags, selectedLanguages]);
 
   useEffect(() => {
     if (page > 1) {
-      fetchBlogs(page);
+      fetchTemplates(page);
     }
   }, [page]);
 
@@ -68,7 +63,7 @@ const Blogs = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, [hasMoreBlogs, isFetching]);
+  }, [hasMoreTemplates, isFetching]);
 
   const fetchTags = async () => {
     try {
@@ -92,14 +87,16 @@ const Blogs = () => {
     }
   };
 
-  const fetchBlogs = async (currentPage: number) => {
+  const fetchTemplates = async (currentPage: number) => {
     try {
       setIsFetching(true);
-      const query = `/api/blog-posts?query=${blogQuery}&page=${currentPage}&tags=${selectedTags
+      const query = `/api/code-templates/templates?query=${templateQuery}&page=${currentPage}&tags=${selectedTags
         .map((tag) => tag.id)
         .join(",")}&languages=${selectedLanguages
         .map((language) => language.id)
-        .join(",")}&sortBy=${sortBy}`;
+        .join(",")}`;
+
+      console.log(query);
       const response = await fetch(query, {
         headers: {
           authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -107,23 +104,26 @@ const Blogs = () => {
       });
       const data = await response.json();
 
-      setBlogs((prevBlogs) => {
-        const newBlogs = [...prevBlogs, ...data.blogPosts];
-        const uniqueBlogs = newBlogs.filter(
-          (blog, index, self) =>
-            index === self.findIndex((b) => b.id === blog.id)
+      console.log(data);
+      setTemplates((prevTemplates) => {
+        const newTemplates = [...prevTemplates, ...data.templates];
+        const uniqueTemplates = newTemplates.filter(
+          (template, index, self) =>
+            index === self.findIndex((b) => b.id === template.id)
         );
-        return uniqueBlogs;
+        return uniqueTemplates;
       });
-      setHasMoreBlogs(data.pagination.currentPage < data.pagination.totalPages);
+      setHasMoreTemplates(
+        data.pagination.currentPage < data.pagination.totalPages
+      );
       setIsFetching(false);
     } catch (error) {
-      console.error("Error fetching blogs:", error);
+      console.error("Error fetching templates:", error);
     }
   };
 
   const handleScroll = () => {
-    if (isFetching || !hasMoreBlogs) return;
+    if (isFetching || !hasMoreTemplates) return;
 
     const scrollTop = document.documentElement.scrollTop;
     const scrollHeight = document.documentElement.scrollHeight;
@@ -143,7 +143,7 @@ const Blogs = () => {
     handleCloseDeleteModal();
 
     try {
-      const response = await fetch(`/api/blog-posts/${id}`, {
+      const response = await fetch(`/api/code-templates/templates/${id}`, {
         method: "DELETE",
         headers: {
           authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -152,24 +152,26 @@ const Blogs = () => {
 
       if (!response.ok) {
         if (response.status === 401) {
-          showAlert("You must be logged in to delete a blog", "error");
+          showAlert("You must be logged in to delete a code template", "error");
           return;
         }
-        showAlert("Error deleting blog", "error");
+        showAlert("Error deleting code template", "error");
         return;
       } else {
-        setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== id));
-        showAlert("Blog deleted successfully", "success");
+        setTemplates((prevTemplates) =>
+          prevTemplates.filter((template) => template.id !== id)
+        );
+        showAlert("Code template deleted successfully", "success");
       }
     } catch (error) {
-      console.error("Error deleting blog:", error);
+      console.error("Error deleting code template:", error);
     }
   };
 
   const handleCloseDeleteModal = () => {
     setDeleteModalIsOpen(false);
     setDeleteConfirmation("");
-    setDeleteBlogId(null);
+    setDeleteTemplateId(null);
     setDeleteConfirmationHasError(false);
   };
 
@@ -184,11 +186,11 @@ const Blogs = () => {
           onClick={(e) => e.stopPropagation()}
         >
           <h2 className="text-lg font-bold mb-4 text-text-light dark:text-text-dark">
-            Are you sure you would like to delete this blog?
+            Are you sure you would like to delete this code template?
           </h2>
           <div className="w-10/12 mb-4">
             <InputField
-              placeholder="Type CONFIRM to delete this blog"
+              placeholder="Type CONFIRM to delete this code template"
               value={deleteConfirmation}
               onChangeText={setDeleteConfirmation}
               hasError={deleteConfirmationHasError}
@@ -198,7 +200,7 @@ const Blogs = () => {
 
           <div className="flex justify-center gap-2">
             <ActionButton
-              onClick={() => handleDelete(deleteBlogId!)}
+              onClick={() => handleDelete(deleteTemplateId!)}
               text="Submit"
               size="small"
             />
@@ -226,19 +228,19 @@ const Blogs = () => {
           {/* Page search section */}
           <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
             <h1 className="text-4xl font-bold text-text-light dark:text-text-dark mb-4 sm:mb-0">
-              Blogs
+              Code Templates
             </h1>
-            {/* Search blogs */}
+            {/* Search Templates */}
             <div className="w-full sm:w-72">
               <InputField
-                placeholder="Search blogs"
-                value={blogQuery}
-                onChangeText={setBlogQuery}
+                placeholder="Search templates"
+                value={templateQuery}
+                onChangeText={setTemplateQuery}
               />
             </div>
           </div>
           <h2 className="text-lg mb-4 text-text-light dark:text-text-dark">
-            Explore blogs to learn how to code!
+            Explore code templates created by the community!
           </h2>
           <div className="flex flex-col sm:flex-row gap-5">
             <div className="w-full sm:w-80">
@@ -263,37 +265,29 @@ const Blogs = () => {
                 onQueryChange={setLanguageQuery}
               />
             </div>
-            <div className="w-full sm:flex-grow">
-              <Dropdown
-                options={sortTypes}
-                selectedOption={sortBy}
-                setSelectedOption={setSortBy}
-                text="Sort by"
-              />
-            </div>
           </div>
         </section>
         <section className="w-full">
-          {/* Blogs section */}
+          {/* Templates section */}
           <div className="w-full grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {blogs.map((blog) => (
-              <div key={blog.id}>
+            {templates.map((template) => (
+              <div key={template.id}>
                 <Card
-                  id={blog.id}
-                  title={blog.title}
+                  id={template.id}
+                  title={template.title}
+                  language={template.language.name}
                   author={{
-                    firstName: blog.author.firstName,
-                    lastName: blog.author.lastName,
-                    id: blog.author.id,
+                    firstName: template.author.firstName,
+                    lastName: template.author.lastName,
+                    id: template.author.id,
                   }}
-                  description={""}
-                  tags={blog.tags}
-                  type={"blogs"}
-                  blog={blog}
-                  owned={blog.owned}
-                  handleEdit={(id) => router.push(`/blogs/${id}/edit`)}
+                  description={template.explanation}
+                  tags={template.tags}
+                  type={"templates"}
+                  owned={template.owned}
+                  handleEdit={(id) => router.push(`/templates/${id}/edit`)}
                   handleDelete={(id) => {
-                    setDeleteBlogId(id);
+                    setDeleteTemplateId(id);
                     setDeleteModalIsOpen(true);
                   }}
                 />
@@ -306,4 +300,4 @@ const Blogs = () => {
   );
 };
 
-export default Blogs;
+export default Templates;
