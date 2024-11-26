@@ -4,6 +4,7 @@ import { showAlert } from "./Alert";
 import InputField from "./InputField";
 import { getCancelIcon, getReportIcon, getSendIcon } from "@/utils/svg";
 import ReportModal from "@/components/ReportModal";
+import { refreshLogin, verifyLogin } from "./refresh";
 
 interface CommentRendererProps {
   comments: Comment[];
@@ -142,6 +143,10 @@ const RenderComments: React.FC<CommentRendererProps> = ({
     try {
       const action = commentRatings[id] === 1 ? "remove-upvote" : "upvote";
 
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
+
       const response = await fetch(`/api/ratings/comment/${id}`, {
         method: "PUT",
         headers: {
@@ -194,6 +199,10 @@ const RenderComments: React.FC<CommentRendererProps> = ({
   const handleDownvote = async (id: number) => {
     try {
       const action = commentRatings[id] === -1 ? "remove-downvote" : "downvote";
+
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
 
       const response = await fetch(`/api/ratings/comment/${id}`, {
         method: "PUT",
@@ -292,6 +301,10 @@ const RenderComments: React.FC<CommentRendererProps> = ({
 
   const handleSendReply = async (comment: Comment) => {
     try {
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
+
       const response = await fetch(`/api/comments/`, {
         method: "POST",
         headers: {
@@ -343,6 +356,10 @@ const RenderComments: React.FC<CommentRendererProps> = ({
     description: string
   ) => {
     try {
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
+
       const response = await fetch(`/api/content-monitoring/reports/comment`, {
         method: "POST",
         headers: {

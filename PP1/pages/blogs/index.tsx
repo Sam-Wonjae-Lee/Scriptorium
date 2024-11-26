@@ -9,6 +9,7 @@ import { BlogType } from "@/utils/types";
 import { useRouter } from "next/router";
 import { showAlert } from "@/components/Alert";
 import ActionButton from "@/components/ActionButton";
+import { refreshLogin, verifyLogin } from "@/components/refresh";
 
 const Blogs = () => {
   const router = useRouter();
@@ -100,6 +101,10 @@ const Blogs = () => {
         .join(",")}&languages=${selectedLanguages
         .map((language) => language.id)
         .join(",")}&sortBy=${sortBy}`;
+
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
       const response = await fetch(query, {
         headers: {
           authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
@@ -143,6 +148,10 @@ const Blogs = () => {
     handleCloseDeleteModal();
 
     try {
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
+
       const response = await fetch(`/api/blog-posts/${id}`, {
         method: "DELETE",
         headers: {
