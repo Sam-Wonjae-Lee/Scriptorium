@@ -55,6 +55,7 @@ export interface BlogType {
 }
 
 export interface Template {
+  isAuthor: boolean;
   id: number;
   title: string;
   language: { id: number; name: string };

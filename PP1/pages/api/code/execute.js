@@ -83,7 +83,7 @@ async function executeCode(req, identifier) {
     }
     else if (req.body.language == "cpp") {
         await fs.writeFile(srcPath, req.body.code);
-        const compileCommand = `g++ ${srcPath} -o ./client_files/${identifier}/${identifier}`
+        const compileCommand = `g++ -std=c++11 ${srcPath} -o ./client_files/${identifier}/${identifier}`
         try {
             const res = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
             if (res.stderr) {
