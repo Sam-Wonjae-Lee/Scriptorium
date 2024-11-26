@@ -14,7 +14,14 @@ export type User = {
   id: number;
   firstName: string;
   lastName: string;
-  avatar: string;
+  avatar: AvatarProps["avatar"];
+};
+
+export type AvatarProps = {
+  avatar: {
+    type: string;
+    data: number[];
+  } | null;
 };
 
 export interface Comment {

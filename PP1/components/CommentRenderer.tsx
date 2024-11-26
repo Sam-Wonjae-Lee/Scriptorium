@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Comment } from "@/utils/types";
+import { AvatarProps, Comment } from "@/utils/types";
 import { showAlert } from "./Alert";
 import InputField from "./InputField";
 import { getCancelIcon, getReportIcon, getSendIcon } from "@/utils/svg";
@@ -7,11 +7,13 @@ import ReportModal from "@/components/ReportModal";
 
 interface CommentRendererProps {
   comments: Comment[];
+  setComments: React.Dispatch<React.SetStateAction<Comment[]>>;
   blogId: number;
 }
 
 const RenderComments: React.FC<CommentRendererProps> = ({
   comments,
+  setComments,
   blogId,
 }) => {
   const [openedReply, setOpenedReply] = useState<number | null>(null);
@@ -308,7 +310,29 @@ const RenderComments: React.FC<CommentRendererProps> = ({
           showAlert("You must be logged in to reply", "error");
         }
       }
-      const data = response.json();
+
+      const newReply = await response.json();
+      setComments((prevComments: Comment[]) => {
+        const addReplyToComment = (comments: Comment[]): Comment[] => {
+          return comments.map((c) => {
+            if (c.id === comment.id) {
+              return {
+                ...c,
+                replies: [...(c.replies || []), newReply],
+              };
+            } else if (c.replies && c.replies.length > 0) {
+              return {
+                ...c,
+                replies: addReplyToComment(c.replies),
+              };
+            }
+            return c;
+          });
+        };
+        return addReplyToComment(prevComments);
+      });
+      setReplyContent("");
+      setOpenedReply(null);
     } catch (error) {
       console.error("Error replying:", error);
     }
@@ -352,6 +376,12 @@ const RenderComments: React.FC<CommentRendererProps> = ({
     }
   };
 
+  const getAvatarSrc = (avatarData: AvatarProps["avatar"]) => {
+    if (!avatarData?.data) return null;
+    const base64 = Buffer.from(avatarData.data).toString("base64");
+    return `data:image/png;base64,${base64}`;
+  };
+
   const renderReplies = (replies: Comment[]): JSX.Element[] => {
     return replies.map((reply) => (
       <div
@@ -359,6 +389,13 @@ const RenderComments: React.FC<CommentRendererProps> = ({
         className="ml-6 border-l border-text-light dark:border-text-dark pl-4 mt-2"
       >
         <div className="flex flex-col p-2">
+          <div className="w-10 h-10">
+            <img
+              src={getAvatarSrc(reply.user.avatar)!}
+              // alt="User Avatar"
+              className="avatar"
+            />
+          </div>
           <p className="font-semibold">
             {reply.user.firstName} {reply.user.lastName}:
           </p>

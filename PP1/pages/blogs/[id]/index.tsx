@@ -342,7 +342,11 @@ const Blog = () => {
               />
             </div>
             {comments && blog ? (
-              <CommentRenderer comments={comments} blogId={blog.id} />
+              <CommentRenderer
+                comments={comments}
+                blogId={blog.id}
+                setComments={setComments}
+              />
             ) : blogExists ? (
               renderLoading()
             ) : (
