@@ -14,20 +14,25 @@ import python from "highlight.js/lib/languages/python";
 import c from "highlight.js/lib/languages/c";
 import cpp from "highlight.js/lib/languages/cpp";
 import java from "highlight.js/lib/languages/java";
+import rust from 'highlight.js/lib/languages/rust';
+import ruby from 'highlight.js/lib/languages/ruby';
+import r from 'highlight.js/lib/languages/r';
+import php from 'highlight.js/lib/languages/php';
+import csharp from 'highlight.js/lib/languages/csharp';
 
 hljs.registerLanguage("javascript", javascript);
 hljs.registerLanguage("python", python);
 hljs.registerLanguage("c", c);
 hljs.registerLanguage("cpp", cpp);
 hljs.registerLanguage("java", java);
+hljs.registerLanguage("rust", rust);
+hljs.registerLanguage("ruby", ruby);
+hljs.registerLanguage("r", r);
+hljs.registerLanguage("php", php);
+hljs.registerLanguage("csharp", csharp);
 
-const LANG_EXTENSTION_CONVERTER: Record<string, string> = {Python: "py", Javascript: "js", C: "c", Cpp: "cpp", Java: "java"};
+const LANG_EXTENSTION_CONVERTER: Record<string, string> = {Python: "py", JavaScript: "js", C: "c", Cpp: "cpp", Java: "java", Php: "php", R: "R", Rust: "rs", "CSharp": "cs", Ruby: "rb" };
 const NON_EMPTY = "Field must not be empty";
-
-interface CursorPosition {
-    start: number;
-    end: number;
-}
 
 interface Language {
     name: string;
@@ -58,16 +63,16 @@ const OnlineEditor = () => {
 
     const [activeTab, setActiveTab] = useState("Console");
 
-    const editorRef = useRef(null);
-    const lastCursorPosition = useRef<CursorPosition>({ start: 0, end: 0 });
+    const editorRef = useRef<HTMLPreElement>(null);
+    const textareaRef = useRef<HTMLTextAreaElement>(null);
 
     const verifyLogin = async () : Promise<boolean> => {
-        const response = await fetch("http://localhost:3000/api/users/verify", {
+        const response = await fetch("/api/users/verify", {
             method: "GET",
             headers: {"Content-Type": "application/json", "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`}
         })
         if (!response.ok) {
-            const refreshResponse = await fetch("http://localhost:3000/api/users/refresh", {
+            const refreshResponse = await fetch("/api/users/refresh", {
                 method: "GET"
             })
             const data = await refreshResponse.json();
@@ -81,64 +86,10 @@ const OnlineEditor = () => {
         return true;
     }
 
-    const getCursorPosition = (): CursorPosition => {
-        const selection = window.getSelection();
-        if (!selection?.rangeCount || !editorRef.current) {
-            return { start: 0, end: 0 };
-        }
-
-        const range = selection.getRangeAt(0);
-        const preSelectionRange = range.cloneRange();
-        preSelectionRange.selectNodeContents(editorRef.current);
-        preSelectionRange.setEnd(range.startContainer, range.startOffset);
-        const start = preSelectionRange.toString().length;
-
-        return {
-            start,
-            end: start + range.toString().length
-        };
-    };
-
-    const setCursorPosition = (positions: CursorPosition) => {
-        const editor = editorRef.current;
-        if (!editor) return;
-
-        const selection = window.getSelection();
-        const range = document.createRange();
-
-        let currentPos = 0;
-        let startNode: Node | null = null;
-        let startOffset = 0;
-        let endNode: Node | null = null;
-        let endOffset = 0;
-
-        const findPosition = (node: Node) => {
-            if (node.nodeType === Node.TEXT_NODE) {
-                const length = node.textContent?.length || 0;
-                
-                if (currentPos <= positions.start && currentPos + length >= positions.start) {
-                    startNode = node;
-                    startOffset = positions.start - currentPos;
-                }
-                if (currentPos <= positions.end && currentPos + length >= positions.end) {
-                    endNode = node;
-                    endOffset = positions.end - currentPos;
-                }
-                currentPos += length;
-            } else {
-                for (const child of Array.from(node.childNodes)) {
-                    findPosition(child);
-                }
-            }
-        };
-
-        findPosition(editor);
-
-        if (startNode && endNode) {
-            range.setStart(startNode, startOffset);
-            range.setEnd(endNode, endOffset);
-            selection?.removeAllRanges();
-            selection?.addRange(range);
+    const syncScroll = () => {
+        if (textareaRef.current && editorRef.current) {
+            editorRef.current.scrollTop = textareaRef.current.scrollTop;
+            editorRef.current.scrollLeft = textareaRef.current.scrollLeft;
         }
     };
 
@@ -169,6 +120,7 @@ const OnlineEditor = () => {
 
     const runCode = async () => {
         const ext = LANG_EXTENSTION_CONVERTER[activeLanguage];
+        console.log(ext)
         setCodeRunning(true);
         const response = await fetch(`/api/code/execute`, { 
             method: "POST",
@@ -189,44 +141,30 @@ const OnlineEditor = () => {
             return;
         }
         if (data.compilerWarnings) {
-            outputString += data.compilerWarnings;
+            outputString += data.compilerWarnings + "\n";
         }
         if (data.stderr) {
-            outputString += "\n" + data.stderr;
+            outputString += data.stderr + "\n";
         }
         if (data.stdout) {
-            outputString += "\n" + data.stdout;
+            outputString += data.stdout + "\n";
         }
         setOutput(outputString);
+        console.log(outputString);
     }
 
-    const handleCodeInput = (event: React.FormEvent<HTMLDivElement>) => {
-        const target = event.target as HTMLDivElement;
-        const newCode = target.innerText;
-        const currentCursorPos = getCursorPosition();
-
+    const handleCodeInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const target = event.target as HTMLTextAreaElement;
+        const newCode = target.value;
         setCode(newCode);
-
-        const charAtCursor = newCode[currentCursorPos.start]; 
-        console.log(currentCursorPos);
-        if (charAtCursor === "\n" || charAtCursor === "\t") {
-            lastCursorPosition.current = currentCursorPos;
-            return;
-        }
-
-        target.innerHTML = hljs.highlight(newCode, { language: activeLanguage.toLowerCase() }).value;
-
-        if (lastCursorPosition.current.start !== 0 || lastCursorPosition.current.end !== 0) {
-            setCursorPosition({ start: currentCursorPos.start + 1, end: currentCursorPos.end + 1 });
-            lastCursorPosition.current = { start: 0, end: 0 };
-        } else {
-            setCursorPosition(currentCursorPos);
+        if (editorRef.current) {
+            editorRef.current.innerHTML = hljs.highlight(newCode, { language: activeLanguage.toLowerCase() }).value;
         }
     };
 
-    const handleStandardInput = (event: React.FormEvent<HTMLDivElement>) => {
-        const target = event.target as HTMLDivElement;
-        const newStdin = target.innerText;
+    const handleStandardInput = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+        const target = event.target as HTMLTextAreaElement;
+        const newStdin = target.value;
         setStdin(newStdin);
     }
 
@@ -253,16 +191,17 @@ const OnlineEditor = () => {
             })
 
             const data = await response.json();
+            if (response.ok) {
+                showAlert("Template saved succesfully", "success");
+            }
+            else {
+                showAlert("Template could not be saved", "error");
+            }
             console.log(data);
         }
         catch (error) {
-
+            console.log(error);
         }
-        console.log(title);
-        console.log(explanation);
-        console.log(languageId);
-        console.log(selectedTags);
-        console.log(code);
     }
 
     const handleRedirectHome = () => {
@@ -281,18 +220,14 @@ const OnlineEditor = () => {
         verifyLoginWrapper();
     }, [])
 
-    useEffect(() => {
-        //console.log(code);
-    }, [code])
-
     return (
-        <div className="h-screen w-screen bg-background-light dark:bg-element_background-dark flex flex-col">
-            <div className="flex justify-between">
-                <div className="w-[50%] h-fill flex space-x-4 items-center text-text-light dark:text-text-dark ml-4">
+        <div className="h-screen w-screen bg-background-light dark:bg-element_background-dark flex flex-col overflow-y-auto">
+            <div className="flex flex-col md:flex-row justify-between w-full">
+                <div className="w-[50%] h-fill flex space-x-4 items-center text-text-light dark:text-text-dark md:ml-4">
                     <ActionButton text="Home" onClick={handleRedirectHome} size="small" outlineButton={true}/>
                     <ThemeSwitcher/>
                 </div>
-                <div className="w-[50%] flex justify-between">
+                <div className="w-[50%] flex flex-col md:flex-row justify-between">
                     <div className="flex items-center space-x-4 text-hot_pink-darken dark:text-hot_pink-normal">
                         <h3>Choose Language</h3>
                         <Dropdown options={languages.map((lang) => lang.name)} selectedOption={activeLanguage} setSelectedOption={setActiveLanguage} text=""/>
@@ -313,9 +248,9 @@ const OnlineEditor = () => {
                     </div>
                 </div>
             </div>
-            <div className="flex h-[50%] w-full justify-between">
-                <div className="relative w-[50%] h-full">
-                    <div className={`${isLoggedIn ? `` : `opacity-50 pointer-events-none`} w-full h-full p-4 text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark border rounded border-hot_pink-darken dark:border-hot_pink-normal flex flex-col space-y-4`}>
+            <div className="flex h-full w-full flex-col md:flex-row md:h-[50%]">
+                <div className="relative w-full h-[50%] md:h-full md:w-[50%] text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark border rounded border-hot_pink-darken dark:border-hot_pink-normal overflow-y-auto">
+                    <div className={`${isLoggedIn ? `` : `opacity-50 pointer-events-none`} w-full h-full p-4 flex flex-col space-y-4`}>
                         <h2 className="ml-2">Template Details</h2>
                         <div className="w-[50%]">
                             <InputField placeholder="Title" value={title} hasError={titleError} errorMessage={NON_EMPTY} onChangeText={(text: string) => {
@@ -323,7 +258,7 @@ const OnlineEditor = () => {
                                 setTitle(text)
                             }}/>
                         </div>
-                        <textarea placeholder="Explanation" className="text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark border rounded border-background-dark dark:border-background-light p-4 w-full border-2 h-[30%] rounded-xl overflow-y-auto focus:border-hot_pink-normal dark:focus:border-hot_pink-normal outline-none" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        <textarea placeholder="Explanation" className="text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark border rounded border-background-dark dark:border-background-light p-4 w-full border-2 h-[40%] rounded-xl overflow-y-auto focus:border-hot_pink-normal dark:focus:border-hot_pink-normal outline-none" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                             setExplanation(e.target.value);
                         }}>
                         </textarea>
@@ -344,33 +279,26 @@ const OnlineEditor = () => {
                         </div>
                     )}
                 </div>
-                <pre className="w-[50%] h-full">
-                    <code className="w-full h-full">
-                        <div ref={editorRef}
-                        contentEditable="true"
-                        onInput={handleCodeInput}
-                        onPaste={handleCodeInput}
-                        spellCheck="false"
-                        className="w-full h-full p-4 font-mono text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark border rounded border-hot_pink-darken dark:border-hot_pink-normal overflow-auto outline-none">
-                        </div>
-                    </code>
-                </pre>
-            </div>
-            <div className="w-full flex-1">
-                <div className="w-full h-[12%] bg-element_background-light dark:bg-background-dark border-b border-hot_pink-darken dark:border-hot_pink-normal flex">
-                    <button className="rounded-tr-md border-t-2 border-l-2 border-r-2 border-hot_pink-darken dark:border-hot_pink-normal p-2 w-[10%] text-hot_pink-darken dark:text-hot_pink-normal hover:text-hot_pink-normal hover:border-hot_pink-normal dark:hover:text-hot_pink-darken dark:hover:border-hot_pink-darken" onClick={() => setActiveTab("Console")}>Console</button>
-                    <button className="rounded-tr-md border-t-2 border-l-2 border-r-2 border-hot_pink-darken dark:border-hot_pink-normal p-2 w-[10%] text-hot_pink-darken dark:text-hot_pink-normal hover:text-hot_pink-normal hover:border-hot_pink-normal dark:hover:text-hot_pink-darken dark:hover:border-hot_pink-darken" onClick={() => setActiveTab("Input")}>Input</button>
+                <div className="relative w-full h-[50%] md:h-full md:w-[50%]">
+                    <pre ref={editorRef} className="absolute top-0 left-0 w-full h-full p-4 font-mono text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark overflow-auto pointer-events-none border rounded border-hot_pink-darken dark:border-hot_pink-normal"></pre>
+                    <textarea ref={textareaRef} value={code} onChange={handleCodeInput} onScroll={syncScroll} spellCheck="false" className="absolute top-0 left-0 w-full h-full p-4 font-mono text-transparent caret-text-light dark:caret-text-dark bg-transparent border-transparent focus:border-transparent focus:ring-0 resize-none overflow-auto"></textarea>
                 </div>
-                <div className="w-full h-[88%] bg-element_background-light dark:bg-background-dark text-hot_pink-darken dark:text-hot_pink-normal p-8">
+            </div>
+            <div className="w-full h-full md:flex-1">
+                <div className="w-full h-[12%] bg-element_background-light dark:bg-background-dark border-b border-hot_pink-darken dark:border-hot_pink-normal flex">
+                    <button className="rounded-tr-md border-t-2 border-l-2 border-r-2 border-hot_pink-darken dark:border-hot_pink-normal p-2 w-[20%] md:w-[10%] text-hot_pink-darken dark:text-hot_pink-normal hover:text-hot_pink-normal hover:border-hot_pink-normal dark:hover:text-hot_pink-darken dark:hover:border-hot_pink-darken" onClick={() => setActiveTab("Console")}>Console</button>
+                    <button className="rounded-tr-md border-t-2 border-l-2 border-r-2 border-hot_pink-darken dark:border-hot_pink-normal p-2 w-[20%] md:w-[10%] text-hot_pink-darken dark:text-hot_pink-normal hover:text-hot_pink-normal hover:border-hot_pink-normal dark:hover:text-hot_pink-darken dark:hover:border-hot_pink-darken" onClick={() => setActiveTab("Input")}>Input</button>
+                </div>
+                <div className="w-full h-[88%] bg-element_background-light dark:bg-background-dark text-hot_pink-darken dark:text-hot_pink-normal p-8 overflow-hidden">
                     {activeTab && activeTab == "Console" && (
                         <div className="w-full h-full flex flex-col space-y-2">
                             <h3>Output</h3>
-                            <div className="h-full p-4 font-mono text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark border rounded border-hot_pink-darken dark:border-hot_pink-normal overflow-auto outline-none overflow-x-auto">{output}</div>
+                            <textarea readOnly value={output} className="h-full p-4 font-mono text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark border rounded border-hot_pink-darken dark:border-hot_pink-normal focus:border-hot_pink-darken dark:focus:border-hot_pink-normal focus:ring-0"></textarea>
                         </div>)}
                     {activeTab && activeTab == "Input" && (
                         <div className="w-full h-full flex flex-col space-y-2">
                             <h3>input.txt</h3>
-                            <div contentEditable="true" className="h-full p-4 font-mono text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark border rounded border-hot_pink-darken dark:border-hot_pink-normal overflow-auto outline-none" onInput={handleStandardInput}></div>
+                            <textarea className="h-full p-4 font-mono text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark overflow-auto border rounded border-hot_pink-darken dark:border-hot_pink-normal focus:border-hot_pink-darken dark:focus:border-hot_pink-normal focus:ring-0" onChange={handleStandardInput} value={stdin}></textarea>
                         </div>)}
                 </div>
             </div>
