@@ -223,15 +223,15 @@ const Templates = () => {
       </div>
       {deleteModalIsOpen && renderDeleteModal()}
 
-      <div className="max-w-900 w-900">
+      <div className="max-w-900 w-full px-4 sm:px-6 md:px-8">
         <section className="w-full my-12">
           {/* Page search section */}
-          <div className="flex justify-between items-center mb-4">
-            <h1 className="text-4xl font-bold text-text-light dark:text-text-dark">
+          <div className="flex flex-col sm:flex-row justify-between items-center mb-4">
+            <h1 className="text-4xl font-bold text-text-light dark:text-text-dark mb-4 sm:mb-0">
               Code Templates
             </h1>
             {/* Search Templates */}
-            <div className="w-72">
+            <div className="w-full sm:w-72">
               <InputField
                 placeholder="Search templates"
                 value={templateQuery}
@@ -242,8 +242,8 @@ const Templates = () => {
           <h2 className="text-lg mb-4 text-text-light dark:text-text-dark">
             Explore code templates created by the community!
           </h2>
-          <div className="flex gap-5">
-            <div className="w-80">
+          <div className="flex flex-col sm:flex-row gap-5">
+            <div className="w-full sm:w-80">
               <MultiSelectDropdown
                 placeholder="Select tags"
                 searchPlaceholder="Search tags"
@@ -254,7 +254,7 @@ const Templates = () => {
                 onQueryChange={setTagQuery}
               />
             </div>
-            <div className="w-80">
+            <div className="w-full sm:w-80">
               <MultiSelectDropdown
                 placeholder="Select language"
                 searchPlaceholder="Search languages"

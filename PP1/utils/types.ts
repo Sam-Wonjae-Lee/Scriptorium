@@ -8,6 +8,8 @@ export type Tag = { name: string; color: string; id: number };
 
 export type Rating = { upvotes: number; downvotes: number };
 
+export type SortBy = "upvotes" | "downvotes" | "controversial";
+
 export type User = {
   id: number;
   firstName: string;

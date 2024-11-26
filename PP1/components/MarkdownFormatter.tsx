@@ -39,6 +39,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
 
     // Code blocks (multiline)
     html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
+      console.log(lang);
       if (!supportedLanguages.includes(lang)) {
         lang = "plaintext";
       }

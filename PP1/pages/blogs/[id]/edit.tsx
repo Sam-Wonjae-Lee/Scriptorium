@@ -1,6 +1,6 @@
 import MarkdownRenderer from "@/components/MarkdownFormatter";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
-import React, { useState, useRef, useEffect, use } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import InputField from "@/components/InputField";
 import ActionButton from "@/components/ActionButton";
 import { Option } from "@/utils/types";
@@ -239,8 +239,8 @@ const EditBlog = () => {
         </div>
 
         {/* Tags */}
-        <div className="flex gap-5">
-          <div className="w-80">
+        <div className="flex flex-col sm:flex-row gap-5">
+          <div className="w-full sm:w-80">
             <MultiSelectDropdown
               placeholder="Select tags"
               searchPlaceholder="Search tags"
@@ -251,7 +251,7 @@ const EditBlog = () => {
               onQueryChange={setTagQuery}
             />
           </div>
-          <div className="w-80">
+          <div className="w-full sm:w-80">
             <MultiSelectDropdown
               placeholder="Select templates"
               searchPlaceholder="Search templates"
@@ -265,7 +265,7 @@ const EditBlog = () => {
         </div>
         {/* Tabs */}
         <div className="flex items-center gap-2 mb-4">
-          <h2 className="text-xl  text-text-light dark:text-text-dark">
+          <h2 className="text-xl text-text-light dark:text-text-dark">
             Blog content
           </h2>
           <div
@@ -333,7 +333,7 @@ const EditBlog = () => {
         <ThemeSwitcher />
       </div>
       {renderHelpModal()}
-      <div className="max-w-3xl mx-auto p-4 w-900">
+      <div className="max-w-3xl mx-auto p-4 w-full sm:w-900">
         {blogExists ? renderEditBlog() : render404()}
       </div>
     </main>

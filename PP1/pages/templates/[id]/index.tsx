@@ -56,10 +56,10 @@ const TemplatePage = () => {
   const renderTemplate = (template: Template) => {
     return (
       <div className="text-text-light dark:text-text-dark">
-        <div className="flex justify-between">
+        <div className="flex flex-col md:flex-row justify-between">
           <h1 className="text-3xl font-bold">{template.title}</h1>
           <div
-            className="h-8 px-3 py-6 cursor-pointer flex items-center gap-2 border border-text-light dark:border-text-dark hover:border-hot_pink-normal hover:dark:border-hot_pink-normal rounded-full"
+            className="h-8 px-3 py-6 cursor-pointer flex items-center gap-2 border border-text-light dark:border-text-dark hover:border-hot_pink-normal hover:dark:border-hot_pink-normal rounded-full mt-4 md:mt-0"
             onClick={() => router.push(`/online-editor?templateId=${id}`)}
           >
             <div className="h-8 w-8">{getForkIcon()}</div>
@@ -91,7 +91,7 @@ const TemplatePage = () => {
         </div>
 
         {/* Templates */}
-        <div className="flex flex-wrap gap-2 mt-2 pb-4 mb-2  border-b border-text-light dark:border-text-dark">
+        <div className="flex flex-wrap gap-2 mt-2 pb-4 mb-2 border-b border-text-light dark:border-text-dark">
           <h2>Blogs that mention this template</h2>
           {template.Blogs.map((blog) => (
             <span
@@ -105,12 +105,17 @@ const TemplatePage = () => {
             </span>
           ))}
         </div>
-
-        <MarkdownFormatter
-          content={`\`\`\`${template.language.name.toLowerCase()}\n${
-            template.code
-          }\n\`\`\``}
-        />
+        {template.language.name === "C++" ? (
+          <MarkdownFormatter
+            content={`\`\`\`${"cpp"}\n${template.code}\n\`\`\``}
+          />
+        ) : (
+          <MarkdownFormatter
+            content={`\`\`\`${template.language.name.toLowerCase()}\n${
+              template.code
+            }\n\`\`\``}
+          />
+        )}
       </div>
     );
   };
@@ -122,11 +127,11 @@ const TemplatePage = () => {
   }, [id]);
 
   return (
-    <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
+    <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border p-3">
       <div className="absolute top-0 left-0">
         <ThemeSwitcher />
       </div>
-      <section className="w-900 py-10">
+      <section className="w-full sm:w-11/12 md:w-900 py-10">
         {template
           ? renderTemplate(template)
           : templateExists

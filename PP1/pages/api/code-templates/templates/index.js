@@ -159,7 +159,7 @@ export default async function handler(req, res) {
     // Paginate
     const skip = get_skip(page);
 
-    const templates = await prisma.templates.findMany({
+    let templates = await prisma.templates.findMany({
       where: filters,
       include: {
         tags: true,
@@ -180,6 +180,14 @@ export default async function handler(req, res) {
       skip: skip,
       take: PAGINATION_LIMIT,
     });
+
+    // Check if user is logged in to specify owned blog posts
+    const result = verifyJWT(req);
+    if (result) {
+      templates.forEach((template) => {
+        template.owned = template.authorId === parseInt(result.id);
+      });
+    }
 
     const totalTemplates = await prisma.templates.count({ where: filters });
     const totalPages = Math.ceil(totalTemplates / PAGINATION_LIMIT);
