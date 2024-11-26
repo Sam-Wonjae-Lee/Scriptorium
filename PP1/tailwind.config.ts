@@ -10,8 +10,11 @@ export default {
   ],
   theme: {
     extend: {
+      maxHeight: {
+        "200": "200px",
+      },
       animation: {
-        spin: 'spin 1s linear infinite', 
+        spin: "spin 1s linear infinite",
       },
       left: {
         "2px": "2px",
