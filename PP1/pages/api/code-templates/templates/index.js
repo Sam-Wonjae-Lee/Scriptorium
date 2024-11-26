@@ -71,13 +71,7 @@ export default async function handler(req, res) {
 
     res.status(201).json(template);
   } else if (req.method === "GET") {
-    const { 
-      query = "", 
-      languageId, 
-      tags, 
-      authorId,
-      page = 1 
-    } = req.query;
+    const { query = "", languages, tags, authorId, page = 1 } = req.query;
 
     // let { authorId } = req.query;
 
