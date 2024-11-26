@@ -16,6 +16,11 @@ async function main() {
       { name: "C" },
       { name: "Java" },
       { name: "JavaScript" },
+      { name: "Php" },
+      { name: "R" },
+      { name: "Ruby" },
+      { name: "CSharp" },
+      { name: "Rust" }
     ],
   });
   await prisma.tags.createMany({
