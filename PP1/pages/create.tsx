@@ -34,7 +34,8 @@ const Create = () => {
 
     return (
         <div className="h-screen w-screen flex flex-col items-center bg-background-light dark:bg-background-dark">
-            <NavBar />
+            <NavBar/>
+            
             <div className="flex h-full w-full">
                 <div className="text-black dark:text-text-dark h-full w-[50%] flex flex-col space-y-4 items-center justify-center">
                     <h3>Online Editor</h3>
