@@ -71,13 +71,21 @@ export default async function handler(req, res) {
 
     res.status(201).json(template);
   } else if (req.method === "GET") {
-    const { query = "", languageId, tags, authorId, page = 1 } = req.query;
+    const { 
+      query = "", 
+      languageId, 
+      tags, 
+      authorId,
+      page = 1 
+    } = req.query;
 
-    const result = verifyJWT(req);
+    // let { authorId } = req.query;
 
-    if (authorId == null) {
-      authorId = result.id;
-    }
+    // const result = verifyJWT(req);
+
+    // if (authorId == null) {
+    //   authorId = result.id;
+    // }
 
     // Check that author exists if provided
     if (authorId) {
