@@ -8,6 +8,7 @@ import { Template } from "@/utils/types";
 import { useRouter } from "next/router";
 import { showAlert } from "@/components/Alert";
 import ActionButton from "@/components/ActionButton";
+import NavBar from "@/components/NavBar";
 
 const Templates = () => {
   const router = useRouter();
@@ -217,10 +218,8 @@ const Templates = () => {
   };
 
   return (
-    <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
-      <div className="absolute top-0 left-0">
-        <ThemeSwitcher />
-      </div>
+    <main className="mt-4 min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
+      <NavBar />
       {deleteModalIsOpen && renderDeleteModal()}
 
       <div className="max-w-900 w-full px-4 sm:px-6 md:px-8">

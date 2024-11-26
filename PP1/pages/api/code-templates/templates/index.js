@@ -71,7 +71,21 @@ export default async function handler(req, res) {
 
     res.status(201).json(template);
   } else if (req.method === "GET") {
-    const { query = "", languages, tags, authorId, page = 1 } = req.query;
+    const { 
+      query = "", 
+      languageId, 
+      tags, 
+      authorId,
+      page = 1 
+    } = req.query;
+
+    // let { authorId } = req.query;
+
+    // const result = verifyJWT(req);
+
+    // if (authorId == null) {
+    //   authorId = result.id;
+    // }
 
     // Check that author exists if provided
     if (authorId) {
@@ -162,18 +176,12 @@ export default async function handler(req, res) {
     let templates = await prisma.templates.findMany({
       where: filters,
       include: {
-        tags: true,
         author: {
           select: {
             id: true,
             firstName: true,
             lastName: true,
-          },
-        },
-        language: {
-          select: {
-            id: true,
-            name: true,
+            avatar: true,
           },
         },
       },

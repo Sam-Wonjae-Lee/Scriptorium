@@ -5,6 +5,7 @@ import MarkdownFormatter from "@/components/MarkdownFormatter";
 import { Template } from "@/utils/types";
 import { showAlert } from "@/components/Alert";
 import { getForkIcon } from "@/utils/svg";
+import NavBar from "@/components/NavBar";
 
 const TemplatePage = () => {
   const router = useRouter();
@@ -127,10 +128,8 @@ const TemplatePage = () => {
   }, [id]);
 
   return (
-    <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border p-3">
-      <div className="absolute top-0 left-0">
-        <ThemeSwitcher />
-      </div>
+    <main className="mt-4 min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border p-3">
+      <NavBar />
       <section className="w-full sm:w-11/12 md:w-900 py-10">
         {template
           ? renderTemplate(template)

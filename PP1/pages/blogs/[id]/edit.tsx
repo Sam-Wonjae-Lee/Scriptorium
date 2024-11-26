@@ -8,6 +8,7 @@ import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import { showAlert } from "@/components/Alert";
 import { getInfoIcon } from "@/utils/svg";
 import { useRouter } from "next/router";
+import NavBar from "@/components/NavBar";
 
 const EditBlog = () => {
   const router = useRouter();
@@ -328,10 +329,8 @@ const EditBlog = () => {
   };
 
   return (
-    <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
-      <div className="absolute top-0 left-0">
-        <ThemeSwitcher />
-      </div>
+    <main className="mt-4 min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
+      <NavBar/>
       {renderHelpModal()}
       <div className="max-w-3xl mx-auto p-4 w-full sm:w-900">
         {blogExists ? renderEditBlog() : render404()}

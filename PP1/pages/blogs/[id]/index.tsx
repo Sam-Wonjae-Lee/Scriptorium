@@ -11,6 +11,7 @@ import BlogRatingSection from "@/components/BlogRatingSection";
 import { BlogType } from "@/utils/types";
 import ReportModal from "@/components/ReportModal";
 import Dropdown from "@/components/Dropdown";
+import NavBar from "@/components/NavBar";
 
 const Blog = () => {
   const router = useRouter();
@@ -301,7 +302,7 @@ const Blog = () => {
   };
 
   return (
-    <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
+    <main className="mt-4 min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
       <ReportModal
         show={reportModalIsOpen}
         onHide={() => setReportModalIsOpen(false)}
@@ -309,9 +310,7 @@ const Blog = () => {
           handleBlogReportSubmit(reportType, description);
         }}
       />
-      <div className="absolute top-0 left-0">
-        <ThemeSwitcher />
-      </div>
+      <NavBar/>
       <section className="w-full sm:w-11/12 md:w-900 py-10 px-4 sm:px-6 md:px-0">
         {blog ? renderBlog(blog) : blogExists ? renderLoading() : render404()}
         {/* Comment Section */}
