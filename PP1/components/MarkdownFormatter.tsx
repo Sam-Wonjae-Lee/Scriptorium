@@ -43,20 +43,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
     hljs.registerLanguage("php", php);
     hljs.registerLanguage("csharp", csharp);
 
-    // Bold Italic
-    let html = markdown.replace(
-      /\*\*\*(.*?)\*\*\*/g,
-      "<strong><em>$1</em></strong>"
-    );
-
-    // Underline
-    html = html.replace(/__(.*?)__/g, "<u>$1</u>");
-
-    // Bold
-    html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-
-    // Italic
-    html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
+    let html = markdown;
 
     // Code blocks (multiline)
     html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
@@ -68,6 +55,18 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
       }).value;
       return `<pre><code class="hljs language-${lang} !bg-transparent">${highlightedCode}</code></pre>`;
     });
+
+    // Bold Italic
+    // html = html.replace(/\*\*\*(.*?)\*\*\*/g, "<strong><em>$1</em></strong>");
+
+    // Underline
+    // html = html.replace(/__(.*?)__/g, "<u>$1</u>");
+
+    // Bold
+    // html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+    // Italic
+    // html = html.replace(/\*(.*?)\*/g, "<em>$1</em>");
 
     // Inline code
     html = html.replace(/`(.*?)`/g, "<code class='hljs rounded-md'>$1</code>");
@@ -85,34 +84,34 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content }) => {
       .replace(/^# (.*$)/gm, "<h1 class='text-2xl'>$1</h1>");
 
     // Tables
-    html = html.replace(/(\|.+\|[\r\n])+/g, (match) => {
-      const rows = match
-        .split("\n")
-        .filter((line) => !/^(\|[-:]+)+\|$/.test(line)) // Filter out the separator line
-        .map((line, index) => {
-          const cells = line
-            .split("|")
-            .map((cell) => cell.trim())
-            .filter(Boolean); // Remove empty cells
+    // html = html.replace(/(\|.+\|[\r\n])+/g, (match) => {
+    //   const rows = match
+    //     .split("\n")
+    //     .filter((line) => !/^(\|[-:]+)+\|$/.test(line)) // Filter out the separator line
+    //     .map((line, index) => {
+    //       const cells = line
+    //         .split("|")
+    //         .map((cell) => cell.trim())
+    //         .filter(Boolean); // Remove empty cells
 
-          // Wrap the first row in <thead> and the others in <tbody>
-          if (index === 0) {
-            // First row is the header row
-            return `<thead ><tr><th class="border px-4 py-2">${cells.join(
-              "</th><th class='border px-4 py-2'>"
-            )}</th></tr></thead>`;
-          } else {
-            // Other rows are data rows
-            return `<tr><td class="border px-4 py-2 text-center">${cells.join(
-              "</td class='border px-4 py-2'><td>"
-            )}</td></tr>`;
-          }
-        })
-        .join("");
+    //       // Wrap the first row in <thead> and the others in <tbody>
+    //       if (index === 0) {
+    //         // First row is the header row
+    //         return `<thead ><tr><th class="border px-4 py-2">${cells.join(
+    //           "</th><th class='border px-4 py-2'>"
+    //         )}</th></tr></thead>`;
+    //       } else {
+    //         // Other rows are data rows
+    //         return `<tr><td class="border px-4 py-2 text-center">${cells.join(
+    //           "</td class='border px-4 py-2'><td>"
+    //         )}</td></tr>`;
+    //       }
+    //     })
+    //     .join("");
 
-      // Wrap all rows in a <tbody>
-      return `<table class="table-auto rounded-lg border-separate border border-text-light dark:border-text-dark">${rows}</table>`;
-    });
+    //   // Wrap all rows in a <tbody>
+    //   return `<table class="table-auto rounded-lg border-separate border border-text-light dark:border-text-dark">${rows}</table>`;
+    // });
 
     // Replace newlines with <br>
     html = html.replace(/\n/g, "<br />");

@@ -121,7 +121,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
             isOpen
               ? "border-hot_pink-normal dark:border-hot_pink-normal"
               : "border-text-light dark:border-text-dark"
-          } bg-background-light dark:bg-background-dark flex items-center gap-2 container flex-wrap`}
+          } bg-background-light dark:bg-background-dark`}
         >
           {/* Search */}
           <input
@@ -131,21 +131,28 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
             placeholder={searchPlaceholder}
             className="w-full px-2 py-1 mb-2 outline-none bg-transparent border-b-2 border-text-light dark:border-text-dark text-text-light dark:text-text-dark"
           />
-          {/* TAGS */}
-          {options.map((option) => (
-            <div
-              key={option.id}
-              className={`px-2 rounded-full cursor-pointer select-none ${
-                option.color
-                  ? ""
-                  : "bg-element_background-light dark:bg-element_background-dark"
-              }`}
-              onClick={() => handleOptionClick(option)}
-              style={{ backgroundColor: getOptionColor(option) }}
-            >
-              {option.name}
-            </div>
-          ))}
+          {/* Tags */}
+          <div
+            className="flex flex-wrap gap-2 overflow-y-auto"
+            style={{
+              maxHeight: "200px", // Adjust height as needed
+            }}
+          >
+            {options.map((option) => (
+              <div
+                key={option.id}
+                className={`px-2 rounded-full cursor-pointer select-none ${
+                  option.color
+                    ? ""
+                    : "bg-element_background-light dark:bg-element_background-dark"
+                }`}
+                onClick={() => handleOptionClick(option)}
+                style={{ backgroundColor: getOptionColor(option) }}
+              >
+                {option.name}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
