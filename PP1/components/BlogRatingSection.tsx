@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { showAlert } from "./Alert";
 import { BlogType } from "@/utils/types";
+import { refreshLogin, verifyLogin } from "@/components/refresh";
+import { verify } from "crypto";
 
 interface BlogRatingSectionProps {
   blog: BlogType;
@@ -68,6 +70,10 @@ const BlogRatingSection: React.FC<BlogRatingSectionProps> = ({ blog }) => {
     try {
       const action = rating === 1 ? "remove-upvote" : "upvote";
 
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
+
       const response = await fetch(`/api/ratings/blog/${id}`, {
         method: "PUT",
         headers: {
@@ -107,6 +113,10 @@ const BlogRatingSection: React.FC<BlogRatingSectionProps> = ({ blog }) => {
   const handleDownvote = async (id: number) => {
     try {
       const action = rating === -1 ? "remove-downvote" : "downvote";
+
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
 
       const response = await fetch(`/api/ratings/blog/${id}`, {
         method: "PUT",

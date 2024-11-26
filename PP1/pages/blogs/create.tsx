@@ -8,6 +8,7 @@ import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import { showAlert } from "@/components/Alert";
 import { getInfoIcon } from "@/utils/svg";
 import { useRouter } from "next/router";
+import { refreshLogin, verifyLogin } from "@/components/refresh";
 
 const CreateBlog = () => {
   const router = useRouter();
@@ -74,6 +75,10 @@ const CreateBlog = () => {
     const tagIds = selectedTags.map((tag) => tag.id);
     const templateIds = selectedTemplates.map((template) => template.id);
     try {
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
+
       const response = await fetch("/api/blog-posts", {
         method: "POST",
         headers: {
