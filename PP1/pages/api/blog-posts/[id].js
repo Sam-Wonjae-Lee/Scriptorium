@@ -14,6 +14,7 @@ export default async function handler(req, res) {
       const blogPost = await prisma.blogs.findUnique({
         where: { id: parseInt(id) },
         include: {
+          author: { select: { id: true, firstName: true, lastName: true } },
           tags: true,
           Templates: true,
           Comments: true,
@@ -44,7 +45,7 @@ export default async function handler(req, res) {
   else if (req.method === "PUT") {
     const result = verifyJWT(req);
     if (!result) {
-      return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     const { title, authorId, content, tagIds, templateIds } = req.body;
 
@@ -55,6 +56,7 @@ export default async function handler(req, res) {
         title: true,
         authorId: true,
         content: true,
+        isFlagged: true,
         tags: { select: { id: true } },
         Templates: { select: { id: true } },
       },
@@ -62,6 +64,12 @@ export default async function handler(req, res) {
 
     if (!blogPost) {
       return res.status(404).json({ error: "Blog post not found" });
+    }
+
+    if (blogPost.isFlagged) {
+      return res
+        .status(403)
+        .json({ error: "Blog post is flagged and cannot be edited" });
     }
 
     // Check if user exists
@@ -129,7 +137,7 @@ export default async function handler(req, res) {
   else if (req.method === "DELETE") {
     const result = verifyJWT(req);
     if (!result) {
-      return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     try {
       // Check if blog exists

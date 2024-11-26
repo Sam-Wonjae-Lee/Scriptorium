@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 interface DropdownProps {
   options: string[];
   selectedOption: string;
+  text: string;
   setSelectedOption: (option: string) => void;
 }
 
@@ -10,6 +11,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   options,
   selectedOption,
   setSelectedOption,
+  text,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -49,7 +51,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         className="flex items-center gap-2 w-full"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span>{`Sort by ${selectedOption}`}</span>
+        <span>{`${text} ${selectedOption}`}</span>
       </div>
       {isOpen && (
         <div

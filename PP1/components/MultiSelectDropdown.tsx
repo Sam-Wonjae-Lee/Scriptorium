@@ -116,9 +116,8 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
       </div>
       {isOpen && (
         <div
-          // FIXME: I legit couldnt get this to work with tailwind, so I had to use inline styles
           style={{ left: "-1px" }}
-          className={`absolute w-96 rounded-b-22 rounded-tr-22 p-2 bottom-0 translate-y-full z-50 border-2 ${
+          className={`absolute w-full sm:w-80 md:w-96 rounded-b-22 lg:rounded-tr-22 md:rounded-tr-22 p-2 bottom-0 translate-y-full z-50 border-2 ${
             isOpen
               ? "border-hot_pink-normal dark:border-hot_pink-normal"
               : "border-text-light dark:border-text-dark"

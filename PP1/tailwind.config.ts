@@ -10,6 +10,9 @@ export default {
   ],
   theme: {
     extend: {
+      animation: {
+        spin: 'spin 1s linear infinite', 
+      },
       left: {
         "2px": "2px",
       },
@@ -54,5 +57,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/forms")],
 } satisfies Config;

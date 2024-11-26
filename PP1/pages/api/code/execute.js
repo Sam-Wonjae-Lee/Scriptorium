@@ -4,7 +4,7 @@ import { verifyJWT } from '@/utils/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { promisify } from 'util';
 
-const LANGUAGES = ["py", "cpp", "c", "java", "js"]
+const LANGUAGES = ["py", "cpp", "c", "java", "js", "php", "R", "rb", "cs", "rs"]
 // 10 seconds
 const PROGRAM_TIMEOUT = 10000;
 // 10 MB
@@ -15,6 +15,7 @@ const execPromise = promisify(exec);
 export default async function handler(req, res) {
     if (req.method === "POST") {
         if (!req.body.code || !req.body.language) {
+            console.log(req.body);
             return res.status(400).json({"message": "Invalid fields"});
         }
         if (!LANGUAGES.includes(req.body.language)) {
@@ -41,15 +42,39 @@ export default async function handler(req, res) {
 
 async function executeCode(req, identifier) {
     let executableArgs;
-    let execProgram;
-    let compilerWarnings;
+    let execProgram = "";
+    let compilerWarnings = "";
+    let stdout = "";
+    let stderr = "";
+    let timeout = false;
     console.log(identifier);
+    
     await fs.mkdir(`./client_files/${identifier}`);
     const srcPath = `./client_files/${identifier}/${identifier}.${req.body.language}`;
     if (req.body.language == "py") {
         await fs.writeFile(srcPath, req.body.code);
         executableArgs = srcPath;
         execProgram = "python3";
+    }
+    else if (req.body.language == "php") {
+        await fs.writeFile(srcPath, req.body.code);
+        executableArgs = srcPath;
+        execProgram = "php";
+    }
+    else if (req.body.language == "R") {
+        await fs.writeFile(srcPath, req.body.code);
+        executableArgs = srcPath;
+        execProgram = "Rscript";
+    }
+    else if (req.body.language == "rb") {
+        await fs.writeFile(srcPath, req.body.code);
+        executableArgs = srcPath;
+        execProgram = "ruby";
+    }
+    else if (req.body.language == "cs") {
+        await fs.writeFile(srcPath, req.body.code);
+        executableArgs = srcPath;
+        execProgram = "dotnet script";
     }
     else if (req.body.language == "js") {
         await fs.writeFile(srcPath, req.body.code);
@@ -58,27 +83,124 @@ async function executeCode(req, identifier) {
     }
     else if (req.body.language == "cpp") {
         await fs.writeFile(srcPath, req.body.code);
-        const compileCommand = `g++ ${srcPath} -o ./client_files/${identifier}/${identifier}`
-        const { stderr } = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
-        compilerWarnings = stderr;
-        executableArgs = `./client_files/${identifier}/${identifier}`;
-        execProgram = "";
+        const compileCommand = `g++ -std=c++11 ${srcPath} -o ./client_files/${identifier}/${identifier}`
+        try {
+            const res = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
+            if (res.stderr) {
+                const isCriticalError = res.stderr.toLowerCase().includes("error");
+                if (isCriticalError) {
+                    await fs.rm(`./client_files/${identifier}`, { recursive: true })
+                    return {
+                        stdout,
+                        stderr,
+                        compilerWarnings: res.stderr,
+                        timeout
+                    }
+                }
+            }
+            compilerWarnings = res.stderr;
+            executableArgs = `./client_files/${identifier}/${identifier}`;
+        }
+        catch (error) {
+            await fs.rm(`./client_files/${identifier}`, { recursive: true })
+            return {
+                stdout: error.stdout,
+                stderr: error.stderr,
+                compilerWarnings,
+                timeout
+            }
+        }
+    }
+    else if (req.body.language == "rs") {
+        await fs.writeFile(srcPath, req.body.code);
+        const compileCommand = `rustc ${srcPath} -o ./client_files/${identifier}/${identifier}`
+        try {
+            const res = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
+            if (res.stderr) {
+                const isCriticalError = res.stderr.toLowerCase().includes("error");
+                if (isCriticalError) {
+                    await fs.rm(`./client_files/${identifier}`, { recursive: true })
+                    return {
+                        stdout,
+                        stderr,
+                        compilerWarnings: res.stderr,
+                        timeout
+                    }
+                }
+            }
+            compilerWarnings = res.stderr;
+            executableArgs = `./client_files/${identifier}/${identifier}`;
+        }
+        catch (error) {
+            await fs.rm(`./client_files/${identifier}`, { recursive: true })
+            return {
+                stdout: error.stdout,
+                stderr: error.stderr,
+                compilerWarnings,
+                timeout
+            }
+        }
     }
     else if (req.body.language == "c") {
         await fs.writeFile(srcPath, req.body.code);
         const compileCommand = `gcc -Wall ${srcPath} -o ./client_files/${identifier}/${identifier}`
-        const { stderr } = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
-        compilerWarnings = stderr;
-        executableArgs = `./client_files/${identifier}/${identifier}`;
-        execProgram = "";
+        try {
+            const res = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
+            if (res.stderr) {
+                const isCriticalError = res.stderr.toLowerCase().includes("error");
+                if (isCriticalError) {
+                    await fs.rm(`./client_files/${identifier}`, { recursive: true })
+                    return {
+                        stdout,
+                        stderr,
+                        compilerWarnings: res.stderr,
+                        timeout
+                    }
+                }
+            }
+            compilerWarnings = res.stderr;
+            executableArgs = `./client_files/${identifier}/${identifier}`;
+        }
+        catch (error) {
+            await fs.rm(`./client_files/${identifier}`, { recursive: true })
+            return {
+                stdout: error.stdout,
+                stderr: error.stderr,
+                compilerWarnings,
+                timeout
+            }
+        }
     }
     else if (req.body.language == "java") {
         await fs.writeFile(srcPath, req.body.code);
         const compileCommand = `javac ${srcPath}`
-        const { stderr } = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
-        compilerWarnings = stderr;
-        executableArgs = `-cp ./client_files/${identifier} ${srcPath}`;
-        execProgram = "java";
+        try {
+            const res = await execPromise(compileCommand, {timeout: PROGRAM_TIMEOUT});
+            if (res.stderr) {
+                const isCriticalError = res.stderr.toLowerCase().includes("error");
+                if (isCriticalError) {
+                    await fs.rm(`./client_files/${identifier}`, { recursive: true })
+                    return {
+                        stdout,
+                        stderr,
+                        compilerWarnings: res.stderr,
+                        timeout
+                    }
+                }
+            }
+            compilerWarnings = res.stderr;
+            executableArgs = `-cp ./client_files/${identifier} ${srcPath}`;
+            execProgram = "java";
+        }
+        catch (error) {
+            await fs.rm(`./client_files/${identifier}`, { recursive: true })
+            return {
+                stdout: error.stdout,
+                stderr: error.stderr,
+                compilerWarnings,
+                timeout
+            }
+        }
     }
 
     let stdinPath;
@@ -92,14 +214,15 @@ async function executeCode(req, identifier) {
     // await execPromise(memoryCommand);
 
     const command = `${execProgram} ${executableArgs}` + (req.body.stdin ? ` < ${stdinPath}` : ``);
-    let stdout, stderr, timeout;
+    console.log("Running command: " + command);
     try {
         const result = await execPromise(command, {timeout: PROGRAM_TIMEOUT});
         stdout = result.stdout;
         stderr = result.stderr;
     }
     catch (error) {
-        console.log(error);
+        stderr = error.stderr;
+        stdout = error.stdout;
         if (error.signal == "SIGTERM") {
             timeout = true;
         }
@@ -107,7 +230,6 @@ async function executeCode(req, identifier) {
     finally {
         await fs.rm(`./client_files/${identifier}`, { recursive: true })
     }
-
     return {
         stdout,
         stderr,

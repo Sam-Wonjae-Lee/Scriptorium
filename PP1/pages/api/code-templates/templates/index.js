@@ -113,18 +113,21 @@ export default async function handler(req, res) {
       return res.status(200).json(blogPosts);
     }
 
-    const languageIdInt = parseInt(languageId);
     const tagsArray = tags ? tags.split(",") : [];
     const tagsArrayInt = tagsArray.map((tag) => parseInt(tag));
 
-    // Check languageId exists if provided
-    if (languageIdInt) {
-      const language = await prisma.languages.findUnique({
-        where: { id: languageIdInt },
-      });
-      if (!language) {
-        res.status(400).json({ message: "Language not found" });
-        return;
+    // Check language exists if provided
+    const languageIds = languages
+      ? languages.split(",").map((language) => parseInt(language))
+      : [];
+    if (languages) {
+      for (const languageId of languageIds) {
+        const language = await prisma.languages.findUnique({
+          where: { id: parseInt(languageId) },
+        });
+        if (!language) {
+          return res.status(400).json({ message: "Language does not exist" });
+        }
       }
     }
 
@@ -159,13 +162,18 @@ export default async function handler(req, res) {
       { code: { contains: query } },
     ];
 
-    if (languageId) filters.languageId = languageIdInt;
+    if (languages) {
+      filters.languageId = {
+        in: languageIds,
+      };
+    }
+
     filters.isPublic = true;
 
     // Paginate
     const skip = get_skip(page);
 
-    const templates = await prisma.templates.findMany({
+    let templates = await prisma.templates.findMany({
       where: filters,
       include: {
         author: {
@@ -180,6 +188,14 @@ export default async function handler(req, res) {
       skip: skip,
       take: PAGINATION_LIMIT,
     });
+
+    // Check if user is logged in to specify owned blog posts
+    const result = verifyJWT(req);
+    if (result) {
+      templates.forEach((template) => {
+        template.owned = template.authorId === parseInt(result.id);
+      });
+    }
 
     const totalTemplates = await prisma.templates.count({ where: filters });
     const totalPages = Math.ceil(totalTemplates / PAGINATION_LIMIT);
