@@ -45,8 +45,7 @@ export default async function handler(req, res) {
     if (!template.isPublic && (!result || result.id != template.authorId)) {
       return res.status(403).json({ message: "Forbidden access" });
     }
-
-    res.status(200).json(template);
+    res.status(200).json({isAuthor: (result && result.id == template.authorId), ...template});
   } else if (req.method === "PUT") {
     if (!result) {
       return res.status(401).json({ error: "Unauthorized" });

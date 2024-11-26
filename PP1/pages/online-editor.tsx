@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { Option } from "@/utils/types";
+import { Option, Template } from "@/utils/types";
 import MultiSelectDropdown from "@/components/MultiSelectDropdown";
 import ActionButton from "@/components/ActionButton";
 import InputField from "@/components/InputField";
@@ -43,6 +43,9 @@ const OnlineEditor = () => {
     const router = useRouter();
 
     const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    const [unauthorized, setUnauthorized] = useState(false);
+
+    const [originalTemplate, setOriginalTemplate] = useState<Template>();
 
     const [tags, setTags] = useState<Option[]>([]);
     const [selectedTags, setSelectedTags] = useState<Option[]>([]);
@@ -118,6 +121,29 @@ const OnlineEditor = () => {
         }
     }
 
+    const fetchTemplate = async (templateId: string) : Promise<Template | null> => {
+        const res = await verifyLogin();
+        try {
+            const response = await fetch(`/api/code-templates/templates/${templateId}`, { 
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${sessionStorage.getItem("accessToken")}`
+                }
+            })
+
+            const data = await response.json();
+            if (response.ok) {
+                return data;
+            }
+            return null;
+        }
+        catch (error) {
+            console.log(error);
+            return null;
+        }
+    }
+
     const runCode = async () => {
         const ext = LANG_EXTENSTION_CONVERTER[activeLanguage];
         console.log(ext)
@@ -175,8 +201,18 @@ const OnlineEditor = () => {
         }
         const languageId = Object.entries(languages).find(([key, val]) => val.name === activeLanguage)?.[1].id || null;
         try {
-            const response = await fetch(`/api/code-templates/templates`, { 
-                method: "POST",
+            let route;
+            let method;
+            if (router.query.edit == "true" && originalTemplate) {
+                route = `/api/code-templates/templates/${originalTemplate.id}`;
+                method = "PUT";
+            }
+            else {
+                route = `/api/code-templates/templates`;
+                method = "POST";
+            }
+            const response = await fetch(route, { 
+                method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${sessionStorage.getItem("accessToken")}`
@@ -208,20 +244,76 @@ const OnlineEditor = () => {
         router.push("\home");
     }
     
+    // useEffect(() => {
+    //     fetchLanguages();
+    //     fetchTags();
+    //     const verifyLoginWrapper = async () => {
+    //         const result = await verifyLogin();
+    //         if (result) {
+    //             setIsLoggedIn(true);
+    //         }
+    //     }
+    //     verifyLoginWrapper();
+    // }, [])
+
     useEffect(() => {
-        fetchLanguages();
-        fetchTags();
-        const verifyLoginWrapper = async () => {
-            const result = await verifyLogin();
-            if (result) {
-                setIsLoggedIn(true);
+        if (originalTemplate && tags.length > 0 && languages.length > 0) {
+            setCode(originalTemplate.code);
+            if (editorRef.current) {
+                editorRef.current.innerHTML = hljs.highlight(originalTemplate.code, { language: activeLanguage.toLowerCase() }).value;
+            }
+            const originalTagIds = originalTemplate.tags.map((tag) => tag.id);
+            setSelectedTags(tags.filter((tag) => originalTagIds.includes(tag.id)));
+            setActiveLanguage(languages.find((lang) => lang.id == originalTemplate.language.id)?.name || languages[0].name);
+            setTitle(originalTemplate.title);
+            setExplanation(originalTemplate.explanation);
+        }
+    }, [tags, languages, originalTemplate])
+
+    useEffect(() => {
+        if (router.query) {
+            fetchLanguages();
+            fetchTags();
+            const verifyLoginWrapper = async () => {
+                const result = await verifyLogin();
+                if (result) {
+                    setIsLoggedIn(true);
+                }
+            }
+            verifyLoginWrapper();
+            if (router.query.templateId && router.query.edit == "true") {
+                const checkValidEditor = async () => {
+                    const templateId : string = router.query.templateId as string;
+                    const template = await fetchTemplate(templateId);
+                    console.log(template);
+                    if (!template || !template.isAuthor) {
+                        setUnauthorized(true);
+                        showAlert("You are not the author of this template", "error");
+                        return;
+                    }
+                    setOriginalTemplate(template);
+                }
+                checkValidEditor();
+            }
+            else if (router.query.templateId) {
+                const checkValidFork = async () => {
+                    const templateId : string = router.query.templateId as string;
+                    const template = await fetchTemplate(templateId);
+                    console.log(template);
+                    if (!template) {
+                        setUnauthorized(true);
+                        showAlert("This is a private template", "error");
+                        return;
+                    }
+                    setOriginalTemplate(template);
+                }
+                checkValidFork();
             }
         }
-        verifyLoginWrapper();
-    }, [])
+    }, [router.query])
 
     return (
-        <div className="h-screen w-screen bg-background-light dark:bg-element_background-dark flex flex-col overflow-y-auto">
+        <div className={`${unauthorized ? `opacity-50 pointer-events-none` : ``} h-screen w-screen bg-background-light dark:bg-element_background-dark flex flex-col overflow-y-auto`}>
             <div className="flex flex-col md:flex-row justify-between w-full">
                 <div className="w-[50%] h-fill flex space-x-4 items-center text-text-light dark:text-text-dark md:ml-4">
                     <ActionButton text="Home" onClick={handleRedirectHome} size="small" outlineButton={true}/>
@@ -258,7 +350,7 @@ const OnlineEditor = () => {
                                 setTitle(text)
                             }}/>
                         </div>
-                        <textarea placeholder="Explanation" className="text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark border rounded border-background-dark dark:border-background-light p-4 w-full border-2 h-[40%] rounded-xl overflow-y-auto focus:border-hot_pink-normal dark:focus:border-hot_pink-normal outline-none" onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                        <textarea placeholder="Explanation" className="text-text-light dark:text-text-dark bg-element_background-light dark:bg-background-dark border rounded border-background-dark dark:border-background-light p-4 w-full border-2 h-[40%] rounded-xl overflow-y-auto focus:border-hot_pink-normal dark:focus:border-hot_pink-normal outline-none" value={explanation} onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                             setExplanation(e.target.value);
                         }}>
                         </textarea>

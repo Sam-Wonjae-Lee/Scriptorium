@@ -285,7 +285,7 @@ const Templates = () => {
                   tags={template.tags}
                   type={"templates"}
                   owned={template.owned}
-                  handleEdit={(id) => router.push(`/templates/${id}/edit`)}
+                  handleEdit={(id) => router.push(`/online-editor?templateId=${id}&edit=true`)}
                   handleDelete={(id) => {
                     setDeleteTemplateId(id);
                     setDeleteModalIsOpen(true);
