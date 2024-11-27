@@ -5,7 +5,7 @@ import Card from "@/components/Card";
 import InputField from "@/components/InputField";
 import NavBar from "@/components/NavBar";
 import { BlogType, Template } from "@/utils/types";
-import { showAlert } from "@/components/Alert";
+import { showAlert } from "@/components/Alert"
 import { verifyLogin, refreshLogin } from "@/components/refresh";
 
 const Profile = () => {
@@ -102,6 +102,7 @@ const Profile = () => {
         signIn();
     }, []);
 
+
     useEffect(() => {
         if (signedIn) {
             getOwnBlogs();
@@ -157,7 +158,6 @@ const Profile = () => {
             });
 
             const data = await response.json();
-
             if (response.ok) {
                 console.log("First name updated:", data);
             } else {
