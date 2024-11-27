@@ -71,15 +71,21 @@ export default async function handler(req, res) {
 
     res.status(201).json(template);
   } else if (req.method === "GET") {
-    const { query = "", languages, tags, authorId, page = 1 } = req.query;
+    const { 
+      query = "", 
+      languages, 
+      tags, 
+      page = 1,
+      own = false,
+    } = req.query;
 
-    // let { authorId } = req.query;
+    let { authorId } = req.query;
 
-    // const result = verifyJWT(req);
+    const result = verifyJWT(req);
 
-    // if (authorId == null) {
-    //   authorId = result.id;
-    // }
+    if (own) {
+      authorId = result.id;
+    }
 
     // Check that author exists if provided
     if (authorId) {
@@ -89,22 +95,6 @@ export default async function handler(req, res) {
       if (!author) {
         return res.status(400).json({ message: "Author does not exist" });
       }
-
-      // Get many instances
-      const blogPosts = await prisma.blogs.findMany({
-        where: { authorId: parseInt(authorId) },
-        include: {
-          tags: true,
-          Templates: {
-            select: {
-              id: true,
-              title: true,
-            },
-          },
-        },
-      });
-
-      return res.status(200).json(blogPosts);
     }
 
     const tagsArray = tags ? tags.split(",") : [];
@@ -117,7 +107,7 @@ export default async function handler(req, res) {
     if (languages) {
       for (const languageId of languageIds) {
         const language = await prisma.languages.findUnique({
-          where: { id: parseInt(languageId) },
+          where: { id: languageId },
         });
         if (!language) {
           return res.status(400).json({ message: "Language does not exist" });
@@ -150,6 +140,10 @@ export default async function handler(req, res) {
       };
     }
 
+    if (authorId) {
+      filters.authorId = {equals : parseInt(authorId)};
+    }
+
     filters.OR = [
       { title: { contains: query } },
       { explanation: { contains: query } },
@@ -158,7 +152,7 @@ export default async function handler(req, res) {
 
     if (languages) {
       filters.languageId = {
-        in: languageIds,
+        in: languages,
       };
     }
 
@@ -170,12 +164,18 @@ export default async function handler(req, res) {
     let templates = await prisma.templates.findMany({
       where: filters,
       include: {
+        tags: true,
         author: {
           select: {
             id: true,
             firstName: true,
             lastName: true,
-            avatar: true,
+          },
+        },
+        language: {
+          select: {
+            id: true,
+            name: true,
           },
         },
       },
@@ -184,7 +184,6 @@ export default async function handler(req, res) {
     });
 
     // Check if user is logged in to specify owned blog posts
-    const result = verifyJWT(req);
     if (result) {
       templates.forEach((template) => {
         template.owned = template.authorId === parseInt(result.id);
