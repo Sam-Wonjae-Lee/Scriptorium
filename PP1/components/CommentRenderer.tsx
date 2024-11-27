@@ -405,14 +405,7 @@ const RenderComments: React.FC<CommentRendererProps> = ({
         key={reply.id}
         className="ml-6 border-l border-text-light dark:border-text-dark pl-4 mt-2"
       >
-        <div className="flex flex-col p-2">
-          <div className="w-10 h-10">
-            <img
-              src={getAvatarSrc(reply.user.avatar)!}
-              // alt="User Avatar"
-              className="avatar"
-            />
-          </div>
+        <div className="flex flex-col p-2" id={`comment-${reply.id}`}>
           <p className="font-semibold">
             {reply.user.firstName} {reply.user.lastName}:
           </p>
@@ -487,7 +480,7 @@ const RenderComments: React.FC<CommentRendererProps> = ({
           key={comment.id}
           className="py-4 text-text-light dark:text-text-dark"
         >
-          <div className="flex flex-col p-2">
+          <div className="flex flex-col p-2" id={`comment-${comment.id}`}>
             <p className="font-bold">
               {comment.user.firstName} {comment.user.lastName}:
             </p>

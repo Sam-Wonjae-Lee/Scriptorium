@@ -5,10 +5,10 @@ export default async function handler(req, res) {
   if (req.method === "GET") {
     const result = verifyJWT(req);
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     if (result.role != "ADMIN") {
-        return res.status(403).json({"error": "Lack of permissions"});
+      return res.status(403).json({ error: "Lack of permissions" });
     }
     const { id, page = 1 } = req.query;
 
@@ -27,6 +27,7 @@ export default async function handler(req, res) {
       where: { blogId: Number(id) },
       include: {
         report: true,
+        user: { select: { id: true, firstName: true, lastName: true } },
       },
       skip: get_skip(page),
       take: PAGINATION_LIMIT,

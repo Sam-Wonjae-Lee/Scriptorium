@@ -27,6 +27,7 @@ export type AvatarProps = {
 export interface Comment {
   id: number;
   user: User;
+  blogId: number;
   content: string;
   numUpvotes: number;
   numDownvotes: number;

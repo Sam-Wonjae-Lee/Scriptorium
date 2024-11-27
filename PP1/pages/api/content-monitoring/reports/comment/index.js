@@ -85,7 +85,7 @@ export default async function handler(req, res) {
     if (result.role != "ADMIN") {
       return res.status(403).json({ error: "Lack of permissions" });
     }
-    const { content, authorFirstName, authorLastName, page = 1 } = req.query;
+    const { query = "", page = 1 } = req.query;
 
     // Search for comments with the given parameters
     const filters = {};
@@ -94,35 +94,42 @@ export default async function handler(req, res) {
       gt: 0,
     };
 
-    if (content) {
-      filters.content = {
-        contains: content,
-      };
-    }
-
-    if (authorFirstName || authorLastName) {
-      filters.user = {
-        AND: [],
-      };
-      if (authorFirstName) {
-        filters.user.AND.push({
-          firstName: {
-            contains: authorFirstName,
+    if (query) {
+      filters.OR = [
+        {
+          content: {
+            contains: query,
           },
-        });
-      }
-      if (authorLastName) {
-        filters.user.AND.push({
-          lastName: {
-            contains: authorLastName,
+        },
+        {
+          user: {
+            firstName: {
+              contains: query,
+            },
           },
-        });
-      }
+        },
+        {
+          user: {
+            lastName: {
+              contains: query,
+            },
+          },
+        },
+      ];
     }
 
     const comments = await prisma.comments.findMany({
       where: filters,
       orderBy: { numReports: "desc" },
+      include: {
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
       skip: get_skip(page),
       take: PAGINATION_LIMIT,
     });
