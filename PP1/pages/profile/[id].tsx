@@ -1,34 +1,17 @@
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import ActionButton from "@/components/ActionButton";
 import Card from "@/components/Card";
 import InputField from "@/components/InputField";
 import NavBar from "@/components/NavBar";
-
-interface Blog {
-    id: number;
-    title: string;
-    content: string;
-    author: { id: number; firstName: string; lastName: string };
-    tags: { id: number; name: string; color: string }[];
-    numUpvotes: number;
-    numDownvotes: number;
-  }
-
-interface Template {
-    id: number;
-    title: string;
-    explanation: string;
-    author: { id: number; firstName: string; lastName: string };
-    tags: { id: number; name: string; color: string }[];
-    languageId: number;
-}
+import { BlogType, Template } from "@/utils/types";
+import { showAlert } from "@/components/Alert";
 
 const Profile = () => {
     const router = useRouter();
     const scrollbarHideClass = "scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']";
 
-    const [ownBlogs, setOwnBlogs] = useState<Blog[]>([]);
+    const [ownBlogs, setOwnBlogs] = useState<BlogType[]>([]);
     const [templates, setTemplates] = useState<Template[]>([]);
     // Convert template languageId to language name
     const [languages, setLanguages] = useState<{ id: number, name: string }[]>([]);
@@ -86,12 +69,157 @@ const Profile = () => {
     }, []);
 
     const [showEditProfile, setShowEditProfile] = useState(false);
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+    const [firstName, setFirstName] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
-    const handleEditProfile = () => {
-        console.log("Profile updated:", firstName, lastName);
-        setShowEditProfile(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleProfileClick = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (event: Event) => {
+            const target = event.target as HTMLInputElement;
+            const file = target.files?.[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    updateAvatar(file);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        input.click();
+    };
+    
+    const { id } = router.query;
+
+    useEffect(() => {
+        // Fetch user avatar
+        const fetchUserAvatar = async () => {
+            try {
+                const response = await fetch(`/api/users/${id}`, {
+                    headers: {
+                        "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
+                    },
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    setAvatarUrl(data.avatar ? `data:image/png;base64,${Buffer.from(data.avatar.data).toString('base64')}` : null);
+                } else {
+                    console.error("Failed to fetch user avatar:", data);
+                }
+            } catch (error) {
+                console.error("Error fetching user avatar:", error);
+            }
+        };
+    
+        fetchUserAvatar();
+    }, [id]);
+
+    const updateFirstName = async () => {
+        if (!id) {
+            console.error("User ID not found.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/users/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
+                },
+                body: JSON.stringify({ firstName }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("First name updated:", data);
+            } else {
+                console.error("Error updating first name:", data);
+            }
+        } catch (err) {
+            console.error("Error updating first name:", err);
+        }
+    };
+
+    const updateLastName = async () => {
+        if (!id) {
+            console.error("User ID not found.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/users/${id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
+                },
+                body: JSON.stringify({ lastName }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("Last name updated:", data);
+            } else {
+                console.error("Error updating last name:", data);
+            }
+        } catch (err) {
+            console.error("Error updating last name:", err);
+        }
+    };
+
+    const updateAvatar = async (file: File) => {
+        if (!id) {
+            console.error("User ID not found.");
+            return;
+        }
+    
+        try {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onloadend = async () => {
+                const base64data = reader.result;
+                console.log("Base64 Avatar Data:", base64data); // Add logging to confirm the data format
+    
+                const response = await fetch(`/api/users/${id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
+                    },
+                    body: JSON.stringify({ avatar: base64data }), // Ensure the key matches your backend
+                });
+    
+                const data = await response.json();
+    
+                if (response.ok) {
+                    console.log("Avatar updated:", data);
+                    setAvatarUrl(data.avatar ? `data:image/png;base64,${Buffer.from(data.avatar.data).toString('base64')}` : null); // Update avatar URL
+                } else {
+                    console.error("Failed to update avatar:", data);
+                }
+            };
+        } catch (error) {
+            console.error("Error updating avatar:", error);
+        }
+    };
+    
+
+    const handleEditProfile = async () => {
+        try {
+            await updateFirstName();
+            await updateLastName();
+            console.log("Profile updated:", firstName, lastName);
+            setShowEditProfile(false);
+        } catch (error) {
+            console.error("Error updating profile:", error);
+        }
     };
 
     const getProfileSvg = () => {
@@ -111,10 +239,16 @@ const Profile = () => {
                 <div className="flex items-center space-x-4">
             
                     <button 
-                        className="bg-background-light border-2 border-black w-20 h-20 rounded-full border-none flex items-center justify-center p-2 cursor-pointer"
+                        className="bg-background-light border-2 border-black w-20 h-20 rounded-full flex items-center justify-center p-2 cursor-pointer"
+                        onClick={handleProfileClick}
                     >
-                        {getProfileSvg()}
+                        {avatarUrl ? (
+                        <img src={avatarUrl} alt="User Avatar" className="w-full h-full rounded-full object-cover" />
+                    ) : (
+                        getProfileSvg()
+                    )}
                     </button>
+                    
                     <button 
                         className="bg-pink-200 w-40 h-10 rounded-full border-none flex items-center justify-center p-2 cursor-pointer text-black"
                         onClick={() => setShowEditProfile(true)}
@@ -174,14 +308,17 @@ const Profile = () => {
                                     <Card
                                         id={blog.id}
                                         title={blog.title}
-                                        author={blog.author}
-                                        description={blog.content}
-                                        tags={blog.tags}
-                                        ratings={{
-                                            upvotes: blog.numUpvotes,
-                                            downvotes: blog.numDownvotes,
+                                        author={{
+                                        firstName: blog.author.firstName,
+                                        lastName: blog.author.lastName,
+                                        id: blog.author.id,
                                         }}
+                                        description={""}
+                                        tags={blog.tags}
                                         type={"blogs"}
+                                        blog={blog}
+                                        owned={blog.owned}
+                                        handleEdit={(id) => router.push(`/blogs/${id}/edit`)}
                                     />
                                 </div>
                             ))}
@@ -189,7 +326,6 @@ const Profile = () => {
                     </div>
                 </section>
 
-                Templates Section
                 <section className="w-full p-4 bg-pink-200">
                     <h2 className="text-xl font-bold mb-4">Your Templates</h2>
                     <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
@@ -199,17 +335,17 @@ const Profile = () => {
                                 <Card
                                     id={template.id}
                                     title={template.title}
-                                    author={template.author}
+                                    language={template.language.name}
+                                    author={{
+                                    firstName: template.author.firstName,
+                                    lastName: template.author.lastName,
+                                    id: template.author.id,
+                                    }}
                                     description={template.explanation}
-                                    language={languages[template.languageId - 1].name}
                                     tags={template.tags}
                                     type={"templates"}
-                                    owned={true}
+                                    owned={template.owned}
                                     handleEdit={(id) => router.push(`/online-editor?templateId=${id}&edit=true`)}
-                                    handleDelete={(id) => {
-                                        // TODO
-                                        console.log("TODO")
-                                      }}
                                 />
                             </div>
                         ))}
