@@ -202,7 +202,7 @@ const Card: React.FC<CardProps> = ({
           </div>
         ))}
       </div>
-      <p className="text-sm">{truncateDescription(description)}</p>
+      <p className="text-sm overflow-hidden">{truncateDescription(description)}</p>
 
       {owned && handleDelete && handleEdit && (
         <div className="absolute bottom-2 left-2 flex gap-2">

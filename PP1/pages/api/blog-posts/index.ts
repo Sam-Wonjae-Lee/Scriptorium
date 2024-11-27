@@ -3,6 +3,7 @@ import { verifyJWT } from "@/utils/auth";
 import { NextApiRequest, NextApiResponse } from "next";
 import { SortBy } from "@/utils/types";
 import { Prisma } from "@prisma/client";
+import { BlogType } from "@/utils/types";
 
 interface BlogPostWithOwnership
   extends Prisma.BlogsGetPayload<{
@@ -117,7 +118,7 @@ export default async function handler(
       templateId,
       page = 1,
       sortBy = "upvotes",
-      authorId,
+      own = false,
     } = req.query as {
       query?: string;
       languages?: string;
@@ -126,7 +127,18 @@ export default async function handler(
       page?: number;
       sortBy?: SortBy;
       authorId?: string;
+      own?: boolean;
     };
+
+    let { authorId } = req.query as {authorId?: string};
+
+    const result = verifyJWT(req);
+
+    if ( own ) {
+      authorId = result.id;
+    }
+
+    console.log("MY ID IS : " + authorId);
 
     // Check that author exists if provided
     if (authorId) {
@@ -136,22 +148,6 @@ export default async function handler(
       if (!author) {
         return res.status(400).json({ message: "Author does not exist" });
       }
-
-      // Get many instances
-      const blogPosts = await prisma.blogs.findMany({
-        where: { authorId: parseInt(authorId) },
-        include: {
-          tags: true,
-          Templates: {
-            select: {
-              id: true,
-              title: true,
-            },
-          },
-        },
-      });
-
-      return res.status(200).json(blogPosts);
     }
 
     // Check that sortBy is valid
@@ -203,6 +199,7 @@ export default async function handler(
     // Create filters
     const filters: {
       tags?: { some: { id: { in: number[] } } };
+      authorId?: { equals: number }; 
       Templates?: { some: { languageId?: { in: number[] }; id?: number } };
       OR?: (
         | { title: { contains: string } }
@@ -253,8 +250,14 @@ export default async function handler(
       };
     }
 
+    if (authorId) {
+      filters.authorId = {
+        equals: parseInt(authorId),
+      };
+    }
+
     // Get many instances
-    let blogPosts: BlogPostWithOwnership[] = await prisma.blogs.findMany({
+    let blogPosts = await prisma.blogs.findMany({
       where: filters,
       include: {
         tags: true,
@@ -302,9 +305,8 @@ export default async function handler(
     }
 
     // Check if user is logged in to specify owned blog posts
-    const result = verifyJWT(req);
     if (result) {
-      blogPosts.forEach((post) => {
+      blogPosts.forEach((post : any) => {
         post.owned = post.authorId === parseInt(result.id);
       });
       blogPosts = blogPosts.filter(

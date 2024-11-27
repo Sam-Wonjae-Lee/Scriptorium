@@ -1,9 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import ThemeSwitcher from "./ThemeSwitcher";
 import Link from "next/link";
+import { showAlert } from "./Alert";
 
 const NavBar = () => {
+
+  const router = useRouter();
+
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -51,6 +55,37 @@ const NavBar = () => {
     templates: ["report", "weekly", "business", "meeting", "documentation"],
     blogs: ["design", "tips", "productivity", "guide", "strategy"]
   };
+
+  const handleProfile = async () => {
+    const response = await fetch("/api/users/verify", {
+      method: "GET",
+      headers: {"Content-Type": "application/json", "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`}
+    })
+    const data1 = await response.json();
+    if (!response.ok) {
+        const refreshResponse = await fetch("/api/users/refresh", {
+            method: "GET"
+        })
+        const data = await refreshResponse.json();
+        if (!refreshResponse.ok) {
+            showAlert("Please sign in", "error");
+            return;
+        }
+        else {
+            sessionStorage.setItem("accessToken", data.accessToken);
+            const response2 = await fetch("/api/users/verify", {
+                method: "GET",
+                headers: {"Content-Type": "application/json", "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`}
+            })
+            const data2 = await response2.json();
+            console.log(data2);
+            router.push(`/profile/${data2.result.id}`);
+            return;
+        }
+    }
+    router.push(`/profile/${data1.result.id}`);
+    return;
+  }
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -253,12 +288,12 @@ const NavBar = () => {
           </button>
           {showProfileDropdown && (
             <div className="absolute right-0 top-12 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-              <Link
-                href="/profile"
+              <div
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                onClick={handleProfile}
               >
                 Profile
-              </Link>
+              </div>
               <Link
                 href="/reports"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

@@ -20,20 +20,21 @@ interface Template {
     title: string;
     explanation: string;
     author: { id: number; firstName: string; lastName: string };
+    tags: { id: number; name: string; color: string }[];
     languageId: number;
 }
 
 const Profile = () => {
     const scrollbarHideClass = "scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']";
 
-    const [trendingBlogs, setTrendingBlogs] = useState<Blog[]>([]);
+    const [ownBlogs, setOwnBlogs] = useState<Blog[]>([]);
     const [templates, setTemplates] = useState<Template[]>([]);
     // Convert template languageId to language name
-    const [languages, setLanguages] = useState<{[key: number]: string}>({});
+    const [languages, setLanguages] = useState<{ id: number, name: string }[]>([]);
 
-    const getTrendingBlogs = async () => {
+    const getOwnBlogs = async () => {
         try {
-            const response = await fetch('/api/blog-posts?sortBy=upvotes', {
+            const response = await fetch('/api/blog-posts?own=true', {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -41,16 +42,28 @@ const Profile = () => {
             }
         });
             const data = await response.json();
-            setTrendingBlogs(data.blogPosts);
+            console.log(data.blogPosts);
+            setOwnBlogs(data.blogPosts);
         } catch (error) {
             console.error("Error getting trending blogs:", error);
         }
     };
 
-
-    const getTemplates = async () => {
+    const fetchLanguages = async () => {
         try {
-            const response = await fetch('/api/code-templates/templates', {
+            const response = await fetch(`/api/languages`);
+            const data = await response.json();
+            console.log(data[0].name)
+            setLanguages(data);
+        } 
+        catch (error) {
+            console.error("Error fetching languages:", error);
+        }
+    };
+
+    const getOwnTemplates = async () => {
+        try {
+            const response = await fetch('/api/code-templates/templates?own=true', {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -59,17 +72,16 @@ const Profile = () => {
             });
             const data = await response.json();
             setTemplates(data.templates);
+            console.log(data.templates)
         } catch (error) {
             console.error("Error getting templates:", error);
         }
     };
 
     useEffect(() => {
-        getTrendingBlogs();
-    }, []);
-
-    useEffect(() => {
-        getTemplates();
+        getOwnBlogs();
+        getOwnTemplates();
+        fetchLanguages();
     }, []);
 
     const [showEditProfile, setShowEditProfile] = useState(false);
@@ -151,12 +163,12 @@ const Profile = () => {
                     </div>
                 )}
 
-                {/* Trending Blogs Section */}
+                {/* Own Blogs Section */}
                 <section className="w-full p-4 bg-pink-200">
                     <h2 className="text-xl font-bold mb-4">Your Blogs</h2>
                     <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
                         <div className="inline-flex gap-4 pb-4 w-max">
-                            {trendingBlogs?.map((blog) => (
+                            {ownBlogs?.map((blog) => (
                                 <div key={blog.id} className="w-[300px] shrink-0">
                                     <Card
                                         id={blog.id}
@@ -164,10 +176,11 @@ const Profile = () => {
                                         author={blog.author}
                                         description={blog.content}
                                         tags={blog.tags}
-                                        rating={{
+                                        ratings={{
                                             upvotes: blog.numUpvotes,
                                             downvotes: blog.numDownvotes,
                                         }}
+                                        type={"blogs"}
                                     />
                                 </div>
                             ))}
@@ -175,20 +188,21 @@ const Profile = () => {
                     </div>
                 </section>
 
-                {/* Templates Section */}
+                Templates Section
                 <section className="w-full p-4 bg-pink-200">
                     <h2 className="text-xl font-bold mb-4">Your Templates</h2>
                     <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
                         <div className="inline-flex gap-4 pb-4 w-max">
-                        {templates?.map((template) => (
+                        {languages.length > 0 && templates?.map((template) => (
                             <div key={template.id} className="w-[300px] shrink-0">
                                 <Card
                                     id={template.id}
                                     title={template.title}
                                     author={template.author}
                                     description={template.explanation}
-                                    language={languages[template.languageId]}
-                                    tags={[]}
+                                    language={languages[template.languageId - 1].name}
+                                    tags={template.tags}
+                                    type={"templates"}
                                 />
                             </div>
                         ))}
