@@ -85,13 +85,7 @@ export default async function handler(req, res) {
     if (result.role != "ADMIN") {
       return res.status(403).json({ error: "Lack of permissions" });
     }
-    const {
-      title,
-      content,
-      authorFirstName,
-      authorLastName,
-      page = 1,
-    } = req.query;
+    const { query = "", page = 1 } = req.query;
 
     // Search for blogs with the given parameters
     const filters = {};
@@ -100,41 +94,31 @@ export default async function handler(req, res) {
       gt: 0,
     };
 
-    if (title) {
-      filters.title = {
-        contains: title,
-      };
-    }
-
-    if (content) {
-      filters.content = {
-        contains: content,
-      };
-    }
-
-    if (authorFirstName || authorLastName) {
-      filters.author = {
-        AND: [],
-      };
-      if (authorFirstName) {
-        filters.author.AND.push({
-          firstName: {
-            contains: authorFirstName,
-          },
-        });
-      }
-      if (authorLastName) {
-        filters.author.AND.push({
-          lastName: {
-            contains: authorLastName,
-          },
-        });
-      }
-    }
+    filters.OR = [
+      {
+        author: {
+          OR: [
+            { firstName: { contains: query } },
+            { lastName: { contains: query } },
+          ],
+        },
+      },
+      { title: { contains: query } },
+      { content: { contains: query } },
+    ];
 
     const blogs = await prisma.blogs.findMany({
       where: filters,
       orderBy: { numReports: "desc" },
+      include: {
+        author: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
       skip: get_skip(page),
       take: PAGINATION_LIMIT,
     });

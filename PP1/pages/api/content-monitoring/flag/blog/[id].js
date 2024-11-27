@@ -5,10 +5,10 @@ export default async function handler(req, res) {
   if (req.method === "PUT") {
     const result = verifyJWT(req);
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     if (result.role != "ADMIN") {
-        return res.status(403).json({"error": "Lack of permissions"});
+      return res.status(403).json({ error: "Lack of permissions" });
     }
     const { id } = req.query;
 
@@ -32,10 +32,10 @@ export default async function handler(req, res) {
   } else if (req.method === "DELETE") {
     const result = verifyJWT(req);
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
     if (result.role != "ADMIN") {
-        return res.status(403).json({"error": "Lack of permissions"});
+      return res.status(403).json({ error: "Lack of permissions" });
     }
     const { id } = req.query;
 
@@ -55,6 +55,26 @@ export default async function handler(req, res) {
     });
 
     res.status(200).json(unflaggedBlog);
+  } else if (req.method === "GET") {
+    const result = verifyJWT(req);
+    if (!result) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+    if (result.role != "ADMIN") {
+      return res.status(403).json({ error: "Lack of permissions" });
+    }
+
+    const { id } = req.query;
+
+    // get blog
+    const blog = await prisma.blogs.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!blog) {
+      return res.status(404).json({ message: "Not found" });
+    }
+    return res.status(200).json(blog.isFlagged);
   } else {
     res.status(405).json({ message: "Method not allowed" });
   }

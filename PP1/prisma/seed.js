@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { get } from "https";
 
 const SALT_ROUNDS = 10;
 const prisma = new PrismaClient();
@@ -1429,7 +1430,7 @@ int main() {
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
       isPublic: true,
-      stdin: "+\n14\n90"
+      stdin: "+\n14\n90",
     },
     {
       title: "Palindrome Checker",
@@ -1657,9 +1658,9 @@ echo isPrime(29) ? 'Yes' : 'No';
       isPublic: true,
     },
     {
-      "title": "Prime Number Checker in Rust",
-      "explanation": "This template checks if a number is prime in Rust",
-      "code": `fn is_prime(n: u32) -> bool {
+      title: "Prime Number Checker in Rust",
+      explanation: "This template checks if a number is prime in Rust",
+      code: `fn is_prime(n: u32) -> bool {
         if n <= 1 {
             return false;
         }
@@ -1675,15 +1676,15 @@ echo isPrime(29) ? 'Yes' : 'No';
         let num = 29;
         println!("{}", if is_prime(num) { "Yes" } else { "No" });
     }`,
-      "languageId": 10,
-      "authorId": getRandomAuthorId(),
-      "tags": getRandomTagIds(),
-      "isPublic": true
+      languageId: 10,
+      authorId: getRandomAuthorId(),
+      tags: getRandomTagIds(),
+      isPublic: true,
     },
     {
-      "title": "Factorial in Rust",
-      "explanation": "This template calculates the factorial of a number in Rust",
-      "code": `fn factorial(n: u32) -> u32 {
+      title: "Factorial in Rust",
+      explanation: "This template calculates the factorial of a number in Rust",
+      code: `fn factorial(n: u32) -> u32 {
         if n == 0 {
             1
         } else {
@@ -1695,15 +1696,15 @@ echo isPrime(29) ? 'Yes' : 'No';
         let num = 5;
         println!("{}", factorial(num));
     }`,
-      "languageId": 10,
-      "authorId": getRandomAuthorId(),
-      "tags": getRandomTagIds(),
-      "isPublic": true
+      languageId: 10,
+      authorId: getRandomAuthorId(),
+      tags: getRandomTagIds(),
+      isPublic: true,
     },
     {
-      "title": "Palindrome Checker in Rust",
-      "explanation": "This template checks if a string is a palindrome in Rust",
-      "code": `fn is_palindrome(s: &str) -> bool {
+      title: "Palindrome Checker in Rust",
+      explanation: "This template checks if a string is a palindrome in Rust",
+      code: `fn is_palindrome(s: &str) -> bool {
         let reversed: String = s.chars().rev().collect();
         s == reversed
     }
@@ -1712,15 +1713,15 @@ echo isPrime(29) ? 'Yes' : 'No';
         let word = "madam";
         println!("{}", if is_palindrome(word) { "Yes" } else { "No" });
     }`,
-      "languageId": 10,
-      "authorId": getRandomAuthorId(),
-      "tags": getRandomTagIds(),
-      "isPublic": true
+      languageId: 10,
+      authorId: getRandomAuthorId(),
+      tags: getRandomTagIds(),
+      isPublic: true,
     },
     {
-      "title": "Bubble Sort in Rust",
-      "explanation": "This template sorts an array using Bubble Sort in Rust",
-      "code": `fn bubble_sort(mut arr: Vec<i32>) -> Vec<i32> {
+      title: "Bubble Sort in Rust",
+      explanation: "This template sorts an array using Bubble Sort in Rust",
+      code: `fn bubble_sort(mut arr: Vec<i32>) -> Vec<i32> {
         let n = arr.len();
         for _ in 0..n {
             for j in 0..n-1 {
@@ -1737,15 +1738,15 @@ echo isPrime(29) ? 'Yes' : 'No';
         let sorted = bubble_sort(arr);
         println!("{:?}", sorted);
     }`,
-      "languageId": 10,
-      "authorId": getRandomAuthorId(),
-      "tags": getRandomTagIds(),
-      "isPublic": true
+      languageId: 10,
+      authorId: getRandomAuthorId(),
+      tags: getRandomTagIds(),
+      isPublic: true,
     },
     {
-      "title": "Fibonacci in Rust",
-      "explanation": "This template calculates the nth Fibonacci number in Rust",
-      "code": `fn fibonacci(n: u32) -> u32 {
+      title: "Fibonacci in Rust",
+      explanation: "This template calculates the nth Fibonacci number in Rust",
+      code: `fn fibonacci(n: u32) -> u32 {
         if n == 0 {
             0
         } else if n == 1 {
@@ -1759,11 +1760,11 @@ echo isPrime(29) ? 'Yes' : 'No';
         let num = 10;
         println!("{}", fibonacci(num));
     }`,
-      "languageId": 10,
-      "authorId": getRandomAuthorId(),
-      "tags": getRandomTagIds(),
-      "isPublic": true
-    }    
+      languageId: 10,
+      authorId: getRandomAuthorId(),
+      tags: getRandomTagIds(),
+      isPublic: true,
+    },
   ];
 
   // Shuffle the templateData array
@@ -1787,7 +1788,7 @@ echo isPrime(29) ? 'Yes' : 'No';
           connect: template.tags.map((id) => ({ id })),
         },
         isPublic: template.isPublic,
-        stdin: template.stdin
+        stdin: template.stdin,
       },
     });
   }
@@ -2215,6 +2216,8 @@ echo isPrime(29) ? 'Yes' : 'No';
   ];
 
   shuffleArray(blogData);
+  const getRandomBlogId = () =>
+    Math.floor(Math.random() * (blogData.length - 1)) + 1;
 
   for (const blog of blogData) {
     await prisma.blogs.create({
@@ -2233,40 +2236,182 @@ echo isPrime(29) ? 'Yes' : 'No';
       },
     });
   }
+
+  const getRandomNumComments = () => Math.floor(Math.random() * 10) + 1;
+  const randomComments = [
+    "Great post! Thanks for sharing.",
+    "I found this very helpful.",
+    "Nice explanation. Keep up the good work!",
+    "This is awesome!",
+    "I have a question. Can you provide more details?",
+    "I'm looking forward to your next post.",
+    "I learned something new today. Thanks!",
+    "This is very informative. Well done!",
+    "I appreciate the effort you put into this.",
+    "I have bookmarked this for future reference.",
+  ];
+
+  const commentData = [];
+  for (let i = 1; i <= blogData.length; i++) {
+    for (let j = 1; j <= getRandomNumComments(); j++) {
+      commentData.push({
+        blogId: i,
+        userId: Math.floor(Math.random() * (users.length - 1)) + 1,
+        content:
+          randomComments[Math.floor(Math.random() * randomComments.length)],
+        numUpvotes: getRandomRating(),
+        numDownvotes: getRandomRating(),
+      });
+    }
+  }
+
+  await prisma.comments.createMany({
+    data: commentData,
+  });
+
+  const randomReplies = [
+    "Thank you for your kind words!",
+    "I'm glad you found it helpful.",
+    "I appreciate your feedback.",
+    "Feel free to ask any questions.",
+    "Stay tuned for more posts!",
+    "I'm happy to hear that you learned something new.",
+    "You're welcome!",
+    "I'm glad you enjoyed it.",
+    "I'm here to help!",
+    "I hope you find it useful.",
+  ];
+
+  const getRandomNumReplies = () => {
+    let u = 0,
+      v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    num = num * 0.5 + 1; // mean=1, stddev=2
+    return Math.max(0, Math.round(num));
+  };
+
+  const commentReplyData = [];
+  for (let i = 1; i <= commentData.length; i++) {
+    for (let k = 0; k < getRandomNumReplies(); k++) {
+      commentReplyData.push({
+        blogId: commentData[i - 1].blogId,
+        parentCommentId: i,
+        userId: Math.floor(Math.random() * (users.length - 1)) + 1,
+        content:
+          randomReplies[Math.floor(Math.random() * randomReplies.length)],
+        numUpvotes: getRandomRating(),
+        numDownvotes: getRandomRating(),
+      });
+    }
+  }
+
+  await prisma.comments.createMany({
+    data: commentReplyData,
+  });
+
+  const getRandomCommentId = () =>
+    Math.floor(
+      Math.random() * (commentData.length + commentReplyData.length - 2)
+    ) + 1;
+
+  const randomExplanations = [
+    "The content violates community guidelines.",
+    "The post contains offensive language.",
+    "The blog promotes hate speech.",
+    "The content is misleading or false.",
+    "The post includes inappropriate images.",
+    "The blog contains spam or scam content.",
+    "The content is too political.",
+    "The post is not friendly to LGBTQ+2 community.",
+    "The blog promotes physical violence.",
+    "The content is considered harassment.",
+  ];
+
+  const sampleUsers = (numUsers) => {
+    const uniqueUsers = new Set();
+    while (uniqueUsers.size < numUsers) {
+      uniqueUsers.add(Math.floor(Math.random() * (users.length - 1)) + 1);
+    }
+    return [...uniqueUsers];
+  };
+
+  const getRandomNumReports = () => {
+    let u = 0,
+      v = 0;
+    while (u === 0) u = Math.random();
+    while (v === 0) v = Math.random();
+    let num = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    num = num * 3 + 15; // mean=15, stddev=10
+    return Math.round(Math.abs(num));
+  };
+
+  const blogReports = [];
+  for (let i = 1; i <= 30; i++) {
+    const blogId = getRandomBlogId();
+    const numReports = getRandomNumReports();
+    const userSample = sampleUsers(
+      Math.max(0, Math.min(numReports, users.length - 1))
+    );
+
+    const blog = await prisma.blogs.findUnique({
+      where: { id: blogId },
+    });
+    await prisma.blogs.update({
+      where: { id: blogId },
+      data: { numReports: blog.numReports + userSample.length },
+    });
+    for (let j = 1; j <= userSample.length; j++) {
+      blogReports.push({
+        blogId: blogId,
+        userId: userSample[j - 1],
+        reportId: Math.floor(Math.random() * 8) + 1,
+        explanation:
+          randomExplanations[
+            Math.floor(Math.random() * randomExplanations.length)
+          ],
+      });
+    }
+  }
+
+  await prisma.blogReports.createMany({
+    data: blogReports,
+  });
+
+  const commentReports = [];
+  for (let i = 1; i <= 30; i++) {
+    const commentId = getRandomCommentId();
+    const numReports = getRandomNumReports();
+    const userSample = sampleUsers(
+      Math.max(0, Math.min(numReports, users.length - 1))
+    );
+
+    const comment = await prisma.comments.findUnique({
+      where: { id: commentId },
+    });
+
+    await prisma.comments.update({
+      where: { id: commentId },
+      data: { numReports: comment.numReports + userSample.length },
+    });
+    for (let j = 1; j <= userSample.length; j++) {
+      commentReports.push({
+        commentId: commentId,
+        userId: userSample[j - 1],
+        reportId: Math.floor(Math.random() * 8) + 1,
+        explanation:
+          randomExplanations[
+            Math.floor(Math.random() * randomExplanations.length)
+          ],
+      });
+    }
+  }
+
+  await prisma.commentReports.createMany({
+    data: commentReports,
+  });
 }
-
-// const parentComment = await prisma.comments.create({
-//   data: {
-//     blogId: 2,
-//     userId: 1,
-//     content: "Two Sum is a classic problem",
-//   },
-// });
-
-// await prisma.comments.createMany({
-//   data: [
-//     {
-//       blogId: 2,
-//       userId: 1,
-//       content: "Two Sum is a classic problem",
-//     },
-//     {
-//       content: "I totally agree haha",
-//       userId: 2,
-//       blogId: 2,
-//     },
-//     {
-//       content: "Yeah, but have you seen Three Sum?",
-//       userId: 3,
-//       blogId: 2,
-//     },
-//     {
-//       content: "Cool blog man",
-//       userId: 3,
-//       blogId: 2,
-//     },
-//   ],
-// });
 
 main()
   .then(async () => {
