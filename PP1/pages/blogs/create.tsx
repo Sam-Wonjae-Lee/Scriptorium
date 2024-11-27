@@ -50,8 +50,15 @@ const CreateBlog = () => {
 
   const fetchTemplates = async () => {
     try {
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
       const response = await fetch(
-        `/api/code-templates/templates?query=${templateQuery}`
+        `/api/code-templates/templates?query=${templateQuery}&own=true`, {
+          headers: {
+            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`
+          }
+        }
       );
       const data = await response.json();
       const transformedTemplates = data.templates.map((template: any) => ({
