@@ -17,7 +17,12 @@ export default async function handler(req, res) {
 
         updateParams.forEach((param) => {
             if (req.body[param]) {
-                fields[param] = req.body[param];
+                if (param === "avatar") {
+                    const base64Data = req.body[param].split(",")[1];
+                    fields[param] = Buffer.from(base64Data, "base64");
+                } else {
+                    fields[param] = req.body[param];
+                }
             }
         });
 
@@ -28,7 +33,7 @@ export default async function handler(req, res) {
                 },
                 data: fields
             });
-            const { password, ...payload} = result;
+            const { password, avatar, ...payload} = result;
             const token = generateToken(payload);
             const refresh_token = generateRefreshToken(payload);
             res.status(200).json({"accessToken": token, "refreshToken": refresh_token, result: payload});
