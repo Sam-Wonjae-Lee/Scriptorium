@@ -9,6 +9,7 @@ import { showAlert } from "@/components/Alert";
 import { getInfoIcon } from "@/utils/svg";
 import { useRouter } from "next/router";
 import NavBar from "@/components/NavBar";
+import { refreshLogin, verifyLogin } from "@/components/refresh";
 
 const EditBlog = () => {
   const router = useRouter();
@@ -115,6 +116,10 @@ const EditBlog = () => {
     const tagIds = selectedTags.map((tag) => tag.id);
     const templateIds = selectedTemplates.map((template) => template.id);
     try {
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
+
       const response = await fetch(`/api/blog-posts/${id}`, {
         method: "PUT",
         headers: {
@@ -330,7 +335,7 @@ const EditBlog = () => {
 
   return (
     <main className="mt-4 min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
-      <NavBar/>
+      <NavBar />
       {renderHelpModal()}
       <div className="max-w-3xl mx-auto p-4 w-full sm:w-900">
         {blogExists ? renderEditBlog() : render404()}

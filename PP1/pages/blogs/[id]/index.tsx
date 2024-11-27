@@ -12,6 +12,7 @@ import { BlogType } from "@/utils/types";
 import ReportModal from "@/components/ReportModal";
 import Dropdown from "@/components/Dropdown";
 import NavBar from "@/components/NavBar";
+import { refreshLogin, verifyLogin } from "@/components/refresh";
 
 const Blog = () => {
   const router = useRouter();
@@ -237,6 +238,10 @@ const Blog = () => {
 
   const handleSendReply = async () => {
     try {
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
+
       const response = await fetch(`/api/comments/`, {
         method: "POST",
         headers: {
@@ -267,6 +272,10 @@ const Blog = () => {
     description: string
   ) => {
     try {
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
+
       const response = await fetch(`/api/content-monitoring/reports/blog`, {
         method: "POST",
         headers: {
@@ -310,7 +319,7 @@ const Blog = () => {
           handleBlogReportSubmit(reportType, description);
         }}
       />
-      <NavBar/>
+      <NavBar />
       <section className="w-full sm:w-11/12 md:w-900 py-10 px-4 sm:px-6 md:px-0">
         {blog ? renderBlog(blog) : blogExists ? renderLoading() : render404()}
         {/* Comment Section */}
