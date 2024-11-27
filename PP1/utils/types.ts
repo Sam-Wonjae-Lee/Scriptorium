@@ -66,4 +66,5 @@ export interface Template {
   Blogs: { id: number; title: string }[];
   isFlagged: boolean;
   owned?: boolean;
+  stdin?: string;
 }

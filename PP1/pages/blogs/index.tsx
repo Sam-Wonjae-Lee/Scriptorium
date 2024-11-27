@@ -10,6 +10,7 @@ import { useRouter } from "next/router";
 import { showAlert } from "@/components/Alert";
 import ActionButton from "@/components/ActionButton";
 import { refreshLogin, verifyLogin } from "@/components/refresh";
+import NavBar from "@/components/NavBar";
 
 const Blogs = () => {
   const router = useRouter();
@@ -225,6 +226,7 @@ const Blogs = () => {
 
   return (
     <main className="min-h-screen relative w-full flex flex-col items-center bg-background-light dark:bg-background-dark box-border">
+      <NavBar />
       <div className="absolute top-0 left-0">
         <ThemeSwitcher />
       </div>

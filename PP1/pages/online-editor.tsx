@@ -267,6 +267,7 @@ const OnlineEditor = () => {
             setActiveLanguage(languages.find((lang) => lang.id == originalTemplate.language.id)?.name || languages[0].name);
             setTitle(originalTemplate.title);
             setExplanation(originalTemplate.explanation);
+            setStdin(originalTemplate.stdin || "");
         }
     }, [tags, languages, originalTemplate])
 

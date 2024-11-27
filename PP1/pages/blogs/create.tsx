@@ -181,6 +181,9 @@ const CreateBlog = () => {
       <div className="absolute top-0 left-0">
         <ThemeSwitcher />
       </div>
+      <div className="absolute top-0 right-0">
+        <ActionButton text="Home" onClick={() => {router.push("/home")}} size="small" outlineButton={true}/>
+      </div>
       {renderHelpModal()}
       <div className="max-w-3xl mx-auto p-4 w-900">
         <h1 className="text-3xl font-bold mb-6 text-text-light dark:text-text-dark">

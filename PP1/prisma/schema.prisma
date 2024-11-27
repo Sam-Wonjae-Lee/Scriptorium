@@ -55,6 +55,7 @@ model Templates {
   tags           Tags[]
   forkedId      Int?
   isPublic       Boolean
+  stdin          String?
 
   // Relations
   language     Languages @relation(fields: [languageId], references: [id])

@@ -11,7 +11,7 @@ const Create = () => {
   };
 
   const handleBlogCreateClick = async () => {
-    const response = await fetch("http://localhost:3000/api/users/verify", {
+    const response = await fetch("/api/users/verify", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -20,7 +20,7 @@ const Create = () => {
     });
     if (!response.ok) {
       const refreshResponse = await fetch(
-        "http://localhost:3000/api/users/refresh",
+        "/api/users/refresh",
         {
           method: "GET",
         }

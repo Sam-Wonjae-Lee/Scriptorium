@@ -25,6 +25,7 @@ interface Template {
 }
 
 const Profile = () => {
+    const router = useRouter();
     const scrollbarHideClass = "scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']";
 
     const [ownBlogs, setOwnBlogs] = useState<Blog[]>([]);
@@ -63,7 +64,7 @@ const Profile = () => {
 
     const getOwnTemplates = async () => {
         try {
-            const response = await fetch('/api/code-templates/templates?own=true', {
+            const response = await fetch('/api/code-templates/saved-templates', {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
@@ -203,6 +204,12 @@ const Profile = () => {
                                     language={languages[template.languageId - 1].name}
                                     tags={template.tags}
                                     type={"templates"}
+                                    owned={true}
+                                    handleEdit={(id) => router.push(`/online-editor?templateId=${id}&edit=true`)}
+                                    handleDelete={(id) => {
+                                        // TODO
+                                        console.log("TODO")
+                                      }}
                                 />
                             </div>
                         ))}

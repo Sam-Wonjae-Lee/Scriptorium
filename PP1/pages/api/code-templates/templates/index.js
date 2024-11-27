@@ -76,16 +76,11 @@ export default async function handler(req, res) {
       languages, 
       tags, 
       page = 1,
-      own = false,
     } = req.query;
 
     let { authorId } = req.query;
 
     const result = verifyJWT(req);
-
-    if (own) {
-      authorId = result.id;
-    }
 
     // Check that author exists if provided
     if (authorId) {
@@ -152,7 +147,7 @@ export default async function handler(req, res) {
 
     if (languages) {
       filters.languageId = {
-        in: languages,
+        in: languageIds,
       };
     }
 
@@ -193,6 +188,7 @@ export default async function handler(req, res) {
     const totalTemplates = await prisma.templates.count({ where: filters });
     const totalPages = Math.ceil(totalTemplates / PAGINATION_LIMIT);
 
+    console.log(templates);
     return res.status(200).json({
       templates,
       pagination: {

@@ -285,7 +285,23 @@ async function main() {
     {
       title: "Two Sum Solution",
       explanation: "This is a solution to the Two Sum problem",
-      code: "def two_sum(nums, target):\n    for i in range(len(nums)):\n        for j in range(i + 1, len(nums)):\n            if nums[i] + nums[j] == target:\n                return [i, j]",
+      code: `def two_sum(nums, target):
+    for i in range(len(nums)):
+        for j in range(i + 1, len(nums)):
+            if nums[i] + nums[j] == target:
+                return [i, j]
+
+if __name__ == "__main__":
+    # Example input
+    nums = [2, 7, 11, 15]
+    target = 9
+
+    # Call the function and print the result
+    result = two_sum(nums, target)
+    if result:
+        print(f"Indices of the two numbers that add up to {target} are: {result}")
+    else:
+        print(f"No two numbers found in {nums} add up to {target}.")`,
       languageId: 1,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -294,7 +310,42 @@ async function main() {
     {
       title: "Three Sum Solution",
       explanation: "This is a solution to the Two Sum problem",
-      code: "class Solution {\npublic:\n  vector<vector<int>> threeSum(vector<int>& nums) {\n    set<vector<int>> res;\n    sort(nums.begin(), nums.end());\n    for (int i = 0; i < nums.size(); i++) {\n      for (int j = i + 1; j < nums.size(); j++) {\n        for (int k = j + 1; k < nums.size(); k++) {\n          if (nums[i] + nums[j] + nums[k] == 0) {\n            res.insert({nums[i], nums[j], nums[k]});\n          }\n        }\n      }\n    }\n    return vector<vector<int>>(res.begin(), res.end());\n  }\n};",
+      code: `#include <iostream>
+#include <vector>
+#include <set>
+#include <algorithm>
+
+class Solution {
+public:
+    std::vector<std::vector<int>> threeSum(std::vector<int>& nums) {
+        std::set<std::vector<int>> res;
+        std::sort(nums.begin(), nums.end());
+        for (size_t i = 0; i < nums.size(); i++) {
+            for (size_t j = i + 1; j < nums.size(); j++) {
+                for (size_t k = j + 1; k < nums.size(); k++) {
+                    if (nums[i] + nums[j] + nums[k] == 0) {
+                        res.insert({nums[i], nums[j], nums[k]});
+                    }
+                }
+            }
+        }
+        return std::vector<std::vector<int>>(res.begin(), res.end());
+    }
+};
+
+int main() {
+    std::vector<int> nums = {-1, 0, 1, 2, -1, -4};
+    Solution sol;
+    auto result = sol.threeSum(nums);
+
+    std::cout << "Triplets that sum to 0 are:\n";
+    for (const auto& triplet : result) {
+        std::cout << "[" << triplet[0] << ", " << triplet[1] << ", " << triplet[2] << "]\n";
+    }
+
+    return 0;
+}
+`,
       languageId: 2,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -303,7 +354,26 @@ async function main() {
     {
       title: "Binary Search",
       explanation: "This is a solution to the Binary Search problem",
-      code: "def binary_search(arr, x):\n    l, r = 0, len(arr) - 1\n    while l <= r:\n        mid = (l + r) // 2\n        if arr[mid] == x:\n            return mid\n        elif arr[mid] < x:\n            l = mid + 1\n        else:\n            r = mid - 1\n    return -1",
+      code: `def binary_search(arr, x):
+    l, r = 0, len(arr) - 1
+    while l <= r:
+        mid = (l + r) // 2
+        if arr[mid] == x:
+            return mid
+        elif arr[mid] < x:
+            l = mid + 1
+        else:
+            r = mid - 1
+    return -1
+
+if __name__ == "__main__":
+    arr = [1, 3, 5, 7, 9, 11]
+    x = 7
+    result = binary_search(arr, x)
+    if result != -1:
+        print(f"Element {x} found at index {result}")
+    else:
+        print(f"Element {x} not found in the array")`,
       languageId: 1,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -312,7 +382,37 @@ async function main() {
     {
       title: "Merge Sort",
       explanation: "This is a solution to the Merge Sort problem",
-      code: "def merge_sort(arr):\n    if len(arr) > 1:\n        mid = len(arr) // 2\n        L = arr[:mid]\n        R = arr[mid:]\n        merge_sort(L)\n        merge_sort(R)\n        i = j = k = 0\n        while i < len(L) and j < len(R):\n            if L[i] < R[j]:\n                arr[k] = L[i]\n                i += 1\n            else:\n                arr[k] = R[j]\n                j += 1\n            k += 1\n        while i < len(L):\n            arr[k] = L[i]\n            i += 1\n            k += 1\n        while j < len(R):\n            arr[k] = R[j]\n            j += 1\n            k += 1",
+      code: `def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L = arr[:mid]
+        R = arr[mid:]
+        merge_sort(L)
+        merge_sort(R)
+        i = j = k = 0
+        while i < len(L) and j < len(R):
+            if L[i] < R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+
+if __name__ == "__main__":
+    arr = [38, 27, 43, 3, 9, 82, 10]
+    print("Original array:", arr)
+    merge_sort(arr)
+    print("Sorted array:", arr)
+`,
       languageId: 1,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -321,7 +421,21 @@ async function main() {
     {
       title: "Quick Sort",
       explanation: "This is a solution to the Quick Sort problem",
-      code: "def quick_sort(arr):\n    if len(arr) <= 1:\n        return arr\n    pivot = arr[len(arr) // 2]\n    left = [x for x in arr if x < pivot]\n    middle = [x for x in arr if x == pivot]\n    right = [x for x in arr if x > pivot]\n    return quick_sort(left) + middle + quick_sort(right)",
+      code: `def quick_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return quick_sort(left) + middle + quick_sort(right)
+
+if __name__ == "__main__":
+    arr = [38, 27, 43, 3, 9, 82, 10]
+    print("Original array:", arr)
+    sorted_arr = quick_sort(arr)
+    print("Sorted array:", sorted_arr)
+`,
       languageId: 1,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -330,7 +444,18 @@ async function main() {
     {
       title: "Bubble Sort",
       explanation: "This is a solution to the Bubble Sort problem",
-      code: "def bubble_sort(arr):\n    n = len(arr)\n    for i in range(n):\n        for j in range(0, n-i-1):\n            if arr[j] > arr[j+1]:\n                arr[j], arr[j+1] = arr[j+1], arr[j]",
+      code: `def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+
+if __name__ == "__main__":
+    arr = [64, 34, 25, 12, 22, 11, 90]
+    print("Original array:", arr)
+    bubble_sort(arr)
+    print("Sorted array:", arr)`,
       languageId: 1,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -339,7 +464,20 @@ async function main() {
     {
       title: "Insertion Sort",
       explanation: "This is a solution to the Insertion Sort problem",
-      code: "def insertion_sort(arr):\n    for i in range(1, len(arr)):\n        key = arr[i]\n        j = i-1\n        while j >= 0 and key < arr[j]:\n            arr[j + 1] = arr[j]\n            j -= 1\n        arr[j + 1] = key",
+      code: `def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and key < arr[j]:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+
+if __name__ == "__main__":
+    arr = [12, 11, 13, 5, 6]
+    print("Original array:", arr)
+    insertion_sort(arr)
+    print("Sorted array:", arr)`,
       languageId: 1,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -348,7 +486,19 @@ async function main() {
     {
       title: "Selection Sort",
       explanation: "This is a solution to the Selection Sort problem",
-      code: "def selection_sort(arr):\n    for i in range(len(arr)):\n        min_idx = i\n        for j in range(i+1, len(arr)):\n            if arr[min_idx] > arr[j]:\n                min_idx = j\n        arr[i], arr[min_idx] = arr[min_idx], arr[i]",
+      code: `def selection_sort(arr):
+    for i in range(len(arr)):
+        min_idx = i
+        for j in range(i + 1, len(arr)):
+            if arr[min_idx] > arr[j]:
+                min_idx = j
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+
+if __name__ == "__main__":
+    arr = [64, 25, 12, 22, 11]
+    print("Original array:", arr)
+    selection_sort(arr)
+    print("Sorted array:", arr)`,
       languageId: 1,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -357,7 +507,32 @@ async function main() {
     {
       title: "Heap Sort",
       explanation: "This is a solution to the Heap Sort problem",
-      code: "def heapify(arr, n, i):\n    largest = i\n    l = 2 * i + 1\n    r = 2 * i + 2\n    if l < n and arr[i] < arr[l]:\n        largest = l\n    if r < n and arr[largest] < arr[r]:\n        largest = r\n    if largest != i:\n        arr[i], arr[largest] = arr[largest], arr[i]\n        heapify(arr, n, largest)\n\ndef heap_sort(arr):\n    n = len(arr)\n    for i in range(n//2, -1, -1):\n        heapify(arr, n, i)\n    for i in range(n-1, 0, -1):\n        arr[i], arr[0] = arr[0], arr[i]\n        heapify(arr, i, 0)",
+      code: `def heapify(arr, n, i):
+    largest = i
+    l = 2 * i + 1
+    r = 2 * i + 2
+    if l < n and arr[i] < arr[l]:
+        largest = l
+    if r < n and arr[largest] < arr[r]:
+        largest = r
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest)
+
+def heap_sort(arr):
+    n = len(arr)
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+    for i in range(n - 1, 0, -1):
+        arr[i], arr[0] = arr[0], arr[i]
+        heapify(arr, i, 0)
+
+if __name__ == "__main__":
+    arr = [12, 11, 13, 5, 6, 7]
+    print("Original array:", arr)
+    heap_sort(arr)
+    print("Sorted array:", arr)
+`,
       languageId: 1,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -366,7 +541,24 @@ async function main() {
     {
       title: "Counting Sort",
       explanation: "This is a solution to the Counting Sort problem",
-      code: "def counting_sort(arr):\n    max_val = max(arr)\n    m = max_val + 1\n    count = [0] * m\n    for a in arr:\n        count[a] += 1\n    i = 0\n    for a in range(m):\n        for c in range(count[a]):\n            arr[i] = a\n            i += 1",
+      code: `def counting_sort(arr):
+    max_val = max(arr)
+    m = max_val + 1
+    count = [0] * m
+    for a in arr:
+        count[a] += 1
+    i = 0
+    for a in range(m):
+        for c in range(count[a]):
+            arr[i] = a
+            i += 1
+
+if __name__ == "__main__":
+    arr = [4, 2, 2, 8, 3, 3, 1]
+    print("Original array:", arr)
+    counting_sort(arr)
+    print("Sorted array:", arr)
+`,
       languageId: 1,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -375,7 +567,37 @@ async function main() {
     {
       title: "Radix Sort",
       explanation: "This is a solution to the Radix Sort problem",
-      code: "def counting_sort(arr, exp1):\n    n = len(arr)\n    output = [0] * n\n    count = [0] * 10\n    for i in range(n):\n        index = arr[i] // exp1\n        count[index % 10] += 1\n    for i in range(1, 10):\n        count[i] += count[i - 1]\n    i = n - 1\n    while i >= 0:\n        index = arr[i] // exp1\n        output[count[index % 10] - 1] = arr[i]\n        count[index % 10] -= 1\n        i -= 1\n    for i in range(len(arr)):\n        arr[i] = output[i]\n\ndef radix_sort(arr):\n    max1 = max(arr)\n    exp = 1\n    while max1 // exp > 0:\n        counting_sort(arr, exp)\n        exp *= 10",
+      code: `def counting_sort(arr, exp1):
+    n = len(arr)
+    output = [0] * n
+    count = [0] * 10
+    for i in range(n):
+        index = arr[i] // exp1
+        count[index % 10] += 1
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+    i = n - 1
+    while i >= 0:
+        index = arr[i] // exp1
+        output[count[index % 10] - 1] = arr[i]
+        count[index % 10] -= 1
+        i -= 1
+    for i in range(len(arr)):
+        arr[i] = output[i]
+
+def radix_sort(arr):
+    max1 = max(arr)
+    exp = 1
+    while max1 // exp > 0:
+        counting_sort(arr, exp)
+        exp *= 10
+
+if __name__ == "__main__":
+    arr = [170, 45, 75, 90, 802, 24, 2, 66]
+    print("Original array:", arr)
+    radix_sort(arr)
+    print("Sorted array:", arr)
+`,
       languageId: 1,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -384,7 +606,25 @@ async function main() {
     {
       title: "Shell Sort",
       explanation: "This is a solution to the Shell Sort problem",
-      code: "def shell_sort(arr):\n    n = len(arr)\n    gap = n // 2\n    while gap > 0:\n        for i in range(gap, n):\n            temp = arr[i]\n            j = i\n            while j >= gap and arr[j - gap] > temp:\n                arr[j] = arr[j - gap]\n                j -= gap\n            arr[j] = temp\n        gap //= 2",
+      code: `def shell_sort(arr):
+    n = len(arr)
+    gap = n // 2
+    while gap > 0:
+        for i in range(gap, n):
+            temp = arr[i]
+            j = i
+            while j >= gap and arr[j - gap] > temp:
+                arr[j] = arr[j - gap]
+                j -= gap
+            arr[j] = temp
+        gap //= 2
+
+if __name__ == "__main__":
+    arr = [12, 34, 54, 2, 3]
+    print("Original array:", arr)
+    shell_sort(arr)
+    print("Sorted array:", arr)
+`,
       languageId: 1,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -393,8 +633,32 @@ async function main() {
     {
       title: "Bubble Sort in C#",
       explanation: "This is a solution to the Bubble Sort problem in C#",
-      code: "public void BubbleSort(int[] arr) {\n    int n = arr.Length;\n    for (int i = 0; i < n - 1; i++)\n        for (int j = 0; j < n - i - 1; j++)\n            if (arr[j] > arr[j + 1]) {\n                int temp = arr[j];\n                arr[j] = arr[j + 1];\n                arr[j + 1] = temp;\n            }\n}",
-      languageId: 10,
+      code: `using System;
+
+int[] arr = { 64, 34, 25, 12, 22, 11, 90 };
+
+void BubbleSort(int[] arr)
+{
+    int n = arr.Length;
+    for (int i = 0; i < n - 1; i++)
+    {
+        for (int j = 0; j < n - i - 1; j++)
+        {
+            if (arr[j] > arr[j + 1])
+            {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+            }
+        }
+    }
+}
+
+Console.WriteLine("Original array: " + string.Join(", ", arr));
+BubbleSort(arr);
+Console.WriteLine("Sorted array: " + string.Join(", ", arr));
+`,
+      languageId: 9,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
       isPublic: true,
@@ -402,8 +666,45 @@ async function main() {
     {
       title: "Quick Sort in C#",
       explanation: "This is a solution to the Quick Sort problem in C#",
-      code: "public void QuickSort(int[] arr, int low, int high) {\n    if (low < high) {\n        int pi = Partition(arr, low, high);\n        QuickSort(arr, low, pi - 1);\n        QuickSort(arr, pi + 1, high);\n    }\n}\n\nprivate int Partition(int[] arr, int low, int high) {\n    int pivot = arr[high];\n    int i = (low - 1);\n    for (int j = low; j <= high - 1; j++) {\n        if (arr[j] < pivot) {\n            i++;\n            int temp = arr[i];\n            arr[i] = arr[j];\n            arr[j] = temp;\n        }\n    }\n    int temp1 = arr[i + 1];\n    arr[i + 1] = arr[high];\n    arr[high] = temp1;\n    return (i + 1);\n}",
-      languageId: 10,
+      code: `using System;
+
+public static void QuickSort(int[] arr, int low, int high)
+{
+    if (low < high)
+    {
+        int pi = Partition(arr, low, high);
+        QuickSort(arr, low, pi - 1);
+        QuickSort(arr, pi + 1, high);
+    }
+}
+
+private static int Partition(int[] arr, int low, int high)
+{
+    int pivot = arr[high];
+    int i = low - 1;
+    for (int j = low; j < high; j++)
+    {
+        if (arr[j] < pivot)
+        {
+            i++;
+            int temp = arr[i];
+            arr[i] = arr[j];
+            arr[j] = temp;
+        }
+    }
+    int temp1 = arr[i + 1];
+    arr[i + 1] = arr[high];
+    arr[high] = temp1;
+    return i + 1;
+}
+
+// Example usage:
+int[] arr = { 10, 7, 8, 9, 1, 5 };
+Console.WriteLine("Original array: " + string.Join(", ", arr));
+QuickSort(arr, 0, arr.Length - 1);
+Console.WriteLine("Sorted array: " + string.Join(", ", arr));
+`,
+      languageId: 9,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
       isPublic: true,
@@ -411,8 +712,63 @@ async function main() {
     {
       title: "Merge Sort in C#",
       explanation: "This is a solution to the Merge Sort problem in C#",
-      code: "public void MergeSort(int[] arr, int l, int r) {\n    if (l < r) {\n        int m = l + (r - l) / 2;\n        MergeSort(arr, l, m);\n        MergeSort(arr, m + 1, r);\n        Merge(arr, l, m, r);\n    }\n}\n\nprivate void Merge(int[] arr, int l, int m, int r) {\n    int n1 = m - l + 1;\n    int n2 = r - m;\n    int[] L = new int[n1];\n    int[] R = new int[n2];\n    Array.Copy(arr, l, L, 0, n1);\n    Array.Copy(arr, m + 1, R, 0, n2);\n    int i = 0, j = 0;\n    int k = l;\n    while (i < n1 && j < n2) {\n        if (L[i] <= R[j]) {\n            arr[k] = L[i];\n            i++;\n        } else {\n            arr[k] = R[j];\n            j++;\n        }\n        k++;\n    }\n    while (i < n1) {\n        arr[k] = L[i];\n        i++;\n        k++;\n    }\n    while (j < n2) {\n        arr[k] = R[j];\n        j++;\n        k++;\n    }\n}",
-      languageId: 10,
+      code: `using System;
+
+public static void MergeSort(int[] arr, int l, int r)
+{
+    if (l < r)
+    {
+        int m = l + (r - l) / 2;
+        MergeSort(arr, l, m);
+        MergeSort(arr, m + 1, r);
+        Merge(arr, l, m, r);
+    }
+}
+
+private static void Merge(int[] arr, int l, int m, int r)
+{
+    int n1 = m - l + 1;
+    int n2 = r - m;
+    int[] L = new int[n1];
+    int[] R = new int[n2];
+    Array.Copy(arr, l, L, 0, n1);
+    Array.Copy(arr, m + 1, R, 0, n2);
+    int i = 0, j = 0, k = l;
+    while (i < n1 && j < n2)
+    {
+        if (L[i] <= R[j])
+        {
+            arr[k] = L[i];
+            i++;
+        }
+        else
+        {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+    while (i < n1)
+    {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+    while (j < n2)
+    {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+// Example usage:
+int[] arr = { 38, 27, 43, 3, 9, 82, 10 };
+Console.WriteLine("Original array: " + string.Join(", ", arr));
+MergeSort(arr, 0, arr.Length - 1);
+Console.WriteLine("Sorted array: " + string.Join(", ", arr));
+`,
+      languageId: 9,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
       isPublic: true,
@@ -420,8 +776,30 @@ async function main() {
     {
       title: "Insertion Sort in C#",
       explanation: "This is a solution to the Insertion Sort problem in C#",
-      code: "public void InsertionSort(int[] arr) {\n    int n = arr.Length;\n    for (int i = 1; i < n; ++i) {\n        int key = arr[i];\n        int j = i - 1;\n        while (j >= 0 && arr[j] > key) {\n            arr[j + 1] = arr[j];\n            j = j - 1;\n        }\n        arr[j + 1] = key;\n    }\n}",
-      languageId: 10,
+      code: `using System;
+
+public static void InsertionSort(int[] arr)
+{
+    for (int i = 1; i < arr.Length; ++i)
+    {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key)
+        {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// Example usage:
+int[] arr = { 12, 11, 13, 5, 6 };
+Console.WriteLine("Original array: " + string.Join(", ", arr));
+InsertionSort(arr);
+Console.WriteLine("Sorted array: " + string.Join(", ", arr));
+`,
+      languageId: 9,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
       isPublic: true,
@@ -429,8 +807,32 @@ async function main() {
     {
       title: "Selection Sort in C#",
       explanation: "This is a solution to the Selection Sort problem in C#",
-      code: "public void SelectionSort(int[] arr) {\n    int n = arr.Length;\n    for (int i = 0; i < n - 1; i++) {\n        int min_idx = i;\n        for (int j = i + 1; j < n; j++)\n            if (arr[j] < arr[min_idx])\n                min_idx = j;\n        int temp = arr[min_idx];\n        arr[min_idx] = arr[i];\n        arr[i] = temp;\n    }\n}",
-      languageId: 10,
+      code: `using System;
+
+public static void SelectionSort(int[] arr)
+{
+    int n = arr.Length;
+    for (int i = 0; i < n - 1; i++)
+    {
+        int min_idx = i;
+        for (int j = i + 1; j < n; j++)
+        {
+            if (arr[j] < arr[min_idx])
+                min_idx = j;
+        }
+        int temp = arr[min_idx];
+        arr[min_idx] = arr[i];
+        arr[i] = temp;
+    }
+}
+
+// Example usage:
+int[] arr = { 64, 25, 12, 22, 11 };
+Console.WriteLine("Original array: " + string.Join(", ", arr));
+SelectionSort(arr);
+Console.WriteLine("Sorted array: " + string.Join(", ", arr));
+`,
+      languageId: 9,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
       isPublic: true,
@@ -438,17 +840,49 @@ async function main() {
     {
       title: "Heap Sort in C#",
       explanation: "This is a solution to the Heap Sort problem in C#",
-      code: "public void HeapSort(int[] arr) {\n    int n = arr.Length;\n    for (int i = n / 2 - 1; i >= 0; i--)\n        Heapify(arr, n, i);\n    for (int i = n - 1; i > 0; i--) {\n        int temp = arr[0];\n        arr[0] = arr[i];\n        arr[i] = temp;\n        Heapify(arr, i, 0);\n    }\n}\n\nprivate void Heapify(int[] arr, int n, int i) {\n    int largest = i;\n    int l = 2 * i + 1;\n    int r = 2 * i + 2;\n    if (l < n && arr[l] > arr[largest])\n        largest = l;\n    if (r < n && arr[r] > arr[largest])\n        largest = r;\n    if (largest != i) {\n        int swap = arr[i];\n        arr[i] = arr[largest];\n        arr[largest] = swap;\n        Heapify(arr, n, largest);\n    }\n}",
-      languageId: 10,
-      authorId: getRandomAuthorId(),
-      tags: getRandomTagIds(),
-      isPublic: true,
-    },
+      code: `using System;
+
+public static void HeapSort(int[] arr)
+{
+    int n = arr.Length;
+    for (int i = n / 2 - 1; i >= 0; i--)
     {
-      title: "Shell Sort in C#",
-      explanation: "This is a solution to the Shell Sort problem in C#",
-      code: "public void ShellSort(int[] arr) {\n    int n = arr.Length;\n    for (int gap = n / 2; gap > 0; gap /= 2) {\n        for (int i = gap; i < n; i += 1) {\n            int temp = arr[i];\n            int j;\n            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap)\n                arr[j] = arr[j - gap];\n            arr[j] = temp;\n        }\n    }\n}",
-      languageId: 10,
+        Heapify(arr, n, i);
+    }
+    for (int i = n - 1; i > 0; i--)
+    {
+        int temp = arr[0];
+        arr[0] = arr[i];
+        arr[i] = temp;
+        Heapify(arr, i, 0);
+    }
+}
+
+private static void Heapify(int[] arr, int n, int i)
+{
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+    if (l < n && arr[l] > arr[largest])
+        largest = l;
+    if (r < n && arr[r] > arr[largest])
+        largest = r;
+    if (largest != i)
+    {
+        int swap = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = swap;
+        Heapify(arr, n, largest);
+    }
+}
+
+// Example usage:
+int[] arr = { 12, 11, 13, 5, 6, 7 };
+Console.WriteLine("Original array: " + string.Join(", ", arr));
+HeapSort(arr);
+Console.WriteLine("Sorted array: " + string.Join(", ", arr));
+`,
+      languageId: 9,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
       isPublic: true,
@@ -456,7 +890,26 @@ async function main() {
     {
       title: "Trapping Rain Water",
       explanation: "This is a solution to the Trapping Rain Water problem",
-      code: "var trap = function(height) {\n    let left = 0, right = height.length - 1;\n    let leftMax = 0, rightMax = 0;\n    let water = 0;\n    while (left < right) {\n        if (height[left] < height[right]) {\n            height[left] >= leftMax ? (leftMax = height[left]) : (water += leftMax - height[left]);\n            left++;\n        } else {\n            height[right] >= rightMax ? (rightMax = height[right]) : (water += rightMax - height[right]);\n            right--;\n        }\n    }\n    return water;\n};",
+      code: `var trap = function(height) {
+    let left = 0, right = height.length - 1;
+    let leftMax = 0, rightMax = 0;
+    let water = 0;
+    while (left < right) {
+        if (height[left] < height[right]) {
+            height[left] >= leftMax ? (leftMax = height[left]) : (water += leftMax - height[left]);
+            left++;
+        } else {
+            height[right] >= rightMax ? (rightMax = height[right]) : (water += rightMax - height[right]);
+            right--;
+        }
+    }
+    return water;
+};
+
+// Example usage:
+let heights = [0,1,0,2,1,0,1,3,2,1,2,1];
+console.log("Trapped water:", trap(heights));  // Output: 6
+`,
       languageId: 5,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -465,7 +918,45 @@ async function main() {
     {
       title: "Rotting Oranges",
       explanation: "This is a solution to the Rotting Oranges problem",
-      code: "var orangesRotting = function(grid) {\n    let queue = [];\n    let freshOranges = 0;\n    let minutes = 0;\n    for (let r = 0; r < grid.length; r++) {\n        for (let c = 0; c < grid[0].length; c++) {\n            if (grid[r][c] === 2) {\n                queue.push([r, c]);\n            }\n            if (grid[r][c] === 1) {\n                freshOranges++;\n            }\n        }\n    }\n    const directions = [getRandomTagIds(), [-1, 0], getRandomTagIds(), [0, -1]];\n    while (queue.length && freshOranges) {\n        let nextQueue = [];\n        while (queue.length) {\n            const [r, c] = queue.shift();\n            for (const [dr, dc] of directions) {\n                const newRow = r + dr;\n                const newCol = c + dc;\n                if (newRow >= 0 && newRow < grid.length && newCol >= 0 && newCol < grid[0].length && grid[newRow][newCol] === 1) {\n                    grid[newRow][newCol] = 2;\n                    freshOranges--;\n                    nextQueue.push([newRow, newCol]);\n                }\n            }\n        }\n        queue = nextQueue;\n        minutes++;\n    }\n    return freshOranges === 0 ? minutes : -1;\n};",
+      code: `var orangesRotting = function(grid) {
+    let queue = [];
+    let freshOranges = 0;
+    let minutes = 0;
+    for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < grid[0].length; c++) {
+            if (grid[r][c] === 2) {
+                queue.push([r, c]);
+            }
+            if (grid[r][c] === 1) {
+                freshOranges++;
+            }
+        }
+    }
+    const directions = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+    while (queue.length && freshOranges) {
+        let nextQueue = [];
+        while (queue.length) {
+            const [r, c] = queue.shift();
+            for (const [dr, dc] of directions) {
+                const newRow = r + dr;
+                const newCol = c + dc;
+                if (newRow >= 0 && newRow < grid.length && newCol >= 0 && newCol < grid[0].length && grid[newRow][newCol] === 1) {
+                    grid[newRow][newCol] = 2;
+                    freshOranges--;
+                    nextQueue.push([newRow, newCol]);
+                }
+            }
+        }
+        queue = nextQueue;
+        minutes++;
+    }
+    return freshOranges === 0 ? minutes : -1;
+};
+
+// Example usage:
+let grid = [[2,1,1],[1,1,0],[0,1,1]];
+console.log("Minutes to rot all oranges:", orangesRotting(grid));  // Output: 4
+`,
       languageId: 5,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -475,7 +966,24 @@ async function main() {
       title: "Longest Substring Without Repeating Characters",
       explanation:
         "This is a solution to the Longest Substring Without Repeating Characters problem",
-      code: "var lengthOfLongestSubstring = function(s) {\n    let map = new Map();\n    let left = 0;\n    let maxLength = 0;\n    for (let right = 0; right < s.length; right++) {\n        if (map.has(s[right])) {\n            left = Math.max(map.get(s[right]) + 1, left);\n        }\n        map.set(s[right], right);\n        maxLength = Math.max(maxLength, right - left + 1);\n    }\n    return maxLength;\n};",
+      code: `var lengthOfLongestSubstring = function(s) {
+    let map = new Map();
+    let left = 0;
+    let maxLength = 0;
+    for (let right = 0; right < s.length; right++) {
+        if (map.has(s[right])) {
+            left = Math.max(map.get(s[right]) + 1, left);
+        }
+        map.set(s[right], right);
+        maxLength = Math.max(maxLength, right - left + 1);
+    }
+    return maxLength;
+};
+
+// Example usage:
+let str = "abcabcbb";
+console.log("Longest substring length:", lengthOfLongestSubstring(str));  // Output: 3
+`,
       languageId: 5,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -485,7 +993,35 @@ async function main() {
       title: "Median of Two Sorted Arrays",
       explanation:
         "This is a solution to the Median of Two Sorted Arrays problem",
-      code: "var findMedianSortedArrays = function(nums1, nums2) {\n    let merged = [];\n    let i = 0, j = 0;\n    while (i < nums1.length && j < nums2.length) {\n        if (nums1[i] < nums2[j]) {\n            merged.push(nums1[i++]);\n        } else {\n            merged.push(nums2[j++]);\n        }\n    }\n    while (i < nums1.length) {\n        merged.push(nums1[i++]);\n    }\n    while (j < nums2.length) {\n        merged.push(nums2[j++]);\n    }\n    let mid = Math.floor(merged.length / 2);\n    if (merged.length % 2 === 0) {\n        return (merged[mid - 1] + merged[mid]) / 2;\n    } else {\n        return merged[mid];\n    }\n};",
+      code: `var findMedianSortedArrays = function(nums1, nums2) {
+    let merged = [];
+    let i = 0, j = 0;
+    while (i < nums1.length && j < nums2.length) {
+        if (nums1[i] < nums2[j]) {
+            merged.push(nums1[i++]);
+        } else {
+            merged.push(nums2[j++]);
+        }
+    }
+    while (i < nums1.length) {
+        merged.push(nums1[i++]);
+    }
+    while (j < nums2.length) {
+        merged.push(nums2[j++]);
+    }
+    let mid = Math.floor(merged.length / 2);
+    if (merged.length % 2 === 0) {
+        return (merged[mid - 1] + merged[mid]) / 2;
+    } else {
+        return merged[mid];
+    }
+};
+
+// Example usage:
+let nums1 = [1, 3];
+let nums2 = [2];
+console.log("Median of two sorted arrays:", findMedianSortedArrays(nums1, nums2));  // Output: 2
+`,
       languageId: 5,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -495,7 +1031,26 @@ async function main() {
       title: "Container With Most Water",
       explanation:
         "This is a solution to the Container With Most Water problem",
-      code: "var maxArea = function(height) {\n    let left = 0, right = height.length - 1;\n    let maxArea = 0;\n    while (left < right) {\n        let width = right - left;\n        let minHeight = Math.min(height[left], height[right]);\n        maxArea = Math.max(maxArea, width * minHeight);\n        if (height[left] < height[right]) {\n            left++;\n        } else {\n            right--;\n        }\n    }\n    return maxArea;\n};",
+      code: `var maxArea = function(height) {
+    let left = 0, right = height.length - 1;
+    let maxArea = 0;
+    while (left < right) {
+        let width = right - left;
+        let minHeight = Math.min(height[left], height[right]);
+        maxArea = Math.max(maxArea, width * minHeight);
+        if (height[left] < height[right]) {
+            left++;
+        } else {
+            right--;
+        }
+    }
+    return maxArea;
+};
+
+// Example usage:
+let height = [1,8,6,2,5,4,8,3,7];
+console.log("Maximum area:", maxArea(height));  // Output: 49
+`,
       languageId: 5,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -505,7 +1060,32 @@ async function main() {
       title: "Longest Palindromic Substring",
       explanation:
         "This is a solution to the Longest Palindromic Substring problem",
-      code: "var longestPalindrome = function(s) {\n    let start = 0, end = 0;\n    for (let i = 0; i < s.length; i++) {\n        let len1 = expandAroundCenter(s, i, i);\n        let len2 = expandAroundCenter(s, i, i + 1);\n        let len = Math.max(len1, len2);\n        if (len > end - start) {\n            start = i - Math.floor((len - 1) / 2);\n            end = i + Math.floor(len / 2);\n        }\n    }\n    return s.substring(start, end + 1);\n};\n\nfunction expandAroundCenter(s, left, right) {\n    while (left >= 0 && right < s.length && s[left] === s[right]) {\n        left--;\n        right++;\n    }\n    return right - left - 1;\n}",
+      code: `var longestPalindrome = function(s) {
+    let start = 0, end = 0;
+    for (let i = 0; i < s.length; i++) {
+        let len1 = expandAroundCenter(s, i, i);
+        let len2 = expandAroundCenter(s, i, i + 1);
+        let len = Math.max(len1, len2);
+        if (len > end - start) {
+            start = i - Math.floor((len - 1) / 2);
+            end = i + Math.floor(len / 2);
+        }
+    }
+    return s.substring(start, end + 1);
+};
+
+function expandAroundCenter(s, left, right) {
+    while (left >= 0 && right < s.length && s[left] === s[right]) {
+        left--;
+        right++;
+    }
+    return right - left - 1;
+}
+
+// Example usage:
+let s = "babad";
+console.log("Longest palindromic substring:", longestPalindrome(s));  // Output: "bab" or "aba"
+`,
       languageId: 5,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -514,7 +1094,30 @@ async function main() {
     {
       title: "Valid Parentheses",
       explanation: "This is a solution to the Valid Parentheses problem",
-      code: "var isValid = function(s) {\n    let stack = [];\n    let map = {\n        '(': ')',\n        '{': '}',\n        '[': ']'\n    };\n    for (let i = 0; i < s.length; i++) {\n        if (map[s[i]]) {\n            stack.push(s[i]);\n        } else {\n            let last = stack.pop();\n            if (s[i] !== map[last]) {\n                return false;\n            }\n        }\n    }\n    return stack.length === 0;\n};",
+      code: `var isValid = function(s) {
+    let stack = [];
+    let map = {
+        '(': ')',
+        '{': '}',
+        '[': ']'
+    };
+    for (let i = 0; i < s.length; i++) {
+        if (map[s[i]]) {
+            stack.push(s[i]);
+        } else {
+            let last = stack.pop();
+            if (s[i] !== map[last]) {
+                return false;
+            }
+        }
+    }
+    return stack.length === 0;
+};
+
+// Example usage:
+let s = "()[]{}";
+console.log("Are the parentheses valid?", isValid(s));  // Output: true
+`,
       languageId: 5,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -523,7 +1126,26 @@ async function main() {
     {
       title: "Merge Intervals",
       explanation: "This is a solution to the Merge Intervals problem",
-      code: "var merge = function(intervals) {\n    if (intervals.length === 0) return intervals;\n    intervals.sort((a, b) => a[0] - b[0]);\n    let result = [intervals[0]];\n    for (let i = 1; i < intervals.length; i++) {\n        let prev = result[result.length - 1];\n        let curr = intervals[i];\n        if (curr[0] <= prev[1]) {\n            prev[1] = Math.max(prev[1], curr[1]);\n        } else {\n            result.push(curr);\n        }\n    }\n    return result;\n};",
+      code: `var merge = function(intervals) {
+    if (intervals.length === 0) return intervals;
+    intervals.sort((a, b) => a[0] - b[0]);
+    let result = [intervals[0]];
+    for (let i = 1; i < intervals.length; i++) {
+        let prev = result[result.length - 1];
+        let curr = intervals[i];
+        if (curr[0] <= prev[1]) {
+            prev[1] = Math.max(prev[1], curr[1]);
+        } else {
+            result.push(curr);
+        }
+    }
+    return result;
+};
+
+// Example usage:
+let intervals = [[1,3],[2,6],[8,10],[15,18]];
+console.log("Merged intervals:", merge(intervals));  // Output: [[1, 6], [8, 10], [15, 18]]
+`,
       languageId: 5,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -532,7 +1154,22 @@ async function main() {
     {
       title: "FizzBuzz in Ruby",
       explanation: "This is a solution to the FizzBuzz problem in Ruby",
-      code: "def fizzbuzz(n)\n  (1..n).each do |i|\n    if i % 3 == 0 && i % 5 == 0\n      puts 'FizzBuzz'\n    elsif i % 3 == 0\n      puts 'Fizz'\n    elsif i % 5 == 0\n      puts 'Buzz'\n    else\n      puts i\n    end\n  end\nend",
+      code: `def fizzbuzz(n)
+  (1..n).each do |i|
+    if i % 3 == 0 && i % 5 == 0
+      puts 'FizzBuzz'
+    elsif i % 3 == 0
+      puts 'Fizz'
+    elsif i % 5 == 0
+      puts 'Buzz'
+    else
+      puts i
+    end
+  end
+end
+
+# Example Output
+fizzbuzz(15)`,
       languageId: 8,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -542,7 +1179,13 @@ async function main() {
       title: "Palindrome Checker in Ruby",
       explanation:
         "This is a solution to check if a string is a palindrome in Ruby",
-      code: "def palindrome?(str)\n  str == str.reverse\nend",
+      code: `def palindrome?(str)
+  str == str.reverse
+end
+
+# Example Output
+puts palindrome?('racecar')  # Output: true
+puts palindrome?('hello')    # Output: false`,
       languageId: 8,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -552,7 +1195,14 @@ async function main() {
       title: "Factorial in Ruby",
       explanation:
         "This is a solution to calculate the factorial of a number in Ruby",
-      code: "def factorial(n)\n  return 1 if n == 0\n  n * factorial(n - 1)\nend",
+      code: `def factorial(n)
+  return 1 if n == 0
+  n * factorial(n - 1)
+end
+
+# Example Output
+puts factorial(5)  # Output: 120
+puts factorial(0)  # Output: 1`,
       languageId: 8,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -561,7 +1211,17 @@ async function main() {
     {
       title: "Prime Number Checker in Ruby",
       explanation: "This is a solution to check if a number is prime in Ruby",
-      code: "def prime?(n)\n  return false if n <= 1\n  (2..Math.sqrt(n)).each do |i|\n    return false if n % i == 0\n  end\n  true\nend",
+      code: `def prime?(n)
+  return false if n <= 1
+  (2..Math.sqrt(n)).each do |i|
+    return false if n % i == 0
+  end
+  true
+end
+
+# Example Output
+puts prime?(7)   # Output: true
+puts prime?(10)  # Output: false`,
       languageId: 8,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -570,7 +1230,26 @@ async function main() {
     {
       title: "Bubble Sort in Ruby",
       explanation: "This is a solution to the Bubble Sort problem in Ruby",
-      code: "def bubble_sort(arr)\n  n = arr.length\n  loop do\n    swapped = false\n    (n-1).times do |i|\n      if arr[i] > arr[i+1]\n        arr[i], arr[i+1] = arr[i+1], arr[i]\n        swapped = true\n      end\n    end\n    break unless swapped\n  end\n  arr\nend",
+      code: `def bubble_sort(arr)
+  n = arr.length
+  loop do
+    swapped = false
+    (n-1).times do |i|
+      if arr[i] > arr[i+1]
+        arr[i], arr[i+1] = arr[i+1], arr[i]
+        swapped = true
+      end
+    end
+    break unless swapped
+  end
+  arr
+end
+
+# Example Output
+arr = [5, 3, 8, 4, 2]
+puts bubble_sort(arr).inspect
+# Output: [2, 3, 4, 5, 8]
+`,
       languageId: 8,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -579,7 +1258,31 @@ async function main() {
     {
       title: "Merge Sort in Ruby",
       explanation: "This is a solution to the Merge Sort problem in Ruby",
-      code: "def merge_sort(arr)\n  return arr if arr.length <= 1\n  mid = arr.length / 2\n  left = merge_sort(arr[0...mid])\n  right = merge_sort(arr[mid...arr.length])\n  merge(left, right)\nend\n\ndef merge(left, right)\n  sorted = []\n  until left.empty? || right.empty?\n    if left.first <= right.first\n      sorted << left.shift\n    else\n      sorted << right.shift\n    end\n  end\n  sorted + left + right\nend",
+      code: `def merge_sort(arr)
+  return arr if arr.length <= 1
+  mid = arr.length / 2
+  left = merge_sort(arr[0...mid])
+  right = merge_sort(arr[mid...arr.length])
+  merge(left, right)
+end
+
+def merge(left, right)
+  sorted = []
+  until left.empty? || right.empty?
+    if left.first <= right.first
+      sorted << left.shift
+    else
+      sorted << right.shift
+    end
+  end
+  sorted + left + right
+end
+
+# Example Output
+arr = [5, 3, 8, 4, 2]
+puts merge_sort(arr).inspect
+# Output: [2, 3, 4, 5, 8]
+`,
       languageId: 8,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -588,7 +1291,27 @@ async function main() {
     {
       title: "Binary Search in Ruby",
       explanation: "This is a solution to the Binary Search problem in Ruby",
-      code: "def binary_search(arr, target)\n  low = 0\n  high = arr.length - 1\n  while low <= high\n    mid = (low + high) / 2\n    if arr[mid] == target\n      return mid\n    elsif arr[mid] < target\n      low = mid + 1\n    else\n      high = mid - 1\n    end\n  end\n  -1\nend",
+      code: `def binary_search(arr, target)
+  low = 0
+  high = arr.length - 1
+  while low <= high
+    mid = (low + high) / 2
+    if arr[mid] == target
+      return mid
+    elsif arr[mid] < target
+      low = mid + 1
+    else
+      high = mid - 1
+    end
+  end
+  -1
+end
+
+# Example Output
+arr = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+puts binary_search(arr, 5)  # Output: 4
+puts binary_search(arr, 10) # Output: -1
+`,
       languageId: 8,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -597,17 +1320,19 @@ async function main() {
     {
       title: "Quick Sort in Ruby",
       explanation: "This is a solution to the Quick Sort problem in Ruby",
-      code: "def quick_sort(arr)\n  return arr if arr.length <= 1\n  pivot = arr.delete_at(rand(arr.length))\n  left, right = arr.partition { |x| x < pivot }\n  quick_sort(left) + [pivot] + quick_sort(right)\nend",
+      code: `def quick_sort(arr)
+  return arr if arr.length <= 1
+  pivot = arr.delete_at(rand(arr.length))
+  left, right = arr.partition { |x| x < pivot }
+  quick_sort(left) + [pivot] + quick_sort(right)
+end
+
+# Example Output
+arr = [5, 3, 8, 4, 2]
+puts quick_sort(arr).inspect
+# Output: [2, 3, 4, 5, 8]
+`,
       languageId: 8,
-      authorId: getRandomAuthorId(),
-      tags: getRandomTagIds(),
-      isPublic: true,
-    },
-    {
-      title: "File Copy",
-      explanation: "This is a solution to copy a file in C",
-      code: '#include <stdio.h>\n#include <stdlib.h>\n\nvoid copyFile(const char *source, const char *destination) {\n    FILE *src = fopen(source, "rb");\n    FILE *dest = fopen(destination, "wb");\n    if (!src || !dest) {\n        perror("File error");\n        exit(EXIT_FAILURE);\n    }\n    char buffer[BUFSIZ];\n    size_t size;\n    while ((size = fread(buffer, 1, BUFSIZ, src))) {\n        fwrite(buffer, 1, size, dest);\n    }\n    fclose(src);\n    fclose(dest);\n}',
-      languageId: 3,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
       isPublic: true,
@@ -616,6 +1341,7 @@ async function main() {
       title: "Memory Allocation",
       explanation: "This is a solution to dynamically allocate memory in C",
       code: '#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    int *arr;\n    int n;\n    printf("Enter number of elements: ");\n    scanf("%d", &n);\n    arr = (int*)malloc(n * sizeof(int));\n    if (arr == NULL) {\n        fprintf(stderr, "Memory allocation failed");\n        return 1;\n    }\n    for (int i = 0; i < n; i++) {\n        arr[i] = i + 1;\n    }\n    for (int i = 0; i < n; i++) {\n        printf("%d ", arr[i]);\n    }\n    free(arr);\n    return 0;\n}',
+      stdin: "14",
       languageId: 3,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -631,15 +1357,6 @@ async function main() {
       isPublic: true,
     },
     {
-      title: "Socket Programming",
-      explanation: "This is a solution to create a simple TCP server in C",
-      code: '#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n#include <unistd.h>\n#include <arpa/inet.h>\n\nint main() {\n    int server_fd, new_socket;\n    struct sockaddr_in address;\n    int opt = 1;\n    int addrlen = sizeof(address);\n    char buffer[1024] = {0};\n    if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) {\n        perror("Socket failed");\n        exit(EXIT_FAILURE);\n    }\n    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {\n        perror("Setsockopt failed");\n        exit(EXIT_FAILURE);\n    }\n    address.sin_family = AF_INET;\n    address.sin_addr.s_addr = INADDR_ANY;\n    address.sin_port = htons(8080);\n    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) < 0) {\n        perror("Bind failed");\n        exit(EXIT_FAILURE);\n    }\n    if (listen(server_fd, 3) < 0) {\n        perror("Listen failed");\n        exit(EXIT_FAILURE);\n    }\n    if ((new_socket = accept(server_fd, (struct sockaddr *)&address, (socklen_t*)&addrlen)) < 0) {\n        perror("Accept failed");\n        exit(EXIT_FAILURE);\n    }\n    read(new_socket, buffer, 1024);\n    printf("Message received: %s", buffer);\n    return 0;\n}',
-      languageId: 3,
-      authorId: getRandomAuthorId(),
-      tags: getRandomTagIds(),
-      isPublic: true,
-    },
-    {
       title: "Thread Creation",
       explanation: "This is a solution to create a new thread in C",
       code: '#include <stdio.h>\n#include <stdlib.h>\n#include <pthread.h>\n\nvoid *threadFunc(void *arg) {\n    printf("Thread created");\n    return NULL;\n}\n\nint main() {\n    pthread_t thread;\n    if (pthread_create(&thread, NULL, threadFunc, NULL)) {\n        fprintf(stderr, "Error creating thread");\n        return 1;\n    }\n    if (pthread_join(thread, NULL)) {\n        fprintf(stderr, "Error joining thread");\n        return 2;\n    }\n    return 0;\n}',
@@ -649,27 +1366,19 @@ async function main() {
       isPublic: true,
     },
     {
-      title: "File Reading",
-      explanation: "This is a solution to read a file in C",
-      code: '#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    FILE *file = fopen("example.txt", "r");\n    if (file == NULL) {\n        perror("File opening failed");\n        return EXIT_FAILURE;\n    }\n    char ch;\n    while ((ch = fgetc(file)) != EOF) {\n        putchar(ch);\n    }\n    fclose(file);\n    return 0;\n}',
-      languageId: 3,
-      authorId: getRandomAuthorId(),
-      tags: getRandomTagIds(),
-      isPublic: true,
-    },
-    {
-      title: "Environment Variables",
-      explanation: "This is a solution to access environment variables in C",
-      code: '#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    char *path = getenv("PATH");\n    if (path != NULL) {\n        printf("PATH: %s\\n", path);\n    } else {\n        printf("PATH not found");\n    }\n    return 0;\n}',
-      languageId: 3,
-      authorId: getRandomAuthorId(),
-      tags: getRandomTagIds(),
-      isPublic: true,
-    },
-    {
-      title: "Signal Handling",
-      explanation: "This is a solution to handle signals in C",
-      code: '#include <stdio.h>\n#include <stdlib.h>\n#include <signal.h>\n\nvoid handleSignal(int signal) {\n    printf("Caught signal %d\\n", signal);\n    exit(1);\n}\n\nint main() {\n    signal(SIGINT, handleSignal);\n    while (1) {\n        printf("Running...\\n");\n        sleep(1);\n    }\n    return 0;\n}',
+      title: "Unsafe printing with an uninitialized pointer",
+      explanation: "This is an example of unsafe printing in C",
+      code: `#include <stdio.h>
+
+int main() {
+    int *ptr;
+    
+    // Unsafe printing with an uninitialized pointer
+    printf("Value: %d", *ptr); 
+    
+    return 0;
+}
+`,
       languageId: 3,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -720,6 +1429,7 @@ async function main() {
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
       isPublic: true,
+      stdin: "+\n14\n90"
     },
     {
       title: "Palindrome Checker",
@@ -731,27 +1441,9 @@ async function main() {
       isPublic: true,
     },
     {
-      title: "Number Guesser",
-      explanation: "This template implements a number guessing game",
-      code: '#include <iostream>\n#include <cstdlib>\n#include <ctime>\n\nvoid numberGuesser() {\n    std::srand(std::time(0));\n    int number = std::rand() % 100 + 1;\n    int guess;\n    std::cout << "Guess a number between 1 and 100: ";\n    do {\n        std::cin >> guess;\n        if (guess > number) {\n            std::cout << "Too high! Try again: ";\n        } else if (guess < number) {\n            std::cout << "Too low! Try again: ";\n        } else {\n            std::cout << "Correct! The number was " << number << std::endl;\n        }\n    } while (guess != number);\n}\n\nint main() {\n    numberGuesser();\n    return 0;\n}',
-      languageId: 2,
-      authorId: getRandomAuthorId(),
-      tags: getRandomTagIds(),
-      isPublic: true,
-    },
-    {
-      title: "Simple Chatbot",
-      explanation: "This template implements a simple chatbot",
-      code: '#include <iostream>\n#include <string>\n\nvoid chatbot() {\n    std::string input;\n    std::cout << "Hello! I am a chatbot. How can I help you today?" << std::endl;\n    while (true) {\n        std::getline(std::cin, input);\n        if (input == "exit") {\n            std::cout << "Goodbye!" << std::endl;\n            break;\n        }\n        std::cout << "You said: " << input << std::endl;\n    }\n}\n\nint main() {\n    chatbot();\n    return 0;\n}',
-      languageId: 2,
-      authorId: getRandomAuthorId(),
-      tags: getRandomTagIds(),
-      isPublic: true,
-    },
-    {
       title: "FizzBuzz in Java",
       explanation: "This is a solution to the FizzBuzz problem in Java",
-      code: 'public class FizzBuzz {\n  public static void main(String[] args) {\n    for (int i = 1; i <= 100; i++) {\n      if (i % 3 == 0 && i % 5 == 0) {\n        System.out.println("FizzBuzz");\n      } else if (i % 3 == 0) {\n        System.out.println("Fizz");\n      } else if (i % 5 == 0) {\n        System.out.println("Buzz");\n      } else {\n        System.out.println(i);\n      }\n    }\n  }\n}',
+      code: 'class FizzBuzz {\n  public static void main(String[] args) {\n    for (int i = 1; i <= 100; i++) {\n      if (i % 3 == 0 && i % 5 == 0) {\n        System.out.println("FizzBuzz");\n      } else if (i % 3 == 0) {\n        System.out.println("Fizz");\n      } else if (i % 5 == 0) {\n        System.out.println("Buzz");\n      } else {\n        System.out.println(i);\n      }\n    }\n  }\n}',
       languageId: 4,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -761,7 +1453,7 @@ async function main() {
       title: "Palindrome Checker in Java",
       explanation:
         "This is a solution to check if a string is a palindrome in Java",
-      code: 'public class PalindromeChecker {\n  public static boolean isPalindrome(String str) {\n    int left = 0, right = str.length() - 1;\n    while (left < right) {\n      if (str.charAt(left) != str.charAt(right)) {\n        return false;\n      }\n      left++;\n      right--;\n    }\n    return true;\n  }\n\n  public static void main(String[] args) {\n    String text = "madam";\n    System.out.println(text + " is palindrome: " + isPalindrome(text));\n  }\n}',
+      code: 'class PalindromeChecker {\n  public static boolean isPalindrome(String str) {\n    int left = 0, right = str.length() - 1;\n    while (left < right) {\n      if (str.charAt(left) != str.charAt(right)) {\n        return false;\n      }\n      left++;\n      right--;\n    }\n    return true;\n  }\n\n  public static void main(String[] args) {\n    String text = "madam";\n    System.out.println(text + " is palindrome: " + isPalindrome(text));\n  }\n}',
       languageId: 4,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -771,7 +1463,7 @@ async function main() {
       title: "Factorial in Java",
       explanation:
         "This is a solution to calculate the factorial of a number in Java",
-      code: 'public class Factorial {\n  public static int factorial(int n) {\n    if (n == 0) {\n      return 1;\n    }\n    return n * factorial(n - 1);\n  }\n\n  public static void main(String[] args) {\n    int number = 5;\n    System.out.println("Factorial of " + number + " is " + factorial(number));\n  }\n}',
+      code: 'class Factorial {\n  public static int factorial(int n) {\n    if (n == 0) {\n      return 1;\n    }\n    return n * factorial(n - 1);\n  }\n\n  public static void main(String[] args) {\n    int number = 5;\n    System.out.println("Factorial of " + number + " is " + factorial(number));\n  }\n}',
       languageId: 4,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -780,7 +1472,7 @@ async function main() {
     {
       title: "Prime Number Checker in Java",
       explanation: "This is a solution to check if a number is prime in Java",
-      code: 'public class PrimeChecker {\n  public static boolean isPrime(int n) {\n    if (n <= 1) {\n      return false;\n    }\n    for (int i = 2; i <= Math.sqrt(n); i++) {\n      if (n % i == 0) {\n        return false;\n      }\n    }\n    return true;\n  }\n\n  public static void main(String[] args) {\n    int number = 29;\n    System.out.println(number + " is prime: " + isPrime(number));\n  }\n}',
+      code: 'class PrimeChecker {\n  public static boolean isPrime(int n) {\n    if (n <= 1) {\n      return false;\n    }\n    for (int i = 2; i <= Math.sqrt(n); i++) {\n      if (n % i == 0) {\n        return false;\n      }\n    }\n    return true;\n  }\n\n  public static void main(String[] args) {\n    int number = 29;\n    System.out.println(number + " is prime: " + isPrime(number));\n  }\n}',
       languageId: 4,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -789,7 +1481,7 @@ async function main() {
     {
       title: "Bubble Sort in Java",
       explanation: "This is a solution to the Bubble Sort problem in Java",
-      code: 'public class BubbleSort {\n  public static void bubbleSort(int[] arr) {\n    int n = arr.length;\n    for (int i = 0; i < n - 1; i++) {\n      for (int j = 0; j < n - i - 1; j++) {\n        if (arr[j] > arr[j + 1]) {\n          int temp = arr[j];\n          arr[j] = arr[j + 1];\n          arr[j + 1] = temp;\n        }\n      }\n    }\n  }\n\n  public static void main(String[] args) {\n    int[] arr = {64, 34, 25, 12, 22, 11, 90};\n    bubbleSort(arr);\n    System.out.println("Sorted array: ");\n    for (int i : arr) {\n      System.out.print(i + " ");\n    }\n  }\n}',
+      code: 'class BubbleSort {\n  public static void bubbleSort(int[] arr) {\n    int n = arr.length;\n    for (int i = 0; i < n - 1; i++) {\n      for (int j = 0; j < n - i - 1; j++) {\n        if (arr[j] > arr[j + 1]) {\n          int temp = arr[j];\n          arr[j] = arr[j + 1];\n          arr[j + 1] = temp;\n        }\n      }\n    }\n  }\n\n  public static void main(String[] args) {\n    int[] arr = {64, 34, 25, 12, 22, 11, 90};\n    bubbleSort(arr);\n    System.out.println("Sorted array: ");\n    for (int i : arr) {\n      System.out.print(i + " ");\n    }\n  }\n}',
       languageId: 4,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -798,7 +1490,7 @@ async function main() {
     {
       title: "Merge Sort in Java",
       explanation: "This is a solution to the Merge Sort problem in Java",
-      code: 'public class MergeSort {\n  public static void mergeSort(int[] arr, int l, int r) {\n    if (l < r) {\n      int m = (l + r) / 2;\n      mergeSort(arr, l, m);\n      mergeSort(arr, m + 1, r);\n      merge(arr, l, m, r);\n    }\n  }\n\n  public static void merge(int[] arr, int l, int m, int r) {\n    int n1 = m - l + 1;\n    int n2 = r - m;\n    int[] L = new int[n1];\n    int[] R = new int[n2];\n    for (int i = 0; i < n1; ++i) {\n      L[i] = arr[l + i];\n    }\n    for (int j = 0; j < n2; ++j) {\n      R[j] = arr[m + 1 + j];\n    }\n    int i = 0, j = 0;\n    int k = l;\n    while (i < n1 && j < n2) {\n      if (L[i] <= R[j]) {\n        arr[k] = L[i];\n        i++;\n      } else {\n        arr[k] = R[j];\n        j++;\n      }\n      k++;\n    }\n    while (i < n1) {\n      arr[k] = L[i];\n      i++;\n      k++;\n    }\n    while (j < n2) {\n      arr[k] = R[j];\n      j++;\n      k++;\n    }\n  }\n\n  public static void main(String[] args) {\n    int[] arr = {12, 11, 13, 5, 6, 7};\n    mergeSort(arr, 0, arr.length - 1);\n    System.out.println("Sorted array: ");\n    for (int i : arr) {\n      System.out.print(i + " ");\n    }\n  }\n}',
+      code: 'class MergeSort {\n  public static void mergeSort(int[] arr, int l, int r) {\n    if (l < r) {\n      int m = (l + r) / 2;\n      mergeSort(arr, l, m);\n      mergeSort(arr, m + 1, r);\n      merge(arr, l, m, r);\n    }\n  }\n\n  public static void merge(int[] arr, int l, int m, int r) {\n    int n1 = m - l + 1;\n    int n2 = r - m;\n    int[] L = new int[n1];\n    int[] R = new int[n2];\n    for (int i = 0; i < n1; ++i) {\n      L[i] = arr[l + i];\n    }\n    for (int j = 0; j < n2; ++j) {\n      R[j] = arr[m + 1 + j];\n    }\n    int i = 0, j = 0;\n    int k = l;\n    while (i < n1 && j < n2) {\n      if (L[i] <= R[j]) {\n        arr[k] = L[i];\n        i++;\n      } else {\n        arr[k] = R[j];\n        j++;\n      }\n      k++;\n    }\n    while (i < n1) {\n      arr[k] = L[i];\n      i++;\n      k++;\n    }\n    while (j < n2) {\n      arr[k] = R[j];\n      j++;\n      k++;\n    }\n  }\n\n  public static void main(String[] args) {\n    int[] arr = {12, 11, 13, 5, 6, 7};\n    mergeSort(arr, 0, arr.length - 1);\n    System.out.println("Sorted array: ");\n    for (int i : arr) {\n      System.out.print(i + " ");\n    }\n  }\n}',
       languageId: 4,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -807,7 +1499,7 @@ async function main() {
     {
       title: "Binary Search in Java",
       explanation: "This is a solution to the Binary Search problem in Java",
-      code: 'public class BinarySearch {\n  public static int binarySearch(int[] arr, int x) {\n    int l = 0, r = arr.length - 1;\n    while (l <= r) {\n      int m = l + (r - l) / 2;\n      if (arr[m] == x) {\n        return m;\n      }\n      if (arr[m] < x) {\n        l = m + 1;\n      } else {\n        r = m - 1;\n      }\n    }\n    return -1;\n  }\n\n  public static void main(String[] args) {\n    int[] arr = {2, 3, 4, 10, 40};\n    int x = 10;\n    int result = binarySearch(arr, x);\n    if (result == -1) {\n      System.out.println("Element not present");\n    } else {\n      System.out.println("Element found at index " + result);\n    }\n  }\n}',
+      code: 'class BinarySearch {\n  public static int binarySearch(int[] arr, int x) {\n    int l = 0, r = arr.length - 1;\n    while (l <= r) {\n      int m = l + (r - l) / 2;\n      if (arr[m] == x) {\n        return m;\n      }\n      if (arr[m] < x) {\n        l = m + 1;\n      } else {\n        r = m - 1;\n      }\n    }\n    return -1;\n  }\n\n  public static void main(String[] args) {\n    int[] arr = {2, 3, 4, 10, 40};\n    int x = 10;\n    int result = binarySearch(arr, x);\n    if (result == -1) {\n      System.out.println("Element not present");\n    } else {\n      System.out.println("Element found at index " + result);\n    }\n  }\n}',
       languageId: 4,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -816,7 +1508,7 @@ async function main() {
     {
       title: "Quick Sort in Java",
       explanation: "This is a solution to the Quick Sort problem in Java",
-      code: 'public class QuickSort {\n  public static void quickSort(int[] arr, int low, int high) {\n    if (low < high) {\n      int pi = partition(arr, low, high);\n      quickSort(arr, low, pi - 1);\n      quickSort(arr, pi + 1, high);\n    }\n  }\n\n  public static int partition(int[] arr, int low, int high) {\n    int pivot = arr[high];\n    int i = (low - 1);\n    for (int j = low; j <= high - 1; j++) {\n      if (arr[j] < pivot) {\n        i++;\n        int temp = arr[i];\n        arr[i] = arr[j];\n        arr[j] = temp;\n      }\n    }\n    int temp = arr[i + 1];\n    arr[i + 1] = arr[high];\n    arr[high] = temp;\n    return (i + 1);\n  }\n\n  public static void main(String[] args) {\n    int[] arr = {10, 7, 8, 9, 1, 5};\n    quickSort(arr, 0, arr.length - 1);\n    System.out.println("Sorted array: ");\n    for (int i : arr) {\n      System.out.print(i + " ");\n    }\n  }\n}',
+      code: 'class QuickSort {\n  public static void quickSort(int[] arr, int low, int high) {\n    if (low < high) {\n      int pi = partition(arr, low, high);\n      quickSort(arr, low, pi - 1);\n      quickSort(arr, pi + 1, high);\n    }\n  }\n\n  public static int partition(int[] arr, int low, int high) {\n    int pivot = arr[high];\n    int i = (low - 1);\n    for (int j = low; j <= high - 1; j++) {\n      if (arr[j] < pivot) {\n        i++;\n        int temp = arr[i];\n        arr[i] = arr[j];\n        arr[j] = temp;\n      }\n    }\n    int temp = arr[i + 1];\n    arr[i + 1] = arr[high];\n    arr[high] = temp;\n    return (i + 1);\n  }\n\n  public static void main(String[] args) {\n    int[] arr = {10, 7, 8, 9, 1, 5};\n    quickSort(arr, 0, arr.length - 1);\n    System.out.println("Sorted array: ");\n    for (int i : arr) {\n      System.out.print(i + " ");\n    }\n  }\n}',
       languageId: 4,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -833,29 +1525,9 @@ async function main() {
       isPublic: true,
     },
     {
-      title: "Data Visualization with ggplot2",
-      explanation:
-        "This template shows how to create a scatter plot using ggplot2 in R",
-      code: "library(ggplot2)\nggplot(mtcars, aes(x = wt, y = mpg)) + geom_point()",
-      languageId: 7,
-      authorId: getRandomAuthorId(),
-      tags: getRandomTagIds(),
-      isPublic: true,
-    },
-    {
       title: "Descriptive Statistics in R",
       explanation: "This template calculates basic descriptive statistics in R",
       code: "data(mtcars)\nsum_stats <- summary(mtcars)\nprint(sum_stats)",
-      languageId: 7,
-      authorId: getRandomAuthorId(),
-      tags: getRandomTagIds(),
-      isPublic: true,
-    },
-    {
-      title: "Time Series Analysis in R",
-      explanation:
-        "This template demonstrates how to perform time series analysis in R",
-      code: "data(AirPassengers)\nts_data <- ts(AirPassengers, frequency = 12)\nplot(ts_data)",
       languageId: 7,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -909,7 +1581,14 @@ async function main() {
     {
       title: "Factorial in PHP",
       explanation: "This template calculates the factorial of a number in PHP",
-      code: "<?php function factorial($n) { return $n == 0 ? 1 : $n * factorial($n - 1); } echo factorial(5); ?>",
+      code: `<?php 
+// Factorial in PHP
+function factorial($n) { 
+    return $n == 0 ? 1 : $n * factorial($n - 1); 
+} 
+echo factorial(5); 
+?>
+`,
       languageId: 6,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -918,7 +1597,14 @@ async function main() {
     {
       title: "Palindrome Checker in PHP",
       explanation: "This template checks if a string is a palindrome in PHP",
-      code: "<?php function isPalindrome($str) { return $str == strrev($str); } echo isPalindrome('madam') ? 'Yes' : 'No'; ?>",
+      code: `<?php 
+// Palindrome Checker in PHP
+function isPalindrome($str) { 
+    return $str == strrev($str); 
+} 
+echo isPalindrome('madam') ? 'Yes' : 'No'; 
+?>
+`,
       languageId: 6,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -927,7 +1613,24 @@ async function main() {
     {
       title: "Bubble Sort in PHP",
       explanation: "This template sorts an array using Bubble Sort in PHP",
-      code: "<?php function bubbleSort($arr) { $n = count($arr); for ($i = 0; $i < $n-1; $i++) { for ($j = 0; $j < $n-$i-1; $j++) { if ($arr[$j] > $arr[$j+1]) { $temp = $arr[$j]; $arr[$j] = $arr[$j+1]; $arr[$j+1] = $temp; } } } return $arr; } print_r(bubbleSort([64, 34, 25, 12, 22, 11, 90])); ?>",
+      code: `<?php 
+// Bubble Sort in PHP
+function bubbleSort($arr) { 
+    $n = count($arr); 
+    for ($i = 0; $i < $n - 1; $i++) { 
+        for ($j = 0; $j < $n - $i - 1; $j++) { 
+            if ($arr[$j] > $arr[$j + 1]) { 
+                $temp = $arr[$j]; 
+                $arr[$j] = $arr[$j + 1]; 
+                $arr[$j + 1] = $temp; 
+            } 
+        } 
+    } 
+    return $arr; 
+} 
+print_r(bubbleSort([64, 34, 25, 12, 22, 11, 90])); 
+?>
+`,
       languageId: 6,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
@@ -936,22 +1639,131 @@ async function main() {
     {
       title: "Prime Number Checker in PHP",
       explanation: "This template checks if a number is prime in PHP",
-      code: "<?php function isPrime($n) { if ($n <= 1) return false; for ($i = 2; $i <= sqrt($n); $i++) { if ($n % $i == 0) return false; } return true; } echo isPrime(29) ? 'Yes' : 'No'; ?>",
+      code: `<?php 
+// Prime Number Checker in PHP
+function isPrime($n) { 
+    if ($n <= 1) return false; 
+    for ($i = 2; $i <= sqrt($n); $i++) { 
+        if ($n % $i == 0) return false; 
+    } 
+    return true; 
+} 
+echo isPrime(29) ? 'Yes' : 'No'; 
+?>
+`,
       languageId: 6,
       authorId: getRandomAuthorId(),
       tags: getRandomTagIds(),
       isPublic: true,
     },
     {
-      title: "Fibonacci Sequence in PHP",
-      explanation:
-        "This template generates the Fibonacci sequence up to a given number in PHP",
-      code: "<?php function fibonacci($n) { $fib = getRandomTagIds(); for ($i = 2; $i < $n; $i++) { $fib[$i] = $fib[$i-1] + $fib[$i-2]; } return $fib; } print_r(fibonacci(10)); ?>",
-      languageId: 6,
-      authorId: getRandomAuthorId(),
-      tags: getRandomTagIds(),
-      isPublic: true,
+      "title": "Prime Number Checker in Rust",
+      "explanation": "This template checks if a number is prime in Rust",
+      "code": `fn is_prime(n: u32) -> bool {
+        if n <= 1 {
+            return false;
+        }
+        for i in 2..=((n as f64).sqrt() as u32) {
+            if n % i == 0 {
+                return false;
+            }
+        }
+        true
+    }
+    
+    fn main() {
+        let num = 29;
+        println!("{}", if is_prime(num) { "Yes" } else { "No" });
+    }`,
+      "languageId": 10,
+      "authorId": getRandomAuthorId(),
+      "tags": getRandomTagIds(),
+      "isPublic": true
     },
+    {
+      "title": "Factorial in Rust",
+      "explanation": "This template calculates the factorial of a number in Rust",
+      "code": `fn factorial(n: u32) -> u32 {
+        if n == 0 {
+            1
+        } else {
+            n * factorial(n - 1)
+        }
+    }
+    
+    fn main() {
+        let num = 5;
+        println!("{}", factorial(num));
+    }`,
+      "languageId": 10,
+      "authorId": getRandomAuthorId(),
+      "tags": getRandomTagIds(),
+      "isPublic": true
+    },
+    {
+      "title": "Palindrome Checker in Rust",
+      "explanation": "This template checks if a string is a palindrome in Rust",
+      "code": `fn is_palindrome(s: &str) -> bool {
+        let reversed: String = s.chars().rev().collect();
+        s == reversed
+    }
+    
+    fn main() {
+        let word = "madam";
+        println!("{}", if is_palindrome(word) { "Yes" } else { "No" });
+    }`,
+      "languageId": 10,
+      "authorId": getRandomAuthorId(),
+      "tags": getRandomTagIds(),
+      "isPublic": true
+    },
+    {
+      "title": "Bubble Sort in Rust",
+      "explanation": "This template sorts an array using Bubble Sort in Rust",
+      "code": `fn bubble_sort(mut arr: Vec<i32>) -> Vec<i32> {
+        let n = arr.len();
+        for _ in 0..n {
+            for j in 0..n-1 {
+                if arr[j] > arr[j+1] {
+                    arr.swap(j, j+1);
+                }
+            }
+        }
+        arr
+    }
+    
+    fn main() {
+        let arr = vec![64, 34, 25, 12, 22, 11, 90];
+        let sorted = bubble_sort(arr);
+        println!("{:?}", sorted);
+    }`,
+      "languageId": 10,
+      "authorId": getRandomAuthorId(),
+      "tags": getRandomTagIds(),
+      "isPublic": true
+    },
+    {
+      "title": "Fibonacci in Rust",
+      "explanation": "This template calculates the nth Fibonacci number in Rust",
+      "code": `fn fibonacci(n: u32) -> u32 {
+        if n == 0 {
+            0
+        } else if n == 1 {
+            1
+        } else {
+            fibonacci(n - 1) + fibonacci(n - 2)
+        }
+    }
+    
+    fn main() {
+        let num = 10;
+        println!("{}", fibonacci(num));
+    }`,
+      "languageId": 10,
+      "authorId": getRandomAuthorId(),
+      "tags": getRandomTagIds(),
+      "isPublic": true
+    }    
   ];
 
   // Shuffle the templateData array
@@ -975,6 +1787,7 @@ async function main() {
           connect: template.tags.map((id) => ({ id })),
         },
         isPublic: template.isPublic,
+        stdin: template.stdin
       },
     });
   }
@@ -990,15 +1803,6 @@ async function main() {
   };
 
   const blogData = [
-    {
-      title: "How to solve Two Sum",
-      authorId: getRandomAuthorId(),
-      content: "# Introduction",
-      tags: getRandomTagIds(),
-      templates: [1],
-      numUpvotes: getRandomRating(),
-      numDownvotes: getRandomRating(),
-    },
     {
       title: "How to solve Two Sum",
       authorId: getRandomAuthorId(),
