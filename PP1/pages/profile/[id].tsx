@@ -5,7 +5,8 @@ import Card from "@/components/Card";
 import InputField from "@/components/InputField";
 import NavBar from "@/components/NavBar";
 import { BlogType, Template } from "@/utils/types";
-import { showAlert } from "@/components/Alert";
+import { showAlert } from "@/components/Alert"
+import { verifyLogin, refreshLogin } from "@/components/refresh";
 
 const Profile = () => {
     const router = useRouter();
@@ -62,18 +63,11 @@ const Profile = () => {
         }
     };
 
-    useEffect(() => {
-        getOwnBlogs();
-        getOwnTemplates();
-        fetchLanguages();
-    }, []);
-
     const [showEditProfile, setShowEditProfile] = useState(false);
     const [firstName, setFirstName] = useState<string>("");
     const [lastName, setLastName] = useState<string>("");
     const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [signedIn, setIsSignedIn] = useState(false);
 
     const handleProfileClick = () => {
         const input = document.createElement('input');
@@ -92,40 +86,69 @@ const Profile = () => {
         };
         input.click();
     };
-    
-    const { id } = router.query;
 
     useEffect(() => {
-        // Fetch user avatar
-        const fetchUserAvatar = async () => {
-            try {
-                const response = await fetch(`/api/users/${id}`, {
-                    headers: {
-                        "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
-                    },
-                });
-                const data = await response.json();
-                if (response.ok) {
-                    setAvatarUrl(data.avatar ? `data:image/png;base64,${Buffer.from(data.avatar.data).toString('base64')}` : null);
-                } else {
-                    console.error("Failed to fetch user avatar:", data);
-                }
-            } catch (error) {
-                console.error("Error fetching user avatar:", error);
+        const signIn = async () => {
+            if (!(await verifyLogin())) {
+                await refreshLogin();
             }
-        };
-    
-        fetchUserAvatar();
-    }, [id]);
+            if (!(await verifyLogin())) {
+                router.push("/welcome");
+            }
+            else {
+                setIsSignedIn(true);
+            }
+        }
+        signIn();
+    }, []);
+
+
+    useEffect(() => {
+        if (signedIn) {
+            getOwnBlogs();
+            getOwnTemplates();
+            fetchLanguages();
+        }
+    }, [signedIn])
+
+    useEffect(() => {
+        if (router.query.id && signedIn) {
+            const fetchUserAvatar = async () => {
+                try {
+                    const response = await fetch(`/api/users/profile`, {
+                        method: "GET",
+                        headers: {
+                            "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
+                        },
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        console.log(data);
+                        setAvatarUrl(`data:image/png;base64,${Buffer.from(data.avatar).toString('base64')}`);
+                    } else {
+                        console.error("Failed to fetch user avatar:", data);
+                    }
+                } catch (error) {
+                    console.error("Error fetching user avatar:", error);
+                }
+            };
+            console.log("HERE\n");
+            fetchUserAvatar();
+        }
+    }, [router.query, signedIn]);
+
+    useEffect(() => {
+        console.log(avatarUrl);
+    }, [avatarUrl])
 
     const updateFirstName = async () => {
-        if (!id) {
+        if (!router.query.id) {
             console.error("User ID not found.");
             return;
         }
 
         try {
-            const response = await fetch(`/api/users/${id}`, {
+            const response = await fetch(`/api/users/${router.query.id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -135,7 +158,6 @@ const Profile = () => {
             });
 
             const data = await response.json();
-
             if (response.ok) {
                 console.log("First name updated:", data);
             } else {
@@ -147,13 +169,13 @@ const Profile = () => {
     };
 
     const updateLastName = async () => {
-        if (!id) {
+        if (!router.query.id) {
             console.error("User ID not found.");
             return;
         }
 
         try {
-            const response = await fetch(`/api/users/${id}`, {
+            const response = await fetch(`/api/users/${router.query.id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -175,7 +197,7 @@ const Profile = () => {
     };
 
     const updateAvatar = async (file: File) => {
-        if (!id) {
+        if (!router.query.id) {
             console.error("User ID not found.");
             return;
         }
@@ -185,24 +207,28 @@ const Profile = () => {
             reader.readAsDataURL(file);
             reader.onloadend = async () => {
                 const base64data = reader.result;
-                console.log("Base64 Avatar Data:", base64data); // Add logging to confirm the data format
+                // console.log("Base64 Avatar Data:", base64data); // Add logging to confirm the data format
     
-                const response = await fetch(`/api/users/${id}`, {
+                const response = await fetch(`/api/users/${router.query.id}`, {
                     method: "PUT",
                     headers: {
                         "Content-Type": "application/json",
                         "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
                     },
-                    body: JSON.stringify({ avatar: base64data }), // Ensure the key matches your backend
+                    body: JSON.stringify({ 
+                        avatar: base64data 
+                    }), 
                 });
+
+                console.log("\nPOKAWPOKDW\n");
     
                 const data = await response.json();
     
                 if (response.ok) {
-                    console.log("Avatar updated:", data);
-                    setAvatarUrl(data.avatar ? `data:image/png;base64,${Buffer.from(data.avatar.data).toString('base64')}` : null); // Update avatar URL
+                    console.log("Avatar updated")
+                    setAvatarUrl(`${reader.result}`);
                 } else {
-                    console.error("Failed to update avatar:", data);
+                    console.log("POKAPWOKD");
                 }
             };
         } catch (error) {

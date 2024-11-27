@@ -25,7 +25,7 @@ export default async function handler(req, res) {
         result.password
       );
       if (compareResult) {
-        const { password, ...payload } = result;
+        const { password, avatar, ...payload } = result;
         const token = generateToken(payload);
         const refreshToken = generateRefreshToken(payload);
         res.setHeader(
