@@ -283,7 +283,7 @@ const Profile = () => {
             <NavBar />
 
             <div className="flex-grow flex flex-col items-center justify-center space-y-4 mt-16">
-                <div>
+                <div className="text-text-light dark:text-text-dark">
                     {fullname}
                 </div>
                 <div className="flex items-center space-x-4">
@@ -352,54 +352,60 @@ const Profile = () => {
                 <section className="w-full p-4 bg-pink-200">
                     <h2 className="text-xl font-bold mb-4">Your Blogs</h2>
                     <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
-                        <div className="inline-flex gap-4 pb-4 w-max">
-                            {ownBlogs?.map((blog) => (
-                                <div key={blog.id} className="w-[300px] shrink-0">
-                                    <Card
-                                        id={blog.id}
-                                        title={blog.title}
-                                        author={{
-                                        firstName: blog.author.firstName,
-                                        lastName: blog.author.lastName,
-                                        id: blog.author.id,
-                                        }}
-                                        description={""}
-                                        tags={blog.tags}
-                                        type={"blogs"}
-                                        blog={blog}
-                                        owned={blog.owned}
-                                        handleEdit={(id) => router.push(`/blogs/${id}/edit`)}
-                                    />
-                                </div>
-                            ))}
-                        </div>
+                        {ownBlogs && ownBlogs.length > 0 ? (
+                            <div className="inline-flex gap-4 pb-4 w-max">
+                                {ownBlogs?.map((blog) => (
+                                    <div key={blog.id} className="w-[300px] shrink-0">
+                                        <Card
+                                            id={blog.id}
+                                            title={blog.title}
+                                            author={{
+                                            firstName: blog.author.firstName,
+                                            lastName: blog.author.lastName,
+                                            id: blog.author.id,
+                                            }}
+                                            description={""}
+                                            tags={blog.tags}
+                                            type={"blogs"}
+                                            blog={blog}
+                                            owned={blog.owned}
+                                            handleEdit={(id) => router.push(`/blogs/${id}/edit`)}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : ( <p> Your blogs cannot be found </p>
+                        )}
                     </div>
                 </section>
 
                 <section className="w-full p-4 bg-pink-200">
                     <h2 className="text-xl font-bold mb-4">Your Templates</h2>
                     <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
-                        <div className="inline-flex gap-4 pb-4 w-max">
-                        {languages.length > 0 && templates?.map((template) => (
-                            <div key={template.id} className="w-[300px] shrink-0">
-                                <Card
-                                    id={template.id}
-                                    title={template.title}
-                                    language={template.language.name}
-                                    author={{
-                                    firstName: template.author.firstName,
-                                    lastName: template.author.lastName,
-                                    id: template.author.id,
-                                    }}
-                                    description={template.explanation}
-                                    tags={template.tags}
-                                    type={"templates"}
-                                    owned={template.owned}
-                                    handleEdit={(id) => router.push(`/online-editor?templateId=${id}&edit=true`)}
-                                />
+                        {templates && templates.length > 0 ? (
+                            <div className="inline-flex gap-4 pb-4 w-max">
+                                {languages.length > 0 && templates?.map((template) => (
+                                    <div key={template.id} className="w-[300px] shrink-0">
+                                        <Card
+                                            id={template.id}
+                                            title={template.title}
+                                            language={template.language.name}
+                                            author={{
+                                            firstName: template.author.firstName,
+                                            lastName: template.author.lastName,
+                                            id: template.author.id,
+                                            }}
+                                            description={template.explanation}
+                                            tags={template.tags}
+                                            type={"templates"}
+                                            owned={template.owned}
+                                            handleEdit={(id) => router.push(`/online-editor?templateId=${id}&edit=true`)}
+                                        />
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                        </div>
+                        ) : ( <p> Your templates cannot be found </p>
+                        )}
                     </div>
                 </section>
             </div>
