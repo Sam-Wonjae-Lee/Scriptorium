@@ -32,7 +32,7 @@ const WelcomePage = () => {
         <h1 className="text-4xl mb-20 text-text-light dark:text-text-dark">
           Scriptorium
         </h1>
-        <div className="flex flex-row w-[50%] justify-between">
+        <div className="flex flex-col space-y-4 md:space-y-0 md:flex-row w-[50%] justify-between">
           <ActionButton text="Login" onClick={() => setIsLogin((prev) => !prev)} />
           <ActionButton text="Sign up" onClick={() => setIsSignup((prev) => !prev)} />
         </div>

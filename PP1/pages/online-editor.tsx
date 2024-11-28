@@ -101,7 +101,6 @@ const OnlineEditor = () => {
             const response = await fetch(`/api/languages`);
             const data = await response.json();
             setLanguages(data);
-            console.log(data);
             setActiveLanguage(data[0].name);
         } 
         catch (error) {
@@ -113,7 +112,6 @@ const OnlineEditor = () => {
         try {
             const response = await fetch(`/api/tags`);
             const data = await response.json();
-            console.log(data);
             setTags(data);
         }
         catch (error) {
@@ -146,7 +144,6 @@ const OnlineEditor = () => {
 
     const runCode = async () => {
         const ext = LANG_EXTENSTION_CONVERTER[activeLanguage];
-        console.log(ext)
         setCodeRunning(true);
         const response = await fetch(`/api/code/execute`, { 
             method: "POST",
@@ -233,7 +230,6 @@ const OnlineEditor = () => {
             else {
                 showAlert("Template could not be saved", "error");
             }
-            console.log(data);
         }
         catch (error) {
             console.log(error);
@@ -286,7 +282,6 @@ const OnlineEditor = () => {
                 const checkValidEditor = async () => {
                     const templateId : string = router.query.templateId as string;
                     const template = await fetchTemplate(templateId);
-                    console.log(template);
                     if (!template || !template.isAuthor) {
                         setUnauthorized(true);
                         showAlert("You are not the author of this template", "error");
@@ -300,7 +295,6 @@ const OnlineEditor = () => {
                 const checkValidFork = async () => {
                     const templateId : string = router.query.templateId as string;
                     const template = await fetchTemplate(templateId);
-                    console.log(template);
                     if (!template) {
                         setUnauthorized(true);
                         showAlert("This is a private template", "error");

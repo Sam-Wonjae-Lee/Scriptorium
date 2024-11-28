@@ -230,7 +230,6 @@ const Profile = () => {
           });
           const data = await response.json();
           if (response.ok) {
-            console.log(data);
             setAvatarUrl(
               `data:image/png;base64,${Buffer.from(data.avatar).toString(
                 "base64"
@@ -243,7 +242,6 @@ const Profile = () => {
           console.error("Error fetching user avatar:", error);
         }
       };
-      console.log("HERE\n");
       fetchUserAvatar();
     }
   }, [router.query, signedIn]);
@@ -270,7 +268,6 @@ const Profile = () => {
 
       const data = await response.json();
       if (response.ok) {
-        console.log("First name updated:", data);
         sessionStorage.setItem("accessToken", data.accessToken);
         setFullname(data.result.firstName + " " + data.result.lastName);
       } else {
@@ -300,7 +297,6 @@ const Profile = () => {
       const data = await response.json();
 
       if (response.ok) {
-        console.log("Last name updated:", data);
         sessionStorage.setItem("accessToken", data.accessToken);
         setFullname(data.result.firstName + " " + data.result.lastName);
       } else {
@@ -335,15 +331,11 @@ const Profile = () => {
           }),
         });
 
-        console.log("\nPOKAWPOKDW\n");
-
         const data = await response.json();
 
         if (response.ok) {
-          console.log("Avatar updated");
           setAvatarUrl(`${reader.result}`);
         } else {
-          console.log("POKAPWOKD");
         }
       };
     } catch (error) {
@@ -355,7 +347,6 @@ const Profile = () => {
     try {
       await updateFirstName();
       await updateLastName();
-      console.log("Profile updated:", firstName, lastName);
       setShowEditProfile(false);
     } catch (error) {
       console.error("Error updating profile:", error);
