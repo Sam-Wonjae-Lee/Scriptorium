@@ -87,7 +87,8 @@ const Home = () => {
         <section className="w-full p-4 bg-pink-200">
           <h2 className="text-xl font-bold mb-4">Trending Blogs</h2>
           <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
-            <div className="inline-flex gap-4 pb-4 w-max">
+            {trendingBlogs && trendingBlogs.length > 0 ? (
+              <div className="inline-flex gap-4 pb-4 w-max">
               {trendingBlogs?.map((blog) => (
                 <div key={blog.id} className="w-[300px] shrink-0">
                   <Card
@@ -108,6 +109,8 @@ const Home = () => {
                 </div>
               ))}
             </div>
+            ) : ( <p> Trending blogs cannot be found </p>
+            )}
           </div>
         </section>
 
@@ -115,6 +118,7 @@ const Home = () => {
         <section className="w-full p-4 bg-pink-200">
           <h2 className="text-xl font-bold mb-4">Controversial Blogs</h2>
           <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
+            {controversialBlogs && controversialBlogs.length > 0 ? (
             <div className="inline-flex gap-4 pb-4 w-max">
               {controversialBlogs?.map((blog) => (
                 <div key={blog.id} className="w-[300px] shrink-0">
@@ -136,6 +140,8 @@ const Home = () => {
                 </div>
               ))}
             </div>
+            ) : ( <p> Controversial blogs cannot be found </p>
+            )}
           </div>
         </section>
 
@@ -143,6 +149,7 @@ const Home = () => {
         <section className="w-full p-4 bg-pink-200">
           <h2 className="text-xl font-bold mb-4">Templates</h2>
           <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
+            {templates && templates.length > 0 ? (
             <div className="inline-flex gap-4 pb-4 w-max">
               {templates.map((template) => (
                 <div key={template.id}>
@@ -164,6 +171,8 @@ const Home = () => {
                 </div>
               ))}
             </div>
+            ) : ( <p> Templates cannot be found </p>
+            )}
           </div>
         </section>
       </div>
