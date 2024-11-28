@@ -1,4 +1,5 @@
 import prisma from "/utils/db"
+import cookie from "cookie";
 import { verifyJWT, generateRefreshToken, generateToken } from "/utils/auth";
 
 export default async function handler(req, res) {
@@ -17,7 +18,12 @@ export default async function handler(req, res) {
 
         updateParams.forEach((param) => {
             if (req.body[param]) {
-                fields[param] = req.body[param];
+                if (param === "avatar") {
+                    const base64Data = req.body[param].split(",")[1];
+                    fields[param] = Buffer.from(base64Data, "base64");
+                } else {
+                    fields[param] = req.body[param];
+                }
             }
         });
 
@@ -28,10 +34,18 @@ export default async function handler(req, res) {
                 },
                 data: fields
             });
-            const { password, ...payload} = result;
+            const { password, avatar, ...payload} = result;
             const token = generateToken(payload);
-            const refresh_token = generateRefreshToken(payload);
-            res.status(200).json({"accessToken": token, "refreshToken": refresh_token, result: payload});
+            const refreshToken = generateRefreshToken(payload);
+            res.setHeader(
+                "Set-Cookie",
+                cookie.serialize("refreshToken", refreshToken, {
+                  httpOnly: false,
+                  secure: false, // change to true in production
+                  path: "/",
+                })
+              );
+            res.status(200).json({"accessToken": token, result: payload});
         } 
         catch (error) {
             res.status(500).json({"message": "failed to update information"});
