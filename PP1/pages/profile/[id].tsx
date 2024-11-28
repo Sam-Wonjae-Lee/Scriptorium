@@ -16,6 +16,13 @@ const Profile = () => {
     const [templates, setTemplates] = useState<Template[]>([]);
     // Convert template languageId to language name
     const [languages, setLanguages] = useState<{ id: number, name: string }[]>([]);
+    const [showEditProfile, setShowEditProfile] = useState(false);
+    const [firstName, setFirstName] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const [signedIn, setIsSignedIn] = useState(false);
+
+    const [fullname, setFullname] = useState<string>("");
 
     const getOwnBlogs = async () => {
         try {
@@ -63,12 +70,6 @@ const Profile = () => {
         }
     };
 
-    const [showEditProfile, setShowEditProfile] = useState(false);
-    const [firstName, setFirstName] = useState<string>("");
-    const [lastName, setLastName] = useState<string>("");
-    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-    const [signedIn, setIsSignedIn] = useState(false);
-
     const handleProfileClick = () => {
         const input = document.createElement('input');
         input.type = 'file';
@@ -88,6 +89,21 @@ const Profile = () => {
     };
 
     useEffect(() => {
+        const getDetails = async () => {
+            const response = await fetch("/api/users/verify", {
+                method: "GET",
+                headers: {
+                  authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+                },
+              });
+              const data = await response.json();
+              if (!response.ok) {
+                console.log("Error");
+              }
+              else {
+                setFullname(data.result.firstName + " " + data.result.lastName);
+              }
+        }
         const signIn = async () => {
             if (!(await verifyLogin())) {
                 await refreshLogin();
@@ -96,6 +112,7 @@ const Profile = () => {
                 router.push("/welcome");
             }
             else {
+                getDetails();
                 setIsSignedIn(true);
             }
         }
@@ -160,6 +177,8 @@ const Profile = () => {
             const data = await response.json();
             if (response.ok) {
                 console.log("First name updated:", data);
+                sessionStorage.setItem("accessToken", data.accessToken);
+                setFullname(data.result.firstName + " " + data.result.lastName);
             } else {
                 console.error("Error updating first name:", data);
             }
@@ -188,6 +207,8 @@ const Profile = () => {
 
             if (response.ok) {
                 console.log("Last name updated:", data);
+                sessionStorage.setItem("accessToken", data.accessToken);
+                setFullname(data.result.firstName + " " + data.result.lastName);
             } else {
                 console.error("Error updating last name:", data);
             }
@@ -262,6 +283,9 @@ const Profile = () => {
             <NavBar />
 
             <div className="flex-grow flex flex-col items-center justify-center space-y-4 mt-16">
+                <div>
+                    {fullname}
+                </div>
                 <div className="flex items-center space-x-4">
             
                     <button 

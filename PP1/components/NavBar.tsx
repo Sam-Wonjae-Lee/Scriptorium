@@ -533,7 +533,9 @@ const NavBar = () => {
               </button>
               <button
                 onClick={() => {
-                  // Add your signout logic here
+                  sessionStorage.clear();
+                  document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                  router.push("/welcome");
                   setProfileShowDropdown(false);
                 }}
                 className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
