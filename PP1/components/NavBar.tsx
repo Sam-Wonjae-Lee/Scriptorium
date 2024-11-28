@@ -16,6 +16,34 @@ interface Content {
 const NavBar = () => {
   const router = useRouter();
 
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (router.query.id) {
+        const fetchUserAvatar = async () => {
+            try {
+                const response = await fetch(`/api/users/profile`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
+                    },
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    console.log(data);
+                    setAvatarUrl(`data:image/png;base64,${Buffer.from(data.avatar).toString('base64')}`);
+                } else {
+                    console.error("Failed to fetch user avatar:", data);
+                }
+            } catch (error) {
+                console.error("Error fetching user avatar:", error);
+            }
+        };
+        console.log("HERE\n");
+        fetchUserAvatar();
+    }
+}, [router.query]);
+
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -316,11 +344,11 @@ const NavBar = () => {
 
   return (
     <div className="w-full mb-8">
-      <nav className="fixed top-0 left-0 right-0 flex items-center justify-between h-14 px-4 bg-light_pink-darken border-b z-10">
+      <nav className="fixed top-0 left-0 right-0 flex items-center justify-between h-14 px-2 sm:px-4 bg-light_pink-darken border-b z-10">
         {/* Left Section */}
         <div className="flex items-center">
           <button
-            className="p-2 hover:bg-gray-100 rounded-full"
+            className="p-1 sm:p-2 hover:bg-gray-100 rounded-full"
             onClick={toggleSideBar}
           >
             <svg
@@ -347,18 +375,18 @@ const NavBar = () => {
             </svg>
           </button>
           <div className="ml-4 flex items-center">
-            <span className="text-base sm:text-sm md:text-base lg:text-xl font-bold text-black-600">
+            <span className="hidden sm:block text-base md:text-lg lg:text-xl font-bold text-black-600">
               Scriptorium
             </span>
           </div>
         </div>
 
         {/* Enhanced Search Bar */}
-        <div className="flex-1 max-w-2xl mx-4 relative" ref={searchRef}>
+        <div className="flex-1 max-w-2xl mx-2 sm:mx-4 relative" ref={searchRef}>
           <div className="flex">
             <button
               onClick={() => setIsTypeDropdownOpen(!isTypeDropdownOpen)}
-              className="px-4 py-2 border-l-0 border rounded-l-full bg-element_background-light dark:bg-element_background-dark hover:bg-hover-light dark:hover:bg-hover-dark flex items-center gap-2"
+              className="px-1 sm:px-2 py-1 sm:py-2 border-l-0 border rounded-l-full bg-element_background-light dark:bg-element_background-dark hover:bg-hover-light dark:hover:bg-hover-dark flex items-center gap-2"
             >
               <span className="text-text-light dark:text-text-dark capitalize">
                 {contentType}
@@ -366,7 +394,7 @@ const NavBar = () => {
               {getDropDownSvg()}
             </button>
 
-            <div className="flex flex-1 items-center border px-4 bg-element_background-light dark:bg-element_background-dark">
+            <div className="flex flex-1 items-center border px-1 sm:px-2 bg-element_background-light dark:bg-element_background-dark">
               <input
                 type="text"
                 placeholder={`Search ${contentType}...`}
@@ -376,11 +404,11 @@ const NavBar = () => {
                   setIsSearchOpen(true);
                 }}
                 onFocus={() => setIsSearchOpen(true)}
-                className="w-full p-2 bg-transparent outline-none ml-2 text-text-light dark:text-text-dark"
+                className="w-full p-1 sm:p-2 bg-transparent outline-none ml-2 text-text-light dark:text-text-dark"
               />
             </div>
 
-            <button className="px-6 border-l-0 border rounded-r-full bg-element_background-light dark:bg-element_background-dark">
+            <button className="px-2 sm:px-4 border-l-0 border rounded-r-full bg-element_background-light dark:bg-element_background-dark">
               {getSearchSvg()}
             </button>
           </div>
@@ -510,21 +538,25 @@ const NavBar = () => {
         <div className="flex items-center space-x-6 relative">
           <ThemeSwitcher />
           <button
-            className="bg-background-light w-10 h-10 rounded-full border-none flex items-center justify-center p-2 cursor-pointer"
+            className="bg-background-light w-12 h-12 rounded-full border-none flex items-center justify-center p-2 cursor-pointer"
             onClick={() => setProfileShowDropdown(!showProfileDropdown)}
           >
-            {getProfileSvg()}
+            {avatarUrl ? (
+                        <img src={avatarUrl} alt="User Avatar" className="w-full h-full rounded-full object-cover" />
+                    ) : (
+                        getProfileSvg()
+                    )}
           </button>
           {showProfileDropdown && (
-            <div className="absolute right-0 top-12 w-48 bg-white rounded-md shadow-lg py-1 z-50">
+            <div className="absolute right-0 top-12 w-48 bg-white dark:bg-element_background-dark rounded-md shadow-lg py-1 z-50">
               <div
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="block px-4 py-2 text-sm text-text-light dark:text-text-dark"
                 onClick={handleProfile}
               >
                 Profile
               </div>
               <button
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                className="block w-full text-left px-4 py-2 text-sm text-text-light dark:text-text-dark cursor-pointer"
                 onClick={() => {
                   router.push("/report");
                 }}
@@ -538,7 +570,7 @@ const NavBar = () => {
                   router.push("/welcome");
                   setProfileShowDropdown(false);
                 }}
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+                className="block w-full text-left px-4 py-2 text-sm text-text-light dark:text-text-dark cursor-pointer"
               >
                 Sign out
               </button>
