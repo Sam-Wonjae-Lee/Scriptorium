@@ -3,6 +3,15 @@ import { useRouter } from "next/router";
 import ThemeSwitcher from "./ThemeSwitcher";
 import Link from "next/link";
 import { showAlert } from "./Alert";
+import { BlogType, Option, Template } from "@/utils/types";
+import { refreshLogin, verifyLogin } from "./refresh";
+
+interface Content {
+  id: number;
+  title: string;
+  tags: Option[];
+  language?: { id: number; name: string };
+}
 
 const NavBar = () => {
   const router = useRouter();
@@ -10,49 +19,108 @@ const NavBar = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [contentType, setContentType] = useState("templates");
   const [isTypeDropdownOpen, setIsTypeDropdownOpen] = useState(false);
   const searchRef = useRef(null);
   const typeDropdownRef = useRef(null);
 
+  const [tags, setTags] = useState<Option[]>([]);
+  const [selectedTags, setSelectedTags] = useState<Option[]>([]);
+
+  const [languages, setLanguages] = useState<Option[]>([]);
+  const [selectedLanguages, setSelectedLanguages] = useState<Option[]>([]);
+
+  const [content, setContent] = useState<Content[]>([]);
+
   const [showProfileDropdown, setProfileShowDropdown] = useState(false);
 
-  // Sample data - replace with your actual data source
-  const data = {
-    templates: [
-      {
-        id: 1,
-        title: "Weekly Report",
-        explanation: "Template for generating weekly progress reports",
-        tags: ["report", "weekly", "business"],
-      },
-      {
-        id: 2,
-        title: "Meeting Minutes",
-        explanation: "Standard format for recording meeting discussions",
-        tags: ["meeting", "documentation"],
-      },
-    ],
-    blogs: [
-      {
-        id: 1,
-        title: "Best Practices for Template Design",
-        explanation: "Learn how to create effective templates for your team",
-        tags: ["design", "tips", "productivity"],
-      },
-      {
-        id: 2,
-        title: "Documentation Strategy Guide",
-        explanation: "A comprehensive guide to documentation management",
-        tags: ["documentation", "guide", "strategy"],
-      },
-    ],
-  };
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMoreContent, setHasMoreContent] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
 
-  const availableTags: { [key: string]: string[] } = {
-    templates: ["report", "weekly", "business", "meeting", "documentation"],
-    blogs: ["design", "tips", "productivity", "guide", "strategy"],
+  const fetchContent = async (currentPage: number) => {
+    try {
+      setIsFetching(true);
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
+
+      if (contentType === "templates") {
+        const response = await fetch(
+          `/api/code-templates/saved-templates?query=${searchQuery}&languages=${selectedLanguages
+            .map((lang) => lang.id)
+            .join(",")}&tags=${selectedTags
+            .map((tag) => tag.id)
+            .join(",")}&page=${currentPage}`,
+          {
+            headers: {
+              authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          showAlert("Error fetching content", "error");
+          return;
+        }
+
+        const data = await response.json();
+        if (data.templates) {
+          setContent((prevContent) => {
+            const newContent = [...prevContent, ...data.templates];
+            const uniqueContent = newContent.filter(
+              (content, index, self) =>
+                index === self.findIndex((c) => c.id === content.id)
+            );
+            return uniqueContent;
+          });
+        }
+        setHasMoreContent(
+          data.pagination.currentPage < data.pagination.totalPages
+        );
+      } else {
+        const response = await fetch(
+          `/api/blog-posts?own=true&query=${searchQuery}&tags=${selectedTags
+            .map((tag) => tag.id)
+            .join(",")}&languages=${selectedLanguages
+            .map((lang) => lang.id)
+            .join(",")}&
+            page=${currentPage}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          showAlert("Error fetching content", "error");
+          return;
+        }
+
+        const data = await response.json();
+        if (data.blogPosts) {
+          setContent((prevContent) => {
+            const newContent = [...prevContent, ...data.blogPosts];
+            const uniqueContent = newContent.filter(
+              (content, index, self) =>
+                index === self.findIndex((c) => c.id === content.id)
+            );
+            return uniqueContent;
+          });
+          setHasMoreContent(
+            data.pagination.currentPage < data.pagination.totalPages
+          );
+        }
+      }
+
+      setIsFetching(false);
+    } catch (error) {
+      console.error("Error fetching content:", error);
+    }
   };
 
   const handleProfile = async () => {
@@ -82,7 +150,6 @@ const NavBar = () => {
           },
         });
         const data2 = await response2.json();
-        console.log(data2);
         router.push(`/profile/${data2.result.id}`);
         return;
       }
@@ -92,6 +159,12 @@ const NavBar = () => {
   };
 
   useEffect(() => {
+    fetchTags();
+    fetchLanguages();
+    setCurrentPage(1);
+    setContent([]);
+    fetchContent(1);
+
     const handleClickOutside = (event: MouseEvent) => {
       if (
         searchRef.current &&
@@ -110,18 +183,13 @@ const NavBar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  const filteredResults = data[contentType as keyof typeof data].filter(
-    (item: { title: string; explanation: string; tags: string[] }) => {
-      const matchesSearch =
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.explanation.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesTags =
-        selectedTags.length === 0 ||
-        selectedTags.every((tag) => item.tags.includes(tag));
-      return matchesSearch && matchesTags;
-    }
-  );
+  useEffect(() => {
+    fetchTags();
+    fetchLanguages();
+    setCurrentPage(1);
+    setContent([]);
+    fetchContent(1);
+  }, [searchQuery, selectedTags, contentType, selectedLanguages]);
 
   const toggleSideBar = () => {
     setIsSideBarOpen(!isSideBarOpen);
@@ -165,6 +233,27 @@ const NavBar = () => {
     );
   };
 
+  const fetchTags = async () => {
+    try {
+      const response = await fetch(`/api/tags`);
+      const data = await response.json();
+      setTags(data);
+    } catch (error) {
+      console.error("Error fetching tags:", error);
+    }
+  };
+
+  const fetchLanguages = async () => {
+    try {
+      // This pretty much only exists for c++
+      const response = await fetch(`/api/languages`);
+      const data = await response.json();
+      setLanguages(data);
+    } catch (error) {
+      console.error("Error fetching languages:", error);
+    }
+  };
+
   const getDropDownSvg = () => {
     return (
       <svg
@@ -183,6 +272,45 @@ const NavBar = () => {
           strokeLinejoin="round"
         />
       </svg>
+    );
+  };
+
+  const renderContent = () => {
+    return (
+      <div className="max-h-96 overflow-y-auto scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
+        {content.map((item) => (
+          <div
+            key={`content-${item.id}`}
+            className="p-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
+          >
+            <h3 className="text-sm font-medium">
+              {item.title}
+              {item.language && (
+                <span className="text-sm font-medium">
+                  {" - "}
+                  {item.language.name}
+                </span>
+              )}
+            </h3>
+
+            <div className="flex flex-wrap gap-1 mt-1">
+              {item.tags.map((tag) => (
+                <span
+                  key={`content-tag-${tag.id}`}
+                  className="px-2 py-0.5 rounded-full text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
+                >
+                  {tag.name}
+                </span>
+              ))}
+            </div>
+          </div>
+        ))}
+        {content.length === 0 && (
+          <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+            No {contentType} found
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -248,7 +376,7 @@ const NavBar = () => {
                   setIsSearchOpen(true);
                 }}
                 onFocus={() => setIsSearchOpen(true)}
-                className="w-full p-2 bg-transparent outline-none ml-2"
+                className="w-full p-2 bg-transparent outline-none ml-2 text-text-light dark:text-text-dark"
               />
             </div>
 
@@ -265,70 +393,89 @@ const NavBar = () => {
                 <div className="flex flex-wrap gap-2">
                   {selectedTags.map((tag) => (
                     <span
-                      key={tag}
-                      className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
+                      key={`selected-tag-${tag.id}`}
+                      className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-hot_pink-darken text-hot_pink-normal dark:text-blue-200"
                     >
                       <span className="mr-1">#</span>
-                      {tag}
+                      {tag.name}
                       <button
                         onClick={() =>
                           setSelectedTags((tags) =>
                             tags.filter((t) => t !== tag)
                           )
                         }
-                        className="ml-1 hover:text-blue-600"
+                        className="ml-1"
                       >
                         ×
                       </button>
                     </span>
                   ))}
                 </div>
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {availableTags[contentType as keyof typeof availableTags]
-                    .filter((tag: string) => !selectedTags.includes(tag))
-                    .map((tag: string) => (
+
+                <div className="flex scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] overflow-x-auto gap-1 mt-1">
+                  {tags
+                    .filter((tag: Option) => !selectedTags.includes(tag))
+                    .map((tag: Option) => (
                       <button
-                        key={tag}
+                        key={`tag-btn-${tag.id}`}
                         onClick={() =>
                           setSelectedTags((tags) => [...tags, tag])
                         }
-                        className="px-2 py-1 rounded-full text-xs border border-gray-300 dark:border-gray-600 hover:border-blue-500 hover:text-blue-500"
+                        className="px-2 py-1 rounded-full text-xs border border-gray-300 dark:border-gray-600 hover:border-hot_pink-normal hover:text-hot_pink-normal dark:hover:text-hot_pink-normal whitespace-nowrap"
                       >
-                        {tag}
+                        {tag.name}
+                      </button>
+                    ))}
+                </div>
+
+                <div className="my-2 border-t border-gray-300 dark:border-gray-600"></div>
+                {/* Languages Filter */}
+
+                <div className="flex flex-wrap gap-2">
+                  {selectedLanguages.map((language) => (
+                    <span
+                      key={`selected-tag-${language.id}`}
+                      className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 dark:bg-hot_pink-darken text-hot_pink-normal dark:text-blue-200"
+                    >
+                      <span className="mr-1">#</span>
+                      {language.name}
+                      <button
+                        onClick={() =>
+                          setSelectedLanguages((languages) =>
+                            languages.filter((l) => l !== language)
+                          )
+                        }
+                        className="ml-1"
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] overflow-x-auto gap-1 mt-1">
+                  {languages
+                    .filter(
+                      (language: Option) => !selectedTags.includes(language)
+                    )
+                    .map((language: Option) => (
+                      <button
+                        key={`language-btn-${language.id}`}
+                        onClick={() =>
+                          setSelectedLanguages((languages) => [
+                            ...languages,
+                            language,
+                          ])
+                        }
+                        className="px-2 py-1 rounded-full text-xs border border-gray-300 dark:border-gray-600 hover:border-hot_pink-normal hover:text-hot_pink-normal dark:hover:text-hot_pink-normal whitespace-nowrap"
+                      >
+                        {language.name}
                       </button>
                     ))}
                 </div>
               </div>
 
               {/* Results List */}
-              <div className="max-h-96 overflow-y-auto">
-                {filteredResults.map((item) => (
-                  <div
-                    key={item.id}
-                    className="p-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
-                  >
-                    <h3 className="text-sm font-medium">{item.title}</h3>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                      {item.explanation}
-                    </p>
-                    <div className="flex flex-wrap gap-1 mt-1">
-                      {item.tags.map((tag) => (
-                        <span
-                          key={tag}
-                          className="px-2 py-0.5 rounded-full text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-                {filteredResults.length === 0 && (
-                  <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
-                    No {contentType} found
-                  </div>
-                )}
-              </div>
+              {renderContent()}
             </div>
           )}
 

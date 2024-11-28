@@ -40,12 +40,9 @@ export default async function handler(
       return res.status(401).json({ error: "Unauthorized" });
     }
     // Check if body type is JSON
-    console.log(req.headers);
-    console.log(req.headers["content-type"]);
 
     // WHY THE heck IS CONTENT TYPE UNDEFINED
     if (req.headers["content-type"] !== "application/json") {
-      console.log("content type is not json");
       res
         .status(400)
         .json({ message: "Content-Type must be application/json" });
@@ -130,11 +127,11 @@ export default async function handler(
       own?: boolean;
     };
 
-    let { authorId } = req.query as {authorId?: string};
+    let { authorId } = req.query as { authorId?: string };
 
     const result = verifyJWT(req);
 
-    if ( own ) {
+    if (own) {
       authorId = result.id;
     }
 
@@ -199,7 +196,7 @@ export default async function handler(
     // Create filters
     const filters: {
       tags?: { some: { id: { in: number[] } } };
-      authorId?: { equals: number }; 
+      authorId?: { equals: number };
       Templates?: { some: { languageId?: { in: number[] }; id?: number } };
       OR?: (
         | { title: { contains: string } }
@@ -306,7 +303,7 @@ export default async function handler(
 
     // Check if user is logged in to specify owned blog posts
     if (result) {
-      blogPosts.forEach((post : any) => {
+      blogPosts.forEach((post: any) => {
         post.owned = post.authorId === parseInt(result.id);
       });
       blogPosts = blogPosts.filter(
