@@ -12,7 +12,7 @@ const ThemeSwitcher: React.FC = () => {
         viewBox="0 0 24 24"
         strokeWidth="1.5"
         stroke="currentColor"
-        className="size-6 text-text-light dark:text-text-dark"
+        className="size-6 text-text-light"
       >
         <path
           strokeLinecap="round"
@@ -31,7 +31,7 @@ const ThemeSwitcher: React.FC = () => {
         viewBox="0 0 24 24"
         strokeWidth="1.5"
         stroke="currentColor"
-        className="size-6 text-text-light dark:text-text-dark"
+        className="size-6 text-text-light"
       >
         <path
           strokeLinecap="round"
