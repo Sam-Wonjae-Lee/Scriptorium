@@ -1,19 +1,24 @@
-/**
- * As a user, I want to rate blog posts and comments with upvotes or downvotes so that
- * I can express my agreement or disagreement with the content.
- */
-
+import { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/utils/db";
 import { verifyJWT } from "@/utils/auth";
 
-export default async function handler(req, res) {
+interface VoteActionRequestBody {
+  action: "upvote" | "downvote" | "remove-upvote" | "remove-downvote";
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   if (req.method === "PUT") {
     const result = verifyJWT(req);
+
     if (!result) {
       return res.status(401).json({ error: "Unauthorized" });
     }
+
     const { id } = req.query;
-    const { action } = req.body;
+    const { action } = req.body as VoteActionRequestBody;
 
     if (
       !action ||
@@ -32,64 +37,65 @@ export default async function handler(req, res) {
       return res.status(400).json({ message: "User does not exist" });
     }
 
-    // Check if blog exists
-    const blog = await prisma.blogs.findUnique({
-      where: { id: parseInt(id) },
+    // Check if comment exists
+    const comment = await prisma.comments.findUnique({
+      where: { id: parseInt(id as string) },
     });
-    if (!blog) {
-      return res.status(400).json({ message: "Blog does not exist" });
+    if (!comment) {
+      return res.status(400).json({ message: "Comment does not exist" });
     }
 
-    // Check if user has already rated the blog
-    // const rating = await prisma.blogRating.findUnique({
-    //   where: { blogId: parseInt(id), userId: parseInt(result.id) },
-    // });
-    const rating = await prisma.blogRating.findUnique({
+    // Check if user has already rated the comment
+    const rating = await prisma.commentRating.findUnique({
       where: {
-        blogId_userId: { blogId: parseInt(id), userId: parseInt(result.id) },
+        commentId_userId: {
+          commentId: parseInt(id as string),
+          userId: parseInt(result.id),
+        },
       },
     });
+
     if (rating) {
-      // User has already rated the blog
-      let new_rating;
+      // User has already rated the comment
+      let new_rating: number;
 
       if (rating.rating == 0 && action === "upvote") {
         new_rating = 1;
 
-        // Increment blog rating
-        await prisma.blogs.update({
-          where: { id: parseInt(id) },
+        // Increment comment rating
+        await prisma.comments.update({
+          where: { id: parseInt(id as string) },
           data: { numUpvotes: { increment: 1 } },
         });
       } else if (rating.rating == 0 && action === "downvote") {
         // Update rating
         new_rating = -1;
 
-        // Increment blog rating
-        await prisma.blogs.update({
-          where: { id: parseInt(id) },
+        // Increment comment rating
+        await prisma.comments.update({
+          where: { id: parseInt(id as string) },
           data: { numDownvotes: { increment: 1 } },
         });
       } else if (rating.rating == 1 && action === "remove-upvote") {
         new_rating = 0;
 
-        // Decrement blog rating
-        await prisma.blogs.update({
-          where: { id: parseInt(id) },
+        // Decrement comment rating
+        await prisma.comments.update({
+          where: { id: parseInt(id as string) },
           data: { numUpvotes: { decrement: 1 } },
         });
       } else if (rating.rating == -1 && action === "remove-downvote") {
         new_rating = 0;
 
-        // Decrement blog rating
-        await prisma.blogs.update({
-          where: { id: parseInt(id) },
+        // Decrement comment rating
+        await prisma.comments.update({
+          where: { id: parseInt(id as string) },
           data: { numDownvotes: { decrement: 1 } },
         });
       } else if (rating.rating == 1 && action === "downvote") {
         new_rating = -1;
-        await prisma.blogs.update({
-          where: { id: parseInt(id) },
+        await prisma.comments.update({
+          where: { id: parseInt(id as string) },
           data: {
             numUpvotes: { decrement: 1 },
             numDownvotes: { increment: 1 },
@@ -97,8 +103,8 @@ export default async function handler(req, res) {
         });
       } else if (rating.rating == -1 && action === "upvote") {
         new_rating = 1;
-        await prisma.blogs.update({
-          where: { id: parseInt(id) },
+        await prisma.comments.update({
+          where: { id: parseInt(id as string) },
           data: {
             numUpvotes: { increment: 1 },
             numDownvotes: { decrement: 1 },
@@ -107,10 +113,14 @@ export default async function handler(req, res) {
       } else {
         return res.status(400).json({ message: "Cannot perform this action" });
       }
+
       // Update rating
-      await prisma.blogRating.update({
+      await prisma.commentRating.update({
         where: {
-          blogId_userId: { blogId: parseInt(id), userId: parseInt(result.id) },
+          commentId_userId: {
+            commentId: parseInt(id as string),
+            userId: parseInt(result.id),
+          },
         },
         data: { rating: new_rating },
       });
@@ -125,23 +135,23 @@ export default async function handler(req, res) {
     }
 
     // Create rating
-    await prisma.blogRating.create({
+    await prisma.commentRating.create({
       data: {
         userId: parseInt(result.id),
-        blogId: parseInt(id),
+        commentId: parseInt(id as string),
         rating: action === "upvote" ? 1 : -1,
       },
     });
 
-    // Increment blog rating
+    // Increment comment rating
     if (action === "upvote") {
-      await prisma.blogs.update({
-        where: { id: parseInt(id) },
+      await prisma.comments.update({
+        where: { id: parseInt(id as string) },
         data: { numUpvotes: { increment: 1 } },
       });
     } else {
-      await prisma.blogs.update({
-        where: { id: parseInt(id) },
+      await prisma.comments.update({
+        where: { id: parseInt(id as string) },
         data: { numDownvotes: { increment: 1 } },
       });
     }
@@ -153,23 +163,22 @@ export default async function handler(req, res) {
     if (!result) {
       return res.status(200).json({ rating: 0 });
     }
-
     const { id } = req.query;
     const userId = result.id;
 
-    // Check if blog exists
-    const blog = await prisma.blogs.findUnique({
-      where: { id: parseInt(id) },
+    // Check if comment exists
+    const comment = await prisma.comments.findUnique({
+      where: { id: parseInt(id as string) },
     });
-    if (!blog) {
-      return res.status(400).json({ message: "Blog does not exist" });
+    if (!comment) {
+      return res.status(400).json({ message: "Comment does not exist" });
     }
 
     // Get the user's rating
-    const rating = await prisma.blogRating.findUnique({
+    const rating = await prisma.commentRating.findUnique({
       where: {
-        blogId_userId: {
-          blogId: parseInt(id),
+        commentId_userId: {
+          commentId: parseInt(id as string),
           userId: parseInt(userId),
         },
       },
