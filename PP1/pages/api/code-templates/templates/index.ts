@@ -1,24 +1,38 @@
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
 import { verifyJWT } from "@/utils/auth";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req, res) {
+interface TemplateBody {
+  title: string;
+  explanation: string;
+  code: string;
+  languageId: number;
+  tagIds?: number[];
+}
+
+interface FilterParams {
+  query?: string;
+  languages?: string;
+  tags?: string;
+  page?: number;
+  authorId?: string;
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
     const result = verifyJWT(req);
     if (!result) {
       return res.status(401).json({ error: "Unauthorized" });
     }
+
     // Check if body type is JSON
     if (req.headers["content-type"] !== "application/json") {
-      res
-        .status(400)
-        .json({ message: "Content-Type must be application/json" });
-      return;
+      return res.status(400).json({ message: "Content-Type must be application/json" });
     }
 
-    const { title, explanation, code, languageId, tagIds } = req.body;
+    const { title, explanation, code, languageId, tagIds }: TemplateBody = req.body;
     if (!title || !explanation || !code || !languageId || !result.id) {
-      res.status(400).json({ message: "Missing required fields" });
-      return;
+      return res.status(400).json({ message: "Missing required fields" });
     }
 
     // Check if language exists
@@ -26,8 +40,7 @@ export default async function handler(req, res) {
       where: { id: languageId },
     });
     if (!language) {
-      res.status(400).json({ message: "Language not found" });
-      return;
+      return res.status(400).json({ message: "Language not found" });
     }
 
     // Check if author exists
@@ -35,8 +48,7 @@ export default async function handler(req, res) {
       where: { id: result.id },
     });
     if (!author) {
-      res.status(400).json({ message: "Author not found" });
-      return;
+      return res.status(400).json({ message: "Author not found" });
     }
 
     // Check if tags exist
@@ -49,8 +61,7 @@ export default async function handler(req, res) {
         },
       });
       if (tags.length !== tagIds.length) {
-        res.status(400).json({ message: "Tag not found" });
-        return;
+        return res.status(400).json({ message: "Tag not found" });
       }
     }
 
@@ -63,22 +74,16 @@ export default async function handler(req, res) {
         languageId,
         authorId: result.id,
         tags: {
-          connect: tagIds.map((tagId) => ({ id: tagId })),
+          connect: tagIds?.map((tagId) => ({ id: tagId })),
         },
         isPublic: false,
       },
     });
 
-    res.status(201).json(template);
+    return res.status(201).json(template);
   } else if (req.method === "GET") {
-    const { 
-      query = "", 
-      languages, 
-      tags, 
-      page = 1,
-    } = req.query;
-
-    let { authorId } = req.query;
+    const { query = "", languages, tags, page = 1 }: FilterParams = req.query;
+    let { authorId }: FilterParams = req.query;
 
     const result = verifyJWT(req);
 
@@ -120,13 +125,12 @@ export default async function handler(req, res) {
         },
       });
       if (tags.length !== tagsArrayInt.length) {
-        res.status(400).json({ message: "Tag not found" });
-        return;
+        return res.status(400).json({ message: "Tag not found" });
       }
     }
 
     // Create filters
-    const filters = {};
+    const filters: any = {};
     if (tagsArrayInt && tagsArrayInt.length > 0) {
       filters.tags = {
         some: {
@@ -136,7 +140,7 @@ export default async function handler(req, res) {
     }
 
     if (authorId) {
-      filters.authorId = {equals : parseInt(authorId)};
+      filters.authorId = { equals: parseInt(authorId) };
     }
 
     filters.OR = [
@@ -180,7 +184,7 @@ export default async function handler(req, res) {
 
     // Check if user is logged in to specify owned blog posts
     if (result) {
-      templates.forEach((template) => {
+      templates.forEach((template : any) => {
         template.owned = template.authorId === parseInt(result.id);
       });
     }
@@ -188,7 +192,6 @@ export default async function handler(req, res) {
     const totalTemplates = await prisma.templates.count({ where: filters });
     const totalPages = Math.ceil(totalTemplates / PAGINATION_LIMIT);
 
-    console.log(templates);
     return res.status(200).json({
       templates,
       pagination: {
@@ -198,6 +201,6 @@ export default async function handler(req, res) {
       },
     });
   } else {
-    res.status(405).json({ message: "Method Not Allowed" });
+    return res.status(405).json({ message: "Method Not Allowed" });
   }
 }

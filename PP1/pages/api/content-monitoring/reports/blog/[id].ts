@@ -1,7 +1,8 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
 import { verifyJWT } from "@/utils/auth";
 
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
     const result = verifyJWT(req);
     if (!result) {
@@ -12,7 +13,6 @@ export default async function handler(req, res) {
     }
     const { id, page = 1 } = req.query;
 
-    // Check blog exists
     const blog = await prisma.blogs.findUnique({
       where: { id: Number(id) },
     });
@@ -22,7 +22,6 @@ export default async function handler(req, res) {
       return;
     }
 
-    // get reports for blog
     const blogReports = await prisma.blogReports.findMany({
       where: { blogId: Number(id) },
       include: {

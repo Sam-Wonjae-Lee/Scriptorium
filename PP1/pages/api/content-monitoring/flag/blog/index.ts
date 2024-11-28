@@ -1,27 +1,62 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
 import { verifyJWT } from "@/utils/auth";
 
-export default async function handler(req, res) {
+interface JWTResult {
+  id: string;
+  role: "ADMIN" | "USER"; 
+}
+
+
+interface GetBlogsQueryParams {
+  title?: string;
+  content?: string;
+  authorFirstName?: string;
+  authorLastName?: string;
+  page?: string;
+}
+
+interface Blog {
+  id: number;
+  title: string;
+  content: string;
+  isFlagged: boolean;
+  numReports: number;
+  numUpvotes: number;
+  numDownvotes: number;
+  author: {
+    firstName: string;
+    lastName: string;
+  };
+}
+
+interface Pagination {
+  totalBlogs: number;
+  totalPages: number;
+  currentPage: number;
+}
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
-    const result = verifyJWT(req);
+    const result = verifyJWT(req) as JWTResult | null;
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
-    if (result.role != "ADMIN") {
-        return res.status(403).json({"error": "Lack of permissions"});
+    if (result.role !== "ADMIN") {
+      return res.status(403).json({ error: "Lack of permissions" });
     }
+
     const {
       title,
       content,
       authorFirstName,
       authorLastName,
-      page = 1,
-    } = req.query;
+      page = "1", 
+    }: GetBlogsQueryParams = req.query;
 
-    // Search for blogs with the given parameters
-    const filters = {};
-
-    filters.isFlagged = true;
+    const filters: any = {
+      isFlagged: true,
+    };
 
     if (title) {
       filters.title = {
@@ -55,14 +90,18 @@ export default async function handler(req, res) {
       }
     }
 
-    const blogs = await prisma.blogs.findMany({
+    const blogs: Blog[] = await prisma.blogs.findMany({
       where: filters,
       orderBy: { numReports: "desc" },
       skip: get_skip(page),
       take: PAGINATION_LIMIT,
+      include: {
+        author: true, 
+      },
     });
 
     const totalBlogs = await prisma.blogs.count({ where: filters });
+
     const totalPages = Math.ceil(totalBlogs / PAGINATION_LIMIT);
 
     res.status(200).json({
@@ -70,7 +109,7 @@ export default async function handler(req, res) {
       pagination: {
         totalBlogs,
         totalPages,
-        currentPage: page,
+        currentPage: parseInt(page),
       },
     });
   } else {

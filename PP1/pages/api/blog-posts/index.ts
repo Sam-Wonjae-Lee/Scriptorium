@@ -2,96 +2,58 @@ import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
 import { verifyJWT } from "@/utils/auth";
 import { NextApiRequest, NextApiResponse } from "next";
 import { SortBy } from "@/utils/types";
-import { Prisma } from "@prisma/client";
-import { BlogType } from "@/utils/types";
-
-interface BlogPostWithOwnership
-  extends Prisma.BlogsGetPayload<{
-    include: {
-      tags: true;
-      Comments: true;
-      Templates: {
-        select: {
-          id: true;
-          title: true;
-        };
-      };
-      author: {
-        select: {
-          id: true;
-          firstName: true;
-          lastName: true;
-          avatar: true;
-        };
-      };
-    };
-  }> {
-  owned?: boolean;
-}
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Create blog posts
   if (req.method === "POST") {
     const result = verifyJWT(req);
     if (!result) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-    // Check if body type is JSON
 
-    // WHY THE heck IS CONTENT TYPE UNDEFINED
     if (req.headers["content-type"] !== "application/json") {
-      res
+      return res
         .status(400)
         .json({ message: "Content-Type must be application/json" });
-      return;
     }
 
     const { title, content, tagIds, templateIds } = req.body;
 
-    // Check for missing fields
     if (!title || !content) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    // Check if author exists
     const author = await prisma.users.findUnique({
       where: { id: parseInt(result.id) },
     });
     if (!author) {
-      console.log("author does not exist");
       return res.status(400).json({ message: "Author does not exist" });
     }
 
-    // Check if tags exist
     if (tagIds) {
       for (const tagId of tagIds) {
         const tag = await prisma.tags.findUnique({
           where: { id: tagId },
         });
         if (!tag) {
-          console.log("tag does not exist");
           return res.status(400).json({ message: "Tag does not exist" });
         }
       }
     }
 
-    // Check if templates exist
     if (templateIds) {
       for (const templateId of templateIds) {
         const template = await prisma.templates.findUnique({
           where: { id: parseInt(templateId) },
         });
         if (!template) {
-          console.log("template does not exist");
           return res.status(400).json({ message: "Template does not exist" });
         }
       }
     }
 
-    // Create blog post
     const blogPost = await prisma.blogs.create({
       data: {
         title,
@@ -128,16 +90,12 @@ export default async function handler(
     };
 
     let { authorId } = req.query as { authorId?: string };
-
     const result = verifyJWT(req);
 
     if (own) {
       authorId = result.id;
     }
 
-    console.log("MY ID IS : " + authorId);
-
-    // Check that author exists if provided
     if (authorId) {
       const author = await prisma.users.findUnique({
         where: { id: parseInt(authorId) },
@@ -147,7 +105,6 @@ export default async function handler(
       }
     }
 
-    // Check that sortBy is valid
     if (!["upvotes", "downvotes", "controversial"].includes(sortBy)) {
       return res.status(400).json({
         message:
@@ -155,7 +112,6 @@ export default async function handler(
       });
     }
 
-    // Check language exists if provided
     const languageIds = languages
       ? languages.split(",").map((language) => parseInt(language))
       : [];
@@ -170,7 +126,6 @@ export default async function handler(
       }
     }
 
-    // Check tags exist if provided
     const tagIds = tags ? tags.split(",").map((tag) => parseInt(tag)) : [];
     if (tags) {
       for (const tagId of tagIds) {
@@ -183,7 +138,6 @@ export default async function handler(
       }
     }
 
-    // Check template exist if provided
     if (templateId) {
       const template = await prisma.templates.findUnique({
         where: { id: parseInt(templateId) },
@@ -193,24 +147,7 @@ export default async function handler(
       }
     }
 
-    // Create filters
-    const filters: {
-      tags?: { some: { id: { in: number[] } } };
-      authorId?: { equals: number };
-      Templates?: { some: { languageId?: { in: number[] }; id?: number } };
-      OR?: (
-        | { title: { contains: string } }
-        | { content: { contains: string } }
-        | {
-            author: {
-              OR: (
-                | { firstName: { contains: string } }
-                | { lastName: { contains: string } }
-              )[];
-            };
-          }
-      )[];
-    } = {};
+    const filters: Record<string, unknown> = {};
     if (tags) {
       filters.tags = {
         some: {
@@ -253,7 +190,6 @@ export default async function handler(
       };
     }
 
-    // Get many instances
     let blogPosts = await prisma.blogs.findMany({
       where: filters,
       include: {
@@ -278,7 +214,6 @@ export default async function handler(
       take: PAGINATION_LIMIT,
     });
 
-    // Apply custom sorting formulas
     if (sortBy === "downvotes") {
       blogPosts.sort(
         (a, b) =>
@@ -301,9 +236,8 @@ export default async function handler(
       );
     }
 
-    // Check if user is logged in to specify owned blog posts
     if (result) {
-      blogPosts.forEach((post: any) => {
+      blogPosts.forEach((post : any) => {
         post.owned = post.authorId === parseInt(result.id);
       });
       blogPosts = blogPosts.filter(

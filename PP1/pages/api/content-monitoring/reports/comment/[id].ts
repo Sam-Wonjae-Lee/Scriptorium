@@ -1,29 +1,27 @@
+import { NextApiRequest, NextApiResponse } from "next";
 import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
 import { verifyJWT } from "@/utils/auth";
-import { Result } from "postcss";
 
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
     const result = verifyJWT(req);
     if (!result) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-    if (result.role != "ADMIN") {
+    if (result.role !== "ADMIN") {
       return res.status(403).json({ error: "Lack of permissions" });
     }
+
     const { id, page = 1 } = req.query;
 
-    // Check comment exists
     const comment = await prisma.comments.findUnique({
       where: { id: Number(id) },
     });
 
     if (!comment) {
-      res.status(404).json({ message: "Comment not found" });
-      return;
+      return res.status(404).json({ message: "Comment not found" });
     }
 
-    // get reports for comment
     const commentReports = await prisma.commentReports.findMany({
       where: { commentId: Number(id) },
       include: {
@@ -48,6 +46,6 @@ export default async function handler(req, res) {
       },
     });
   } else {
-    res.status(405).json({ message: "Method not allowed" });
+    return res.status(405).json({ message: "Method not allowed" });
   }
 }

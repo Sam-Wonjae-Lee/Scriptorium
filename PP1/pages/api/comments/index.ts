@@ -1,22 +1,31 @@
-/**
- * As a user, I want to comment or reply to existing comments on a blog post so that
- * I can engage with the author and other readers by sharing feedback, asking questions, or starting discussions.
- */
-
-import prisma, { PAGINATION_LIMIT, get_skip } from "@/utils/db";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import prisma from "@/utils/db";
 import { verifyJWT } from "@/utils/auth";
 
-export default async function handler(req, res) {
+interface JWTPayload {
+  id: string;
+}
+
+const PAGINATION_LIMIT = 10;
+
+function get_skip(page: number, limit: number): number {
+  return (Math.max(1, page) - 1) * limit;
+}
+
+export default async function handler(
+  req: NextApiRequest, 
+  res: NextApiResponse
+) {
   if (req.method === "POST") {
-    const result = verifyJWT(req);
+    const result = verifyJWT(req) as JWTPayload | null;
     if (!result) {
       return res.status(401).json({ error: "Unauthorized" });
     }
+    
     const { content, blogId, parentCommentId } = req.body;
     const newUserId = parseInt(result.id);
     const newBlogId = parseInt(blogId);
 
-    // Ensure required fields are provided
     if (!content || !blogId) {
       return res.status(400).json({ error: "Missing required fields" });
     }
@@ -28,7 +37,7 @@ export default async function handler(req, res) {
           parentComment: parentCommentId
             ? { connect: { id: parentCommentId } }
             : undefined,
-          blog: { connect: { id: newBlogId } }, // Always connect to the blog
+          blog: { connect: { id: newBlogId } }, 
           user: { connect: { id: newUserId } },
         },
         include: {
@@ -53,17 +62,17 @@ export default async function handler(req, res) {
       blogId,
       parentCommentId = null,
       sortBy = "upvotes",
-      page = 1,
+      page = "1",
     } = req.query;
 
-    // Check if blog is provideds
     if (!blogId) {
       return res.status(400).json({ error: "Missing blog ID" });
     }
 
-    // Check if blog exists
+    const pageNumber = typeof page === 'string' ? parseInt(page) : 1;
+
     const blog = await prisma.blogs.findUnique({
-      where: { id: parseInt(blogId) },
+      where: { id: parseInt(blogId as string) },
     });
     if (!blog) {
       return res.status(404).json({ error: "Blog not found" });
@@ -71,8 +80,8 @@ export default async function handler(req, res) {
 
     const comments = await prisma.comments.findMany({
       where: {
-        blogId: parseInt(blogId),
-        parentCommentId: parentCommentId ? parseInt(parentCommentId) : null,
+        blogId: parseInt(blogId as string),
+        parentCommentId: parentCommentId ? parseInt(parentCommentId as string) : null,
       },
       include: {
         user: {
@@ -83,26 +92,24 @@ export default async function handler(req, res) {
             avatar: true,
           },
         },
-
         Comments: {
           select: {
             id: true,
           },
         },
       },
-
-      skip: get_skip(page, PAGINATION_LIMIT),
+      skip: get_skip(pageNumber, PAGINATION_LIMIT),
       take: PAGINATION_LIMIT,
     });
 
-    // Apply custom sorting
+    const sortedComments = [...comments];
     if (sortBy === "downvotes") {
-      comments.sort(
+      sortedComments.sort(
         (a, b) =>
           a.numUpvotes - a.numDownvotes - (b.numUpvotes - b.numDownvotes)
       );
     } else if (sortBy === "controversial") {
-      comments.sort((a, b) => {
+      sortedComments.sort((a, b) => {
         const scoreA =
           (a.numUpvotes + a.numDownvotes) ** 2 /
           (Math.abs(a.numUpvotes - a.numDownvotes) + 1);
@@ -112,7 +119,7 @@ export default async function handler(req, res) {
         return scoreB - scoreA;
       });
     } else {
-      comments.sort(
+      sortedComments.sort(
         (a, b) =>
           b.numUpvotes - b.numDownvotes - (a.numUpvotes - a.numDownvotes)
       );
@@ -120,18 +127,18 @@ export default async function handler(req, res) {
 
     const totalComments = await prisma.comments.count({
       where: {
-        blogId: parseInt(blogId),
-        parentCommentId: parentCommentId ? parseInt(parentCommentId) : null,
+        blogId: parseInt(blogId as string),
+        parentCommentId: parentCommentId ? parseInt(parentCommentId as string) : null,
       },
     });
     const totalPages = Math.ceil(totalComments / PAGINATION_LIMIT);
 
     return res.status(200).json({
-      comments,
+      comments: sortedComments,
       pagination: {
         totalComments,
         totalPages,
-        currentPage: page,
+        currentPage: pageNumber,
       },
     });
   } else {
