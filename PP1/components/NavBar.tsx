@@ -34,10 +34,39 @@ const NavBar = () => {
 
   const [showProfileDropdown, setProfileShowDropdown] = useState(false);
 
+  const [isAdmin, setIsAdmin] = useState(false);
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [hasMoreContent, setHasMoreContent] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
+
+  const checkIsAdmin = async () => {
+    try {
+      if (!(await verifyLogin())) {
+        await refreshLogin();
+      }
+
+      const result = await fetch("/api/users/verify", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+
+      if (!result.ok) {
+        showAlert("Error checking admin status", "error");
+        return;
+      }
+
+      const data = await result.json();
+
+      setIsAdmin(data.result.role === "ADMIN");
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+    }
+  };
 
   const fetchContent = async (currentPage: number) => {
     try {
@@ -164,6 +193,7 @@ const NavBar = () => {
     setCurrentPage(1);
     setContent([]);
     fetchContent(1);
+    checkIsAdmin();
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -281,6 +311,7 @@ const NavBar = () => {
         {content.map((item) => (
           <div
             key={`content-${item.id}`}
+            onClick={() => router.push(`/${contentType}/${item.id}`)}
             className="p-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
           >
             <h3 className="text-sm font-medium">
@@ -347,7 +378,10 @@ const NavBar = () => {
             </svg>
           </button>
           <div className="ml-4 flex items-center">
-            <span className="text-base sm:text-sm md:text-base lg:text-xl font-bold text-black-600">
+            <span
+              className="text-base sm:text-sm md:text-base lg:text-xl font-bold text-black-600 cursor-pointer"
+              onClick={() => router.push("/home")}
+            >
               Scriptorium
             </span>
           </div>
@@ -523,14 +557,17 @@ const NavBar = () => {
               >
                 Profile
               </div>
-              <button
-                className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-                onClick={() => {
-                  router.push("/report");
-                }}
-              >
-                Reports
-              </button>
+              {isAdmin && (
+                <div
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => {
+                    router.push("/report");
+                  }}
+                >
+                  Reports
+                </div>
+              )}
+
               <button
                 onClick={() => {
                   sessionStorage.clear();
@@ -551,9 +588,9 @@ const NavBar = () => {
       {isSideBarOpen && (
         <div className="fixed left-0 top-14 h-full w-64 bg-element_background-light dark:bg-element_background-dark dark:text-text-dark shadow-lg z-20">
           <div className="p-4">
-            <Link
-              href="/home"
-              className="flex items-center px-4 py-3 hover:bg-light_pink-darken"
+            <div
+              onClick={() => router.push("/home")}
+              className="flex items-center px-4 py-3 hover:bg-light_pink-darken cursor-pointer"
             >
               <svg
                 className="h-6 w-6 mr-3 text-text-light dark:text-text-dark"
@@ -569,10 +606,10 @@ const NavBar = () => {
                 />
               </svg>
               Home
-            </Link>
-            <Link
-              href="/templates"
-              className="flex items-center px-4 py-3 hover:bg-light_pink-darken"
+            </div>
+            <div
+              onClick={() => router.push("/templates")}
+              className="flex items-center px-4 py-3 hover:bg-light_pink-darken cursor-pointer"
             >
               <svg
                 className="h-6 w-6 mr-3 text-text-light dark:text-text-dark"
@@ -588,10 +625,10 @@ const NavBar = () => {
                 />
               </svg>
               Templates
-            </Link>
-            <Link
-              href="/blogs"
-              className="flex items-center px-4 py-3 hover:bg-light_pink-darken"
+            </div>
+            <div
+              onClick={() => router.push("/blogs")}
+              className="flex items-center px-4 py-3 hover:bg-light_pink-darken cursor-pointer"
             >
               <svg
                 className="h-6 w-6 mr-3 text-text-light dark:text-text-dark"
@@ -607,10 +644,12 @@ const NavBar = () => {
                 />
               </svg>
               Blogs
-            </Link>
-            <Link
-              href="/create"
-              className="flex items-center px-4 py-3 hover:bg-light_pink-darken"
+            </div>
+            <div
+              className="flex items-center px-4 py-3 hover:bg-light_pink-darken cursor-pointer"
+              onClick={() => {
+                router.push("/create");
+              }}
             >
               <svg
                 className="h-6 w-6 mr-3 text-text-light dark:text-text-dark"
@@ -626,7 +665,7 @@ const NavBar = () => {
                 />
               </svg>
               Create
-            </Link>
+            </div>
           </div>
         </div>
       )}
