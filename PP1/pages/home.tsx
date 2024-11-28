@@ -17,17 +17,16 @@ const Home = () => {
   const [templates, setTemplates] = useState<Template[]>([]);
 
   // Convert template languageId to language name
-  const [languages, setLanguages] = useState<{[key: number]: string}>({});
+  const [languages, setLanguages] = useState<{ [key: number]: string }>({});
 
   const fetchLanguages = async () => {
     try {
-        const response = await fetch(`/api/languages`);
-        const data = await response.json();
-        console.log(data[0].name)
-        setLanguages(data);
-    } 
-    catch (error) {
-        console.error("Error fetching languages:", error);
+      const response = await fetch(`/api/languages`);
+      const data = await response.json();
+      console.log(data[0].name);
+      setLanguages(data);
+    } catch (error) {
+      console.error("Error fetching languages:", error);
     }
   };
 
@@ -53,17 +52,17 @@ const Home = () => {
 
   const getTemplates = async () => {
     try {
-        const response = await fetch('/api/code-templates/templates', {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-                authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-            }
-        });
-        const data = await response.json();
-        setTemplates(data.templates);
+      const response = await fetch("/api/code-templates/templates", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+        },
+      });
+      const data = await response.json();
+      setTemplates(data.templates);
     } catch (error) {
-        console.error("Error getting templates:", error);
+      console.error("Error getting templates:", error);
     }
   };
 
@@ -80,98 +79,112 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center bg-background-light dark:bg-background-dark">
+    <div className="min-h-screen w-full flex flex-col items-center  bg-background-light dark:bg-background-dark">
       <NavBar />
-      <div className="flex flex-col items-center gap-4 mt-8 w-full">
+      <div className="mt-12 text-center">
+        <h1 className="text-3xl font-bold text-text-light dark:text-text-dark">
+          Welcome to Scriptorium
+        </h1>
+        <p className="text-lg text-text-light dark:text-text-dark mt-2">
+          Discover the latest trending and controversial blogs, and explore our
+          collection of templates.
+        </p>
+      </div>
+      <div className="flex flex-col items-center gap-4 mt-8 w-full text-text-light dark:text-text-dark">
         {/* Trending Blogs Section */}
-        <section className="w-full p-4 bg-pink-200">
+        <section className="w-full p-4">
           <h2 className="text-xl font-bold mb-4">Trending Blogs</h2>
           <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
             {trendingBlogs && trendingBlogs.length > 0 ? (
               <div className="inline-flex gap-4 pb-4 w-max">
-              {trendingBlogs?.map((blog) => (
-                <div key={blog.id} className="w-[300px] shrink-0">
-                  <Card
-                    id={blog.id}
-                    title={blog.title}
-                    author={{
-                      firstName: blog.author.firstName,
-                      lastName: blog.author.lastName,
-                      id: blog.author.id,
-                    }}
-                    description={""}
-                    tags={blog.tags}
-                    type={"blogs"}
-                    blog={blog}
-                    owned={blog.owned}
-                    handleEdit={(id) => router.push(`/blogs/${id}/edit`)}
-                  />
-                </div>
-              ))}
-            </div>
-            ) : ( <p> Trending blogs cannot be found </p>
+                {trendingBlogs?.map((blog) => (
+                  <div key={blog.id} className="w-[300px] shrink-0">
+                    <Card
+                      id={blog.id}
+                      title={blog.title}
+                      author={{
+                        firstName: blog.author.firstName,
+                        lastName: blog.author.lastName,
+                        id: blog.author.id,
+                      }}
+                      description={""}
+                      tags={blog.tags}
+                      type={"blogs"}
+                      blog={blog}
+                      owned={blog.owned}
+                      handleEdit={(id) => router.push(`/blogs/${id}/edit`)}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p> Trending blogs cannot be found </p>
             )}
           </div>
         </section>
 
         {/* Controversial Blogs Section */}
-        <section className="w-full p-4 bg-pink-200">
+        <section className="w-full p-4 text-text-light dark:text-text-dark">
           <h2 className="text-xl font-bold mb-4">Controversial Blogs</h2>
           <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
             {controversialBlogs && controversialBlogs.length > 0 ? (
-            <div className="inline-flex gap-4 pb-4 w-max">
-              {controversialBlogs?.map((blog) => (
-                <div key={blog.id} className="w-[300px] shrink-0">
-                  <Card
-                    id={blog.id}
-                    title={blog.title}
-                    author={{
-                      firstName: blog.author.firstName,
-                      lastName: blog.author.lastName,
-                      id: blog.author.id,
-                    }}
-                    description={""}
-                    tags={blog.tags}
-                    type={"blogs"}
-                    blog={blog}
-                    owned={blog.owned}
-                    handleEdit={(id) => router.push(`/blogs/${id}/edit`)}
-                  />
-                </div>
-              ))}
-            </div>
-            ) : ( <p> Controversial blogs cannot be found </p>
+              <div className="inline-flex gap-4 pb-4 w-max">
+                {controversialBlogs?.map((blog) => (
+                  <div key={blog.id} className="w-[300px] shrink-0">
+                    <Card
+                      id={blog.id}
+                      title={blog.title}
+                      author={{
+                        firstName: blog.author.firstName,
+                        lastName: blog.author.lastName,
+                        id: blog.author.id,
+                      }}
+                      description={""}
+                      tags={blog.tags}
+                      type={"blogs"}
+                      blog={blog}
+                      owned={blog.owned}
+                      handleEdit={(id) => router.push(`/blogs/${id}/edit`)}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p> Controversial blogs cannot be found </p>
             )}
           </div>
         </section>
 
         {/* Templates Section */}
-        <section className="w-full p-4 bg-pink-200">
+        <section className="w-full p-4 text-text-light dark:text-text-dark">
           <h2 className="text-xl font-bold mb-4">Templates</h2>
           <div className={`w-full overflow-x-auto ${scrollbarHideClass}`}>
             {templates && templates.length > 0 ? (
-            <div className="inline-flex gap-4 pb-4 w-max">
-              {templates.map((template) => (
-                <div key={template.id}>
-                  <Card
-                    id={template.id}
-                    title={template.title}
-                    language={template.language.name}
-                    author={{
-                      firstName: template.author.firstName,
-                      lastName: template.author.lastName,
-                      id: template.author.id,
-                    }}
-                    description={template.explanation}
-                    tags={template.tags}
-                    type={"templates"}
-                    owned={template.owned}
-                    handleEdit={(id) => router.push(`/online-editor?templateId=${id}&edit=true`)}
-                  />
-                </div>
-              ))}
-            </div>
-            ) : ( <p> Templates cannot be found </p>
+              <div className="inline-flex gap-4 pb-4 w-max">
+                {templates.map((template) => (
+                  <div key={template.id}>
+                    <Card
+                      id={template.id}
+                      title={template.title}
+                      language={template.language.name}
+                      author={{
+                        firstName: template.author.firstName,
+                        lastName: template.author.lastName,
+                        id: template.author.id,
+                      }}
+                      description={template.explanation}
+                      tags={template.tags}
+                      type={"templates"}
+                      owned={template.owned}
+                      handleEdit={(id) =>
+                        router.push(`/online-editor?templateId=${id}&edit=true`)
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p> Templates cannot be found </p>
             )}
           </div>
         </section>
