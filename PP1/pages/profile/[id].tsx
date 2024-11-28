@@ -404,7 +404,6 @@ const Profile = () => {
               errorMessage="You must type CONFIRM"
             />
           </div>
-
           <div className="flex justify-center gap-2">
             <ActionButton
               onClick={() => handleDeleteBlog(deleteContentId!)}
