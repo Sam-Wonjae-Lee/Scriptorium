@@ -1,1 +1,1 @@
-npm run dev
+docker run -d -p 3000:3000 scriptorium_group8068:latest
