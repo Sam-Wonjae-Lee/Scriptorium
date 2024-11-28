@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         res.setHeader(
           "Set-Cookie",
           cookie.serialize("refreshToken", refreshToken, {
-            httpOnly: true,
+            httpOnly: false,
             secure: false, // change to true in production
             path: "/",
           })

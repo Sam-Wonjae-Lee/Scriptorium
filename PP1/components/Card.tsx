@@ -182,9 +182,6 @@ const Card: React.FC<CardProps> = ({
         by{" "}
         <span
           className="cursor-pointer"
-          onClick={() => {
-            router.push(`/profile/${author.id}`);
-          }}
         >
           {author.firstName} {author.lastName}
         </span>

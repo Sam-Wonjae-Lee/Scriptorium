@@ -13,13 +13,19 @@ const Profile = () => {
   const scrollbarHideClass =
     "scrollbar-hide [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']";
 
-  const [ownBlogs, setOwnBlogs] = useState<BlogType[]>([]);
-  const [templates, setTemplates] = useState<Template[]>([]);
-  // Convert template languageId to language name
-  const [languages, setLanguages] = useState<{ id: number; name: string }[]>(
-    []
-  );
 
+    const [ownBlogs, setOwnBlogs] = useState<BlogType[]>([]);
+    const [templates, setTemplates] = useState<Template[]>([]);
+    // Convert template languageId to language name
+    const [languages, setLanguages] = useState<{ id: number, name: string }[]>([]);
+    const [showEditProfile, setShowEditProfile] = useState(false);
+    const [firstName, setFirstName] = useState<string>("");
+    const [lastName, setLastName] = useState<string>("");
+    const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+    const [signedIn, setIsSignedIn] = useState(false);
+
+    const [fullname, setFullname] = useState<string>("");
+  
   // Delete modal
   const [deleteBlogModalIsOpen, setDeleteBlogModalIsOpen] = useState(false);
   const [deleteTemplateModalIsOpen, setDeleteTemplateModalIsOpen] =
@@ -57,7 +63,7 @@ const Profile = () => {
     }
   };
 
-  const getOwnTemplates = async () => {
+//HERE  const getOwnTemplates = async () => {
     try {
       const response = await fetch("/api/code-templates/saved-templates", {
         method: "GET",
@@ -79,7 +85,56 @@ const Profile = () => {
   const [lastName, setLastName] = useState<string>("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [signedIn, setIsSignedIn] = useState(false);
+//HERE
+    const handleProfileClick = () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = (event: Event) => {
+            const target = event.target as HTMLInputElement;
+            const file = target.files?.[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    updateAvatar(file);
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+        input.click();
+    };
 
+    useEffect(() => {
+        const getDetails = async () => {
+            const response = await fetch("/api/users/verify", {
+                method: "GET",
+                headers: {
+                  authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
+                },
+              });
+              const data = await response.json();
+              if (!response.ok) {
+                console.log("Error");
+              }
+              else {
+                setFullname(data.result.firstName + " " + data.result.lastName);
+              }
+        }
+        const signIn = async () => {
+            if (!(await verifyLogin())) {
+                await refreshLogin();
+            }
+            if (!(await verifyLogin())) {
+                router.push("/welcome");
+            }
+            else {
+                getDetails();
+                setIsSignedIn(true);
+            }
+        }
+        signIn();
+    }, []);
+//HERE
   const handleCloseDeleteModal = () => {
     setDeleteBlogModalIsOpen(false);
     setDeleteTemplateModalIsOpen(false);
@@ -108,10 +163,33 @@ const Profile = () => {
         },
       });
 
+//HERE
       if (!response.ok) {
         if (response.status === 401) {
           showAlert("You must be logged in to delete a blog", "error");
           return;
+//HERE
+        try {
+            const response = await fetch(`/api/users/${router.query.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
+                },
+                body: JSON.stringify({ firstName }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                console.log("First name updated:", data);
+                sessionStorage.setItem("accessToken", data.accessToken);
+                setFullname(data.result.firstName + " " + data.result.lastName);
+            } else {
+                console.error("Error updating first name:", data);
+            }
+        } catch (err) {
+            console.error("Error updating first name:", err);
+//HERE
         }
         showAlert("Error deleting blog", "error");
         return;
@@ -132,6 +210,7 @@ const Profile = () => {
     }
     handleCloseDeleteModal();
 
+//HERE
     try {
       if (!(await verifyLogin())) {
         await refreshLogin();
@@ -148,6 +227,29 @@ const Profile = () => {
         if (response.status === 401) {
           showAlert("You must be logged in to delete a template", "error");
           return;
+ // HERE
+        try {
+            const response = await fetch(`/api/users/${router.query.id}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${sessionStorage.getItem("accessToken")}`,
+                },
+                body: JSON.stringify({ lastName }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("Last name updated:", data);
+                sessionStorage.setItem("accessToken", data.accessToken);
+                setFullname(data.result.firstName + " " + data.result.lastName);
+            } else {
+                console.error("Error updating last name:", data);
+            }
+        } catch (err) {
+            console.error("Error updating last name:", err);
+//HERE
         }
         showAlert("Error deleting template", "error");
         return;
@@ -344,23 +446,34 @@ const Profile = () => {
 
   const getProfileSvg = () => {
     return (
-      <svg
-        width="29"
-        height="33"
-        viewBox="0 0 29 33"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M27.4493 31.2999L27.4498 25.7504C27.4501 22.6851 24.9652 20.1999 21.8998 20.1999H7.10092C4.03598 20.1999 1.55126 22.6844 1.55092 25.7493L1.55029 31.2999M20.0503 7.24995C20.0503 10.3151 17.5655 12.7999 14.5003 12.7999C11.4351 12.7999 8.95029 10.3151 8.95029 7.24995C8.95029 4.18477 11.4351 1.69995 14.5003 1.69995C17.5655 1.69995 20.0503 4.18477 20.0503 7.24995Z"
-          stroke="black"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    );
-  };
+        <div className="min-h-screen w-full flex flex-col bg-background-light dark:bg-background-dark">
+            <NavBar />
+
+            <div className="flex-grow flex flex-col items-center justify-center space-y-4 mt-16">
+                <div>
+                    {fullname}
+                </div>
+                <div className="flex items-center space-x-4">
+            
+                    <button 
+                        className="bg-background-light border-2 border-black w-20 h-20 rounded-full flex items-center justify-center p-2 cursor-pointer"
+                        onClick={handleProfileClick}
+                    >
+                        {avatarUrl ? (
+                        <img src={avatarUrl} alt="User Avatar" className="w-full h-full rounded-full object-cover" />
+                    ) : (
+                        getProfileSvg()
+                    )}
+                    </button>
+                    
+                    <button 
+                        className="bg-pink-200 w-40 h-10 rounded-full border-none flex items-center justify-center p-2 cursor-pointer text-black"
+                        onClick={() => setShowEditProfile(true)}
+                    >
+                        Edit Profile
+                    </button>
+                </div>
+
 
   const renderDeleteBlogModal = () => {
     return (
