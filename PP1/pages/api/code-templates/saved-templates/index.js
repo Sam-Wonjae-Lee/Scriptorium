@@ -5,18 +5,10 @@ export default async function handler(req, res) {
   if (req.method === "GET") {
     const result = verifyJWT(req);
     if (!result) {
-        return res.status(401).json({"error": "Unauthorized"});
+      return res.status(401).json({ error: "Unauthorized" });
     }
-    const {
-      title,
-      explanation,
-      code,
-      languageId,
-      tags,
-      page = 1,
-    } = req.query;
+    const { query = "", languages, tags, page = 1 } = req.query;
 
-    const languageIdInt = parseInt(languageId);
     const tagsArray = tags ? tags.split(",") : [];
     const tagsArrayInt = tagsArray.map((tag) => parseInt(tag));
     const authorIdInt = parseInt(result.id);
@@ -35,14 +27,18 @@ export default async function handler(req, res) {
       return;
     }
 
-    // Check languageId exists if provided
-    if (languageIdInt) {
-      const language = await prisma.languages.findUnique({
-        where: { id: languageIdInt },
-      });
-      if (!language) {
-        res.status(400).json({ message: "Language not found" });
-        return;
+    // Check language exists if provided
+    const languageIds = languages
+      ? languages.split(",").map((language) => parseInt(language))
+      : [];
+    if (languages) {
+      for (const languageId of languageIds) {
+        const language = await prisma.languages.findUnique({
+          where: { id: languageId },
+        });
+        if (!language) {
+          return res.status(400).json({ message: "Language does not exist" });
+        }
       }
     }
 
@@ -71,10 +67,24 @@ export default async function handler(req, res) {
       };
     }
     filters.authorId = authorIdInt;
-    if (title) filters.title = { contains: title };
-    if (explanation) filters.explanation = { contains: explanation };
-    if (code) filters.code = { contains: code };
-    if (languageId) filters.languageId = languageIdInt;
+
+    if (query) {
+      filters.title = {
+        contains: query,
+      };
+      filters.code = {
+        contains: query,
+      };
+      filters.explanation = {
+        contains: query,
+      };
+    }
+
+    if (languages) {
+      filters.languageId = {
+        in: languageIds,
+      };
+    }
 
     // Paginate
     const skip = get_skip(page);
